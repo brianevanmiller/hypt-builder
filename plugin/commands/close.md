@@ -21,7 +21,7 @@ git log --oneline -10 | grep "chore: touchup"
 ```
 
 If NOT found, run the touchup skill first:
-- Invoke the Skill tool with skill: "hpt:touchup"
+- Invoke the Skill tool with skill: "hypt:touchup"
 - Wait for it to complete before continuing
 
 ### Step 2: Merge the PR

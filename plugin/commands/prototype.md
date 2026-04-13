@@ -72,7 +72,7 @@ Fix any build errors before proceeding.
 
 ### Step 2: Save — initial PR
 
-Invoke the Skill tool with skill: "hpt:save"
+Invoke the Skill tool with skill: "hypt:save"
 
 This commits everything, pushes, and creates a PR.
 
@@ -80,7 +80,7 @@ This commits everything, pushes, and creates a PR.
 
 ### Step 3: First review — fix everything
 
-Invoke the Skill tool with skill: "hpt:review"
+Invoke the Skill tool with skill: "hypt:review"
 
 When the review completes and asks about medium/low findings, reply "all" — fix everything. Be maximalist here. The goal is clean, solid code.
 
@@ -95,7 +95,7 @@ git add -A && git commit -m "fix: address PR review — all findings" && git pus
 
 ### Step 4: First touchup — catch stragglers
 
-Invoke the Skill tool with skill: "hpt:touchup"
+Invoke the Skill tool with skill: "hypt:touchup"
 
 This addresses any PR bot comments, fixes build issues, and updates docs.
 
@@ -103,7 +103,7 @@ This addresses any PR bot comments, fixes build issues, and updates docs.
 
 ### Step 5: Second review — final quality pass
 
-Invoke the Skill tool with skill: "hpt:review"
+Invoke the Skill tool with skill: "hypt:review"
 
 Again, fix ALL findings (reply "all"). Still skip any unit test suggestions.
 
@@ -116,7 +116,7 @@ git add -A && git commit -m "fix: address second review — final quality pass" 
 
 ### Step 6: Unit tests
 
-Invoke the Skill tool with skill: "hpt:unit-tests"
+Invoke the Skill tool with skill: "hypt:unit-tests"
 
 This creates appropriate tests and confirms they pass.
 
@@ -124,7 +124,7 @@ This creates appropriate tests and confirms they pass.
 
 ### Step 7: Final touchup
 
-Invoke the Skill tool with skill: "hpt:touchup"
+Invoke the Skill tool with skill: "hypt:touchup"
 
 Confirm the PR is in a mergeable state — build passes, no blocking comments.
 

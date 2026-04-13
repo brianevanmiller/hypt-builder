@@ -1,14 +1,14 @@
 {
-  "name": "hpt",
+  "name": "hypt",
   "description": "Hyptrain shipping workflow: save, review, test, deploy, close, prototype",
   "version": "1.0.0",
   "author": {
     "name": "Brian Miller",
     "url": "https://github.com/brianevanmiller"
   },
-  "repository": "https://github.com/brianevanmiller/hpt-claude",
+  "repository": "https://github.com/brianevanmiller/hypt-claude",
   "license": "MIT",
-  "homepage": "https://github.com/brianevanmiller/hpt-claude",
+  "homepage": "https://github.com/brianevanmiller/hypt-claude",
   "keywords": [
     "shipping",
     "workflow",
