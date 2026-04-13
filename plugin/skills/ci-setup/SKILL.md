@@ -1,6 +1,6 @@
 ---
 description: "Set up lightweight CI — runs unit tests automatically on every commit via GitHub Actions"
-allowed-tools: ["Bash", "Read", "Write", "Grep", "Glob"]
+allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob"]
 ---
 
 # /ci-setup — Lightweight CI for Your Project
@@ -11,7 +11,7 @@ allowed-tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 - Package manager: !`ls bun.lockb bun.lock package-lock.json yarn.lock pnpm-lock.yaml 2>/dev/null || echo "No lockfile found"`
 - Existing CI: !`ls .github/workflows/*.yml 2>/dev/null || echo "No CI workflows"`
 - Test script: !`cat package.json 2>/dev/null | grep -E '"test"' || echo "No test script"`
-- Existing tests: !`find . -name "*.test.ts" -o -name "*.test.tsx" -o -name "*.spec.ts" 2>/dev/null | head -5 || echo "No test files found"`
+- Existing tests: !`find . -not -path "*/node_modules/*" -name "*.test.ts" -o -name "*.test.tsx" -o -name "*.spec.ts" 2>/dev/null | head -5 || echo "No test files found"`
 
 ## Instructions
 
