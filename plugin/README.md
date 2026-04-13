@@ -6,24 +6,22 @@ A Claude Code plugin that provides a complete shipping workflow: implement, revi
 
 | Command | Description |
 |---------|-------------|
+| `hypt:start` | Onboarding — describe your idea, set up accounts, create a build plan |
 | `hypt:save` | Commit, push, and create/update PR automatically |
 | `hypt:review` | Thorough PR review with 4 parallel subagents — auto-fixes urgent issues |
 | `hypt:touchup` | Quick pre-merge polish — fix PR comments, build issues, update docs |
 | `hypt:unit-tests` | Smart unit test generation prioritized by business criticality |
 | `hypt:deploy` | Verify deployment health — detects platform automatically |
 | `hypt:close` | Merge PR, verify deployment, suggest next tasks |
-| `hypt:prototype` | End-to-end: implement plan, review x2, test, and deliver |
+| `hypt:plan-critic` | Critical plan review — find gaps, ask questions, refine before building |
+| `hypt:prototype` | End-to-end: review plan, implement, review x2, test, and deliver |
 
 ## Installation
 
-```
-/plugin install hypt@hypt-claude
-```
+See the [root README](../README.md) for install instructions, or just run:
 
-Or install from the GitHub URL directly:
-
-```
-/plugin install hypt from github:brianevanmiller/hypt-claude
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/brianevanmiller/hypt-claude/main/install.sh)
 ```
 
 ## Supported Deployment Platforms
@@ -41,14 +39,14 @@ The deploy and close skills automatically detect your deployment platform:
 
 - [GitHub CLI](https://cli.github.com/) (`gh`) — used for PR management, deployment checks
 - Git
-- npm (for build/test commands)
+- [Bun](https://bun.sh/) — runtime, package manager, and task runner
 
 ## Workflow
 
 The typical development flow:
 
 ```
-prototype -> save -> review -> touchup -> unit-tests -> deploy -> close
+start -> prototype -> save -> review -> touchup -> unit-tests -> deploy -> close
 ```
 
 Each skill can also be used independently. For example, use `hypt:save` anytime you want to commit and push, or `hypt:review` for a standalone code review.

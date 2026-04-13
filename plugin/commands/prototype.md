@@ -42,7 +42,19 @@ If NO PR exists, continue with Step 0b below.
 Wait for the user's response. Once you have the plan:
 1. Read the plan document fully
 2. Summarize what you're about to build in 2-3 sentences
-3. Say: "Starting the prototype build now. I'll handle everything — sit back and I'll check in when it's ready for you to look at."
+3. Proceed to Step 0c.
+
+---
+
+### Step 0c: Review the plan
+
+Invoke the Skill tool with skill: "hypt:plan-critic"
+
+Pass the plan file path (or the plan text from the conversation). The plan critic will review for completeness, security, logic gaps, and best practices.
+
+If the critic identifies blockers, they must be resolved before continuing. Once the critic confirms the plan is ready, say:
+
+> "Starting the prototype build now. I'll handle everything — sit back and I'll check in when it's ready for you to look at."
 
 ---
 
