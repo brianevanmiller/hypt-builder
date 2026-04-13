@@ -2,10 +2,11 @@
 name: hypt
 description: >
   Hyptrain shipping workflow orchestrator. Routes user requests to the appropriate
-  hypt skill. Use when the user says "save", "commit", "push", "review",
-  "check my diff", "touchup", "polish", "tests", "unit tests", "close",
-  "merge", "ship it", "done", "deploy", "is it live", "prototype",
-  "build this feature", or "implement this plan".
+  hypt skill. Use when the user says "start", "new project", "get started",
+  "I have an idea", "save", "commit", "push", "review", "check my diff",
+  "touchup", "polish", "tests", "unit tests", "close", "merge", "ship it",
+  "done", "deploy", "is it live", "prototype", "build this feature",
+  "implement this plan", "review plan", "critique plan", or "check my plan".
 allowed-tools: "Skill"
 version: "1.0.0"
 author: "Brian Miller"
@@ -24,19 +25,22 @@ When the user's request matches a shipping workflow action, invoke the appropria
 
 | User says | Invoke |
 |-----------|--------|
+| "Start", new project, get started, set up, onboarding, "I have an idea" | `hypt:start` |
 | "Save", commit, push, create PR | `hypt:save` |
 | Thorough code review, check my diff | `hypt:review` |
 | Quick polish, touchup, pre-merge check, fix PR comments | `hypt:touchup` |
 | Unit tests, add tests, test coverage, write tests | `hypt:unit-tests` |
 | Close, merge, ship it, "done", "we're good" | `hypt:close` |
 | Deploy, check deployment, is it live | `hypt:deploy` |
+| Review plan, critique plan, check my plan, plan review, plan critic | `hypt:plan-critic` |
 | Prototype, build this feature, implement this plan | `hypt:prototype` |
 
 ## Workflow
 
 The typical flow is:
 
-1. `hypt:prototype` — implement a feature from a plan
+0. `hypt:start` — onboarding: describe your idea, set up accounts, create a plan
+1. `hypt:prototype` — review plan, implement, review, test, and deliver
 2. `hypt:save` — commit, push, create PR
 3. `hypt:review` — thorough code review with parallel subagents
 4. `hypt:touchup` — quick polish pass
