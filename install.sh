@@ -31,7 +31,11 @@ mkdir -p "$PLUGINS_DIR/marketplaces"
 # --- Clone or update the marketplace repo ---
 if [ -d "$MARKETPLACE_DIR/.git" ]; then
   echo "Updating hypt-claude..."
-  git -C "$MARKETPLACE_DIR" pull --ff-only --quiet
+  git -C "$MARKETPLACE_DIR" pull --ff-only --quiet || {
+    echo "Update failed. Re-downloading..."
+    rm -rf "$MARKETPLACE_DIR"
+    git clone --quiet "https://github.com/$REPO.git" "$MARKETPLACE_DIR"
+  }
 else
   echo "Downloading hypt-claude..."
   rm -rf "$MARKETPLACE_DIR"
@@ -39,21 +43,21 @@ else
 fi
 
 # --- Read version from plugin.json ---
-VERSION=$(python3 -c "import json; print(json.load(open('$MARKETPLACE_DIR/plugin/.claude-plugin/plugin.json'))['version'])")
+VERSION=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version'])" "$MARKETPLACE_DIR/plugin/.claude-plugin/plugin.json") || {
+  echo "Error: could not read plugin version from plugin.json"
+  exit 1
+}
 GIT_SHA=$(git -C "$MARKETPLACE_DIR" rev-parse HEAD)
 
 # --- Copy plugin to cache ---
 CACHE_DIR="$PLUGINS_DIR/cache/$MARKETPLACE_NAME/$PLUGIN_NAME/$VERSION"
 rm -rf "$CACHE_DIR"
 mkdir -p "$CACHE_DIR"
-cp -R "$MARKETPLACE_DIR/plugin/"* "$CACHE_DIR/"
-# dotfiles (like .claude-plugin) aren't matched by *, copy separately
-if [ -d "$MARKETPLACE_DIR/plugin/.claude-plugin" ]; then
-  cp -R "$MARKETPLACE_DIR/plugin/.claude-plugin" "$CACHE_DIR/"
-fi
+cp -R "$MARKETPLACE_DIR/plugin/." "$CACHE_DIR/"
 
 # --- Update JSON config files ---
-python3 << PYEOF
+export PLUGIN_KEY MARKETPLACE_NAME REPO VERSION GIT_SHA PLUGIN_NAME
+python3 << 'PYEOF' || { echo "Error: failed to update config files."; exit 1; }
 import json, os, sys
 from pathlib import Path
 from datetime import datetime, timezone
@@ -62,12 +66,13 @@ claude_dir = Path.home() / ".claude"
 plugins_dir = claude_dir / "plugins"
 now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
-plugin_key = "$PLUGIN_KEY"
-marketplace = "$MARKETPLACE_NAME"
-repo = "$REPO"
-version = "$VERSION"
-git_sha = "$GIT_SHA"
-cache_path = str(plugins_dir / "cache" / marketplace / "$PLUGIN_NAME" / version)
+plugin_key = os.environ["PLUGIN_KEY"]
+marketplace = os.environ["MARKETPLACE_NAME"]
+repo = os.environ["REPO"]
+version = os.environ["VERSION"]
+git_sha = os.environ["GIT_SHA"]
+plugin_name = os.environ["PLUGIN_NAME"]
+cache_path = str(plugins_dir / "cache" / marketplace / plugin_name / version)
 marketplace_path = str(plugins_dir / "marketplaces" / marketplace)
 
 def safe_load(path, default):
@@ -88,8 +93,8 @@ ip = safe_load(ip_path, {"version": 2, "plugins": {}})
 if "plugins" not in ip:
     ip["plugins"] = {}
 
-existing = ip["plugins"].get(plugin_key, [{}])
-installed_at = existing[0].get("installedAt", now) if existing else now
+existing = ip["plugins"].get(plugin_key, [])
+installed_at = existing[0].get("installedAt", now) if isinstance(existing, list) and existing else now
 
 ip["plugins"][plugin_key] = [{
     "scope": "user",
