@@ -122,7 +122,7 @@ Read the merged PR title/body and recent commits to understand what was shipped.
 
 **If there's a high-value suggestion**, present it briefly:
 
-> **CI suggestion:** Now that [feature] is live, it'd be worth adding [specific test type] to CI. This would catch [specific risk] automatically. Want me to set that up? (Just say `/ci-setup` in a new workspace)
+> **CI suggestion:** Now that [feature] is live, it'd be worth adding [specific test type] to CI. This would catch [specific risk] automatically. Want me to set that up? (Just run `/hypt` and ask to set up CI in a new workspace)
 
 Keep it to ONE suggestion max. If nothing is high-value, say nothing about CI — don't clutter the close summary.
 

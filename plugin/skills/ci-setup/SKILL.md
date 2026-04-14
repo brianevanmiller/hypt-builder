@@ -67,7 +67,13 @@ Add a test script to `package.json`:
 "test": "bun test"
 ```
 
-Create a minimal smoke test at `__tests__/smoke.test.ts`:
+Detect the project's existing test directory convention:
+- If `tests/` exists, use `tests/`
+- If `__tests__/` exists, use `__tests__/`
+- If `test/` exists, use `test/`
+- Otherwise, default to `__tests__/`
+
+Create a minimal smoke test at `<test-dir>/smoke.test.ts`:
 ```ts
 import { describe, expect, test } from "bun:test";
 
@@ -90,7 +96,7 @@ Add test scripts to `package.json`:
 "test": "vitest run"
 ```
 
-Create a minimal smoke test at `__tests__/smoke.test.ts`:
+Create a minimal smoke test at `<test-dir>/smoke.test.ts` (using the same directory detected above):
 ```ts
 import { describe, expect, test } from "vitest";
 
@@ -152,7 +158,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: lts/*
           cache: npm
 
       - run: npm ci
