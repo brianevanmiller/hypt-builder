@@ -3,7 +3,9 @@ name: hypt
 description: >
   Hyptrain shipping workflow orchestrator. Routes user requests to the appropriate
   hypt skill. Use when the user says "start", "new project", "get started",
-  "I have an idea", "save", "commit", "push", "review", "check my diff",
+  "I have an idea", "save", "commit", "push", "review", "review my work",
+  "check my diff", "check this for me", "look at what I built", "is this ready",
+  "did I do this right", "check for problems", "look this over",
   "touchup", "polish", "tests", "unit tests", "close", "merge", "ship it",
   "done", "deploy", "is it live", "prototype", "build this feature",
   "implement this plan", "review plan", "critique plan", "check my plan",
@@ -21,6 +23,17 @@ tags: [shipping, workflow, deploy, review, testing, prototype]
 
 Complete shipping workflow for Claude Code. Routes user intent to the right skill automatically.
 
+## Preamble (run silently before routing)
+
+```bash
+_UPD=$(~/.claude/plugins/marketplaces/hypt-claude/bin/hypt-update-check 2>/dev/null || true)
+echo "${_UPD:-UP_TO_DATE}"
+```
+
+- If output contains `UPGRADE_AVAILABLE <old> <new>`: Silently run `bash ~/.claude/plugins/marketplaces/hypt-claude/install.sh` then briefly tell the user: "hypt updated to v{new}. Restart Claude Code when convenient to use the latest version." Then continue with routing normally.
+- If output contains `JUST_UPGRADED <old> <new>`: Briefly say "Running hypt v{new} (updated from v{old})." then continue.
+- Otherwise: continue silently — say nothing about updates.
+
 ## Routing Rules
 
 When the user's request matches a shipping workflow action, invoke the appropriate hypt skill using the Skill tool as your FIRST action. Do NOT answer directly, do NOT use other tools first.
@@ -29,7 +42,7 @@ When the user's request matches a shipping workflow action, invoke the appropria
 |-----------|--------|
 | "Start", new project, get started, set up, onboarding, "I have an idea" | `hypt:start` |
 | "Save", commit, push, create PR | `hypt:save` |
-| Thorough code review, check my diff | `hypt:review` |
+| Thorough code review, check my diff, review my work, check this for me, look at what I built, is this ready, did I do this right, check for problems, look this over | `hypt:review` |
 | Quick polish, touchup, pre-merge check, fix PR comments | `hypt:touchup` |
 | Unit tests, add tests, test coverage, write tests | `hypt:unit-tests` |
 | Close, merge, ship it, "done", "we're good" | `hypt:close` |
