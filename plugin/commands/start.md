@@ -60,6 +60,16 @@ Then this project is already fully onboarded. Tell the user:
 
 Then stop — do not proceed to Phase 1.
 
+**If a plan file exists but other checks fail** (partial onboarding — the idea is already captured but setup is incomplete):
+
+Tell the user:
+
+> I can see your plan at `[plan file path]`, so I won't re-ask about your idea. But some setup steps are incomplete — let me fix that now.
+
+Then skip directly to **Phase 3** (Step 3a will detect what's missing and only set up what's needed). After Phase 3 completes, skip Phase 4 (docs already exist) and proceed to Phase 5 (CI setup).
+
+**If no plan file exists**, proceed to Phase 1 normally.
+
 ---
 
 ### Phase 1: Tell me about your idea
