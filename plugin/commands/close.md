@@ -100,8 +100,10 @@ Start a new workspace and pick one to work on!
 After merging, briefly assess whether the feature that was just shipped warrants any CI additions. This is NOT about adding everything — only suggest changes that directly protect against regressions in the new feature.
 
 **Check what was built:**
+
+Use the PR number from the Context section (captured before merge) to retrieve the PR info:
 ```bash
-gh pr view --json title,body --jq '"\(.title)
+gh pr view <PR_NUMBER> --json title,body --jq '"\(.title)
 \(.body)"' 2>/dev/null
 ```
 

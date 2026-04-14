@@ -11,7 +11,7 @@ allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob"]
 - Package manager: !`ls bun.lockb bun.lock package-lock.json yarn.lock pnpm-lock.yaml 2>/dev/null || echo "No lockfile found"`
 - Existing CI: !`ls .github/workflows/*.yml 2>/dev/null || echo "No CI workflows"`
 - Test script: !`cat package.json 2>/dev/null | grep -E '"test"' || echo "No test script"`
-- Existing tests: !`find . -not -path "*/node_modules/*" -name "*.test.ts" -o -name "*.test.tsx" -o -name "*.spec.ts" 2>/dev/null | head -5 || echo "No test files found"`
+- Existing tests: !`find . -not -path "*/node_modules/*" \( -name "*.test.ts" -o -name "*.test.tsx" -o -name "*.spec.ts" \) 2>/dev/null | head -5 || echo "No test files found"`
 
 ## Instructions
 
@@ -103,6 +103,8 @@ describe("smoke", () => {
 
 ### Step 4: Create the GitHub Actions workflow
 
+**Before creating the workflow**, check if a `lint` script exists in `package.json`. Only include the "Lint" step in the workflow if a lint script is present. If there is no lint script, omit the Lint step entirely to avoid CI failures.
+
 Create `.github/workflows/ci.yml`:
 
 **For bun projects:**
@@ -178,7 +180,7 @@ If lint fails, fix the issues before continuing. If tests fail, check the smoke 
 ### Step 6: Commit and push
 
 ```bash
-git add .github/workflows/ci.yml __tests__/smoke.test.ts package.json
+git add .github/workflows/ci.yml __tests__/smoke.test.ts package.json package-lock.json yarn.lock pnpm-lock.yaml bun.lockb bun.lock 2>/dev/null
 git commit -m "ci: add GitHub Actions CI — lint and unit tests on every push"
 git push
 ```
