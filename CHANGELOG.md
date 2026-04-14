@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.1 — 2026-04-14
+
+- `/deploy` now stashes uncommitted changes instead of blocking — no more "run `/save` first" interruptions
+
 ## v0.11.0 — 2026-04-14
 
 - Add `/suggestions` skill — analyzes your PR and suggests prioritized next tasks (security, bugs, features, etc.)
