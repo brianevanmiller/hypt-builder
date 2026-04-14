@@ -84,7 +84,7 @@ gh api "repos/$REPO/deployments/<ID>/statuses" --jq '.[0] | {state, target_url, 
 
 **Check for Vercel team access block:**
 
-If any deployment status description contains `TEAM_ACCESS`, `not a member`, or `contributing access`, this means Vercel is blocking auto-deploys because the commit author isn't a seated team member (free plan limitation). Do NOT treat this as a build failure.
+If any deployment status description matches the Vercel team access detection criteria (`TEAM_ACCESS`, `not a member`, or `contributing access`), this means Vercel is blocking auto-deploys because the commit author isn't a seated team member (free plan limitation). Do NOT treat this as a build failure.
 
 Instead:
 - Inform the user: "Vercel blocked the auto-deploy — commit author isn't a team member. Deploying via CLI bypass..."
