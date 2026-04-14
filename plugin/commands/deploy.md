@@ -19,7 +19,7 @@ allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "Write"]
 BRANCH=$(git branch --show-current)
 ```
 
-If the branch is `main`, this is a **production** deploy check. Otherwise it's a **preview** deploy check.
+If the branch is `main`, this is a **production** deploy check. Otherwise, check for a PR first — if a PR exists it's a **preview** deploy check; if no PR exists, fall through to **production** deploy (Step 2b).
 
 ---
 
@@ -167,21 +167,18 @@ Since we detached HEAD before amending, the original branch still points to the 
 
 If the branch is NOT `main`:
 
-1. Ensure changes are pushed:
+1. Check for a PR:
+   ```bash
+   gh pr view --json number,url,statusCheckRollup 2>/dev/null
+   ```
+   If no PR exists, **skip to Step 2b** (production deploy). Ignore any local uncommitted or changed files — they are not relevant. The user just wants to verify that the latest `main` is deployed to production.
+
+2. If a PR exists, ensure changes are pushed:
    ```bash
    git status --porcelain
    ```
    If there are unpushed commits or uncommitted changes, say:
    > You have uncommitted or unpushed changes. Run `/save` first, then try `/deploy` again.
-   
-   And stop.
-
-2. Check for a PR:
-   ```bash
-   gh pr view --json number,url,statusCheckRollup 2>/dev/null
-   ```
-   If no PR exists, say:
-   > No PR found for this branch. Run `/save` to create one, then try `/deploy` again.
    
    And stop.
 
@@ -240,11 +237,12 @@ If the branch is NOT `main`:
 
 ### Step 2b: Main branch (production)
 
-If the branch IS `main`:
+Run this step if the branch IS `main`, OR if the branch is not `main` but has no PR (redirected from Step 2a).
 
-1. Pull latest:
+1. Pull latest main. If not already on `main`, stash any local changes first so the checkout succeeds, then switch:
    ```bash
-   git pull origin main
+   git stash --include-untracked 2>/dev/null || true
+   git fetch origin main && git checkout main && git pull origin main
    ```
 
 2. Find the latest production deployment using the detected platform:
