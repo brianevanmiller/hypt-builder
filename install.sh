@@ -134,8 +134,32 @@ atomic_write(settings_path, settings)
 print("  Config files updated.")
 PYEOF
 
+# --- Set up auto-update ---
+mkdir -p "$HOME/.hypt"
+
+# Create default config if missing (auto_upgrade ON by default)
+if [ ! -f "$HOME/.hypt/config.json" ]; then
+  cat > "$HOME/.hypt/config.json" << 'CONFIGEOF'
+{
+  "auto_upgrade": true,
+  "update_check": true
+}
+CONFIGEOF
+fi
+
+# Make bin scripts executable
+chmod +x "$MARKETPLACE_DIR"/bin/* 2>/dev/null || true
+
+# Register SessionStart hook for auto-updates
+HOOK_SCRIPT="$MARKETPLACE_DIR/bin/hypt-session-update"
+HOOK_TOOL="$MARKETPLACE_DIR/bin/hypt-settings-hook"
+if [ -x "$HOOK_TOOL" ]; then
+  "$HOOK_TOOL" add "$HOOK_SCRIPT" 2>/dev/null || true
+fi
+
 echo ""
 echo "hypt plugin installed successfully! (v$VERSION)"
+echo "Auto-updates enabled — hypt will keep itself up to date."
 echo ""
 echo "Restart Claude Code to activate: type /exit then relaunch."
 echo "After restart, try: /prototype, /save, /review, or /hypt"
