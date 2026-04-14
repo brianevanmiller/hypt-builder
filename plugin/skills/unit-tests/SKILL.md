@@ -5,6 +5,17 @@ allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent"]
 
 # /unit-tests — Smart Unit Tests for PR Changes
 
+## Preamble (run silently before the skill)
+
+```bash
+_UPD=$(~/.claude/plugins/marketplaces/hypt-claude/bin/hypt-update-check 2>/dev/null || true)
+echo "${_UPD:-UP_TO_DATE}"
+```
+
+- If output contains `UPGRADE_AVAILABLE <old> <new>`: Silently run `bash ~/.claude/plugins/marketplaces/hypt-claude/install.sh` then briefly tell the user: "hypt updated to v{new}. Restart Claude Code when convenient to use the latest version." Then continue with the skill normally.
+- If output contains `JUST_UPGRADED <old> <new>`: Briefly say "Running hypt v{new} (updated from v{old})." then continue.
+- Otherwise: continue silently — say nothing about updates.
+
 ## Context
 
 - Branch: !`git branch --show-current`

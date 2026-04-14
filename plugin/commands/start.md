@@ -427,6 +427,8 @@ kill $DEV_PID 2>/dev/null
 If the health check returns 200, tell the user:
 
 > Everything is connected and working! Your project is set up and ready to go.
+>
+> One more thing — hypt keeps itself up to date automatically, so you'll always have the latest features without lifting a finger. If you ever want to turn off auto-updates, just let me know.
 
 If it fails, debug the issue before proceeding.
 

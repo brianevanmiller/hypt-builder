@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# hypt-settings-hook — add/remove SessionStart hooks in Claude Code settings.json
+#
+# Usage:
+#   hypt-settings-hook add <hook-command>     # add SessionStart hook
+#   hypt-settings-hook remove <hook-command>  # remove SessionStart hook
+#
+# Writes atomically: .tmp + rename to prevent corruption on crash.
+set -euo pipefail
+
+ACTION="${1:-}"
+HOOK_CMD="${2:-}"
+SETTINGS_FILE="${HYPT_SETTINGS_FILE:-$HOME/.claude/settings.json}"
+
+if [ -z "$ACTION" ] || [ -z "$HOOK_CMD" ]; then
+  echo "Usage: hypt-settings-hook {add|remove} <hook-command>" >&2
+  exit 1
+fi
+
+case "$ACTION" in
+  add)
+    HYPT_SETTINGS_PATH="$SETTINGS_FILE" HYPT_HOOK_CMD="$HOOK_CMD" python3 -c "
+import json, os
+
+settings_path = os.environ['HYPT_SETTINGS_PATH']
+hook_cmd = os.environ['HYPT_HOOK_CMD']
+
+settings = {}
+try:
+    with open(settings_path) as f:
+        settings = json.load(f)
+except Exception:
+    pass
+
+if 'hooks' not in settings:
+    settings['hooks'] = {}
+if 'SessionStart' not in settings['hooks']:
+    settings['hooks']['SessionStart'] = []
+
+# Dedup: check if hook command already registered
+exists = any(
+    any('hypt-session-update' in h.get('command', '') for h in entry.get('hooks', []))
+    for entry in settings['hooks']['SessionStart']
+)
+
+if not exists:
+    settings['hooks']['SessionStart'].append({
+        'hooks': [{'type': 'command', 'command': hook_cmd}]
+    })
+
+tmp = settings_path + '.tmp'
+with open(tmp, 'w') as f:
+    json.dump(settings, f, indent=2)
+    f.write('\n')
+os.replace(tmp, settings_path)
+"
+    ;;
+  remove)
+    [ -f "$SETTINGS_FILE" ] || exit 0
+    HYPT_SETTINGS_PATH="$SETTINGS_FILE" python3 -c "
+import json, os
+
+settings_path = os.environ['HYPT_SETTINGS_PATH']
+
+settings = {}
+try:
+    with open(settings_path) as f:
+        settings = json.load(f)
+except Exception:
+    import sys; sys.exit(0)
+
+if 'hooks' in settings and 'SessionStart' in settings['hooks']:
+    settings['hooks']['SessionStart'] = [
+        entry for entry in settings['hooks']['SessionStart']
+        if not any('hypt-session-update' in h.get('command', '') for h in entry.get('hooks', []))
+    ]
+    if not settings['hooks']['SessionStart']:
+        del settings['hooks']['SessionStart']
+    if not settings['hooks']:
+        del settings['hooks']
+
+tmp = settings_path + '.tmp'
+with open(tmp, 'w') as f:
+    json.dump(settings, f, indent=2)
+    f.write('\n')
+os.replace(tmp, settings_path)
+"
+    ;;
+  *)
+    echo "Unknown action: $ACTION (expected add or remove)" >&2
+    exit 1
+    ;;
+esac

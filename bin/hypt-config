@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# hypt-config — get/set config values in ~/.hypt/config.json
+#
+# Usage:
+#   hypt-config get <key>          # print value (or empty if missing)
+#   hypt-config set <key> <value>  # write value
+set -euo pipefail
+
+ACTION="${1:-}"
+KEY="${2:-}"
+VALUE="${3:-}"
+CONFIG_FILE="${HYPT_STATE_DIR:-$HOME/.hypt}/config.json"
+
+if [ -z "$ACTION" ] || [ -z "$KEY" ]; then
+  echo "Usage: hypt-config {get|set} <key> [value]" >&2
+  exit 1
+fi
+
+case "$ACTION" in
+  get)
+    if [ ! -f "$CONFIG_FILE" ]; then
+      exit 0
+    fi
+    python3 -c "
+import json, sys
+try:
+    cfg = json.load(open('$CONFIG_FILE'))
+    v = cfg.get('$KEY', '')
+    if isinstance(v, bool):
+        print(str(v).lower())
+    elif v != '':
+        print(v)
+except Exception:
+    pass
+"
+    ;;
+  set)
+    if [ -z "$VALUE" ]; then
+      echo "Usage: hypt-config set <key> <value>" >&2
+      exit 1
+    fi
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    HYPT_CONFIG_FILE="$CONFIG_FILE" HYPT_KEY="$KEY" HYPT_VALUE="$VALUE" python3 -c "
+import json, os
+config_file = os.environ['HYPT_CONFIG_FILE']
+key = os.environ['HYPT_KEY']
+value = os.environ['HYPT_VALUE']
+
+cfg = {}
+try:
+    with open(config_file) as f:
+        cfg = json.load(f)
+except Exception:
+    pass
+
+# Convert string booleans
+if value.lower() in ('true', 'false'):
+    value = value.lower() == 'true'
+
+cfg[key] = value
+
+tmp = config_file + '.tmp'
+with open(tmp, 'w') as f:
+    json.dump(cfg, f, indent=2)
+    f.write('\n')
+os.replace(tmp, config_file)
+"
+    ;;
+  *)
+    echo "Unknown action: $ACTION (expected get or set)" >&2
+    exit 1
+    ;;
+esac
