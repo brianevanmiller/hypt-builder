@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.1 — 2026-04-14
+
+- Add auto-update check to `/start` — now all skills check for hypt updates before running
+
 ## v0.10.0 — 2026-04-14
 
 - `/start` is now idempotent — detects fully onboarded projects and exits early with next-step suggestions
