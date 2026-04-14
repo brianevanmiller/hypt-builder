@@ -48,7 +48,7 @@ All commands use the `hypt:` prefix (e.g., type `/start` or `/hypt` and Claude w
 | `/touchup` | Quick pre-merge polish — fix PR comments, build issues, update docs |
 | `/unit-tests` | Smart unit test generation prioritized by business criticality |
 | `/deploy` | Verify deployment health — detects platform automatically |
-| `/close` | Merge PR, verify deployment, suggest next tasks |
+| `/close` | Merge PR, auto-version-bump + release, verify deployment, suggest next tasks |
 | `/plan-critic` | Critical plan review — find gaps, ask questions, refine before building |
 
 ## Workflow
