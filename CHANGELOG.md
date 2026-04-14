@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.2 — 2026-04-14
+
+- Add MIT license to the project
+
 ## v0.9.1 — 2026-04-14
 
 - Add update-check preamble to `/deploy` and `/close` for consistency with all other skills
