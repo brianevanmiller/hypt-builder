@@ -19,7 +19,7 @@ allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "Write"]
 BRANCH=$(git branch --show-current)
 ```
 
-If the branch is `main`, this is a **production** deploy check. Otherwise it's a **preview** deploy check.
+If the branch is `main`, this is a **production** deploy check. Otherwise, check for a PR first — if a PR exists it's a **preview** deploy check; if no PR exists, fall through to **production** deploy (Step 2b).
 
 ---
 
@@ -44,21 +44,18 @@ Use the first match. If no config file is found, fall back to the **GitHub Deplo
 
 If the branch is NOT `main`:
 
-1. Ensure changes are pushed:
+1. Check for a PR:
+   ```bash
+   gh pr view --json number,url,statusCheckRollup 2>/dev/null
+   ```
+   If no PR exists, **skip to Step 2b** (production deploy). This handles the common case where a user just wants to deploy the latest `main` to production without being on the `main` branch.
+
+2. Ensure changes are pushed:
    ```bash
    git status --porcelain
    ```
    If there are unpushed commits or uncommitted changes, say:
    > You have uncommitted or unpushed changes. Run `/save` first, then try `/deploy` again.
-   
-   And stop.
-
-2. Check for a PR:
-   ```bash
-   gh pr view --json number,url,statusCheckRollup 2>/dev/null
-   ```
-   If no PR exists, say:
-   > No PR found for this branch. Run `/save` to create one, then try `/deploy` again.
    
    And stop.
 
@@ -106,11 +103,11 @@ If the branch is NOT `main`:
 
 ### Step 2b: Main branch (production)
 
-If the branch IS `main`:
+Run this step if the branch IS `main`, OR if the branch is not `main` but has no PR (redirected from Step 2a).
 
-1. Pull latest:
+1. Pull latest main:
    ```bash
-   git pull origin main
+   git fetch origin main && git checkout main && git pull origin main
    ```
 
 2. Find the latest production deployment using the detected platform:
