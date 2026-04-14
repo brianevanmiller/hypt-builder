@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.0 — 2026-04-14
+
+- Add `/suggestions` skill — analyzes your PR and suggests prioritized next tasks (security, bugs, features, etc.)
+- `/close` now runs suggestions before merge and optionally tracks them in `docs/todos/backlog.md`
+- Backlog preference system — choose "always update", "always ask", or "skip" via `hypt-config`
+
 ## v0.10.1 — 2026-04-14
 
 - Add auto-update check to `/start` — now all skills check for hypt updates before running
