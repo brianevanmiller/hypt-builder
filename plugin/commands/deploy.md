@@ -94,12 +94,17 @@ If the branch is NOT `main`:
    ```
    If no PR exists, **skip to Step 2b** (production deploy). Ignore any local uncommitted or changed files — they are not relevant. The user just wants to verify that the latest `main` is deployed to production.
 
-2. If a PR exists, ensure changes are pushed:
+2. If a PR exists, stash any uncommitted changes so they don't interfere:
    ```bash
-   git status --porcelain
+   git stash --include-untracked 2>/dev/null || true
    ```
-   If there are unpushed commits or uncommitted changes, say:
-   > You have uncommitted or unpushed changes. Run `/save` first, then try `/deploy` again.
+
+   Then check for unpushed commits:
+   ```bash
+   git log origin/$(git branch --show-current)..HEAD --oneline 2>/dev/null
+   ```
+   If there are unpushed commits, say:
+   > You have unpushed commits. Run `/save` first, then try `/deploy` again.
    
    And stop.
 
