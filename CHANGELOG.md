@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.9.0 — 2026-04-14
+
+- `/deploy` now falls through to production when no PR exists — non-coder users can deploy latest `main` from any branch
+- Ignores local uncommitted changes when checking production deployment status
+
 ## v0.8.0 — 2026-04-14
 
 - Auto-bypass Vercel TEAM_ACCESS_REQUIRED in `/deploy` and `/close` — detects when Vercel blocks deployments on free plans and deploys via CLI with a temporary author swap on a detached HEAD
