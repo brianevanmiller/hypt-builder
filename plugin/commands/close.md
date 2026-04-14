@@ -24,8 +24,20 @@ If NOT found, run the touchup skill first:
 - Invoke the Skill tool with skill: "hypt:touchup"
 - Wait for it to complete before continuing
 
-### Step 2: Merge the PR
+### Step 2: Ensure PR exists, then merge
 
+Check if a PR exists for this branch:
+```bash
+gh pr view --json number,url 2>/dev/null
+```
+
+If no PR exists, create one:
+```bash
+git push -u origin HEAD
+gh pr create --fill
+```
+
+Then merge:
 ```bash
 gh pr merge --squash --delete-branch
 ```
@@ -126,11 +138,60 @@ Read the merged PR title/body and recent commits to understand what was shipped.
 
 Keep it to ONE suggestion max. If nothing is high-value, say nothing about CI — don't clutter the close summary.
 
-### Step 6: Final summary
+### Step 6: Version bump and release
+
+After merging, automatically bump the version and create a GitHub release.
+
+**Get the latest release version:**
+```bash
+gh release view --json tagName --jq '.tagName' 2>/dev/null
+```
+
+If no releases exist, start from `v0.1.0`. Otherwise, parse the tag (e.g. `v0.5.0`) into major.minor.patch.
+
+**Determine bump type from the PR:**
+
+Use the PR title and commit messages (already available from earlier steps) to decide:
+
+| PR content | Bump | Example |
+|-----------|------|---------|
+| Bug fixes, chore, docs, small tweaks, touchups, config changes | **Patch** | v0.5.0 → v0.5.1 |
+| New features, new skills/commands, significant enhancements, breaking changes | **Minor** | v0.5.0 → v0.6.0 |
+
+**If ambiguous** (e.g. a mix of features and fixes, or unclear scope), ask the user:
+
+> Version bump: the current release is `v0.5.0`. Should the next version be:
+> 1. **v0.5.1** (patch — bug fixes / small changes)
+> 2. **v0.6.0** (minor — new features / enhancements)
+
+Wait for the user's response before continuing.
+
+**Update version files and create release:**
+
+```bash
+# Update VERSION file (no v prefix)
+echo "<NEW_VERSION>" > VERSION
+
+# Update plugin.json version field
+# Use sed or edit the file to set "version": "<NEW_VERSION>"
+```
+
+Then commit, push, and release:
+```bash
+git add VERSION plugin/.claude-plugin/plugin.json
+git commit -m "chore: bump version to v<NEW_VERSION>"
+git push origin main
+gh release create v<NEW_VERSION> --title "v<NEW_VERSION>" --generate-notes
+```
+
+Capture the release URL from the output.
+
+### Step 7: Final summary
 
 ```
 Closed!
 - PR #X merged to main
+- Released: v<NEW_VERSION> (<release URL>)
 - Preview: <url or "checking...">
 - Production: <url or "checking...">
 - Branch cleaned up
