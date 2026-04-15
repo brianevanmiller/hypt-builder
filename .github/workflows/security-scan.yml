@@ -29,11 +29,7 @@ jobs:
       - name: Scan (PR — changed files only)
         if: github.event_name == 'pull_request'
         id: scan_pr
-        run: |
-          # Generate markdown report first (always succeeds — advisory mode)
-          bin/hypt-security-scan --mode advisory --diff-only --format markdown > scan-results.md
-          # Then run blocking scan with GitHub annotations
-          bin/hypt-security-scan --mode blocking --diff-only --format github
+        run: bin/hypt-security-scan --mode blocking --diff-only --format github --markdown-report scan-results.md
         continue-on-error: true
 
       - name: Scan (push — all files, audit only)

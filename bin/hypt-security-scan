@@ -15,6 +15,7 @@
 #   --format text      Human-readable output (default)
 #   --format github    GitHub Actions annotations
 #   --format markdown  PR comment markdown
+#   --markdown-report <file>  Write markdown report to file (in addition to primary format)
 #   --self-test        Verify scanner detection works
 #
 # Exit codes:
@@ -31,6 +32,7 @@ MODE="blocking"
 FORMAT="text"
 SCAN_SCOPE="all"
 SELF_TEST=false
+MARKDOWN_REPORT=""
 
 # ─── Counters ────────────────────────────────────────────────
 CRITICAL_COUNT=0
@@ -56,6 +58,10 @@ ALLOWLIST=(
   "bin/hypt-security-scan:curl http://attacker.com"
   "bin/hypt-security-scan:eval "
   "bin/hypt-security-scan:chmod 777"
+  # Allowlist definition references curl patterns — not actual network calls
+  "bin/hypt-security-scan:hypt-update-check"
+  # Self-test function calls contain "curl" in test names — not actual network calls
+  "bin/hypt-security-scan:_test"
 )
 
 # ─── Known-safe tools for skills ─────────────────────────────
@@ -77,6 +83,9 @@ parse_args() {
         FORMAT="$2"; shift 2 ;;
       --diff-only) SCAN_SCOPE="diff-only"; shift ;;
       --all)      SCAN_SCOPE="all"; shift ;;
+      --markdown-report)
+        [ $# -ge 2 ] || { echo "Missing value for $1" >&2; exit 2; }
+        MARKDOWN_REPORT="$2"; shift 2 ;;
       --self-test) SELF_TEST=true;  shift ;;
       -h|--help)  sed -n '2,/^[^#]/s/^# \?//p' "$0"; exit 0 ;;
       *) echo "Unknown option: $1" >&2; exit 2 ;;
@@ -122,7 +131,9 @@ add_finding() {
         MEDIUM) gl="warning" ;;
         LOW) gl="notice" ;;
       esac
-      echo "::${gl} file=${file},line=${line},title=${category}::[$level] ${detail}" >> "$FINDINGS_FILE"
+      # Sanitize :: in filenames to prevent broken GitHub annotations
+      local safe_file="${file//::/__}"
+      echo "::${gl} file=${safe_file},line=${line},title=${category}::[$level] ${detail}" >> "$FINDINGS_FILE"
       ;;
     markdown)
       echo "| $level | \`$file\` | $line | $category | ${detail:0:120} |" >> "$FINDINGS_FILE"
@@ -153,8 +164,11 @@ is_allowlisted() {
 }
 
 is_comment() {
-  # Returns 0 if the line is a shell comment
-  [[ "$1" =~ ^[[:space:]]*# ]]
+  # Returns 0 if the line is a comment (shell #, JS/TS //, or HTML <!-- -->)
+  local line="$1"
+  [[ "$line" =~ ^[[:space:]]*# ]] || \
+  [[ "$line" =~ ^[[:space:]]*// ]] || \
+  [[ "$line" =~ ^[[:space:]]*\<\!-- ]]
 }
 
 # ═══════════════════════════════════════════════════════════════
@@ -332,26 +346,27 @@ scan_prompt_injection() {
 # Pass 3: Shell Injection / RCE
 # ═══════════════════════════════════════════════════════════════
 
+# Helper: scan for a pattern, skip comments and allowlisted lines
+# Uses $fp and $file from calling scope (bash dynamic scoping)
+_check_shell() {
+  local level="$1" pattern="$2" desc="$3"
+  local matches
+  matches=$(grep -nE "$pattern" "$fp" 2>/dev/null || true)
+  while IFS= read -r match; do
+    [ -z "$match" ] && continue
+    local ln="${match%%:*}"
+    local lc="${match#*:}"
+    is_comment "$lc" && continue
+    is_allowlisted "$file" "$lc" && continue
+    add_finding "$level" "$file" "$ln" "SHELL_INJECTION" "$desc: \"${lc:0:100}\""
+  done <<< "$matches"
+}
+
 scan_shell_injection() {
   while IFS= read -r file; do
     [[ "$file" =~ ^(bin/|install\.(sh|ps1)$) ]] || [[ "$file" =~ \.(sh|bash)$ ]] || continue
     [ -f "$REPO_ROOT/$file" ] || continue
     local fp="$REPO_ROOT/$file"
-
-    # Helper: scan for a pattern, skip comments and allowlisted lines
-    _check_shell() {
-      local level="$1" pattern="$2" desc="$3"
-      local matches
-      matches=$(grep -nE "$pattern" "$fp" 2>/dev/null || true)
-      while IFS= read -r match; do
-        [ -z "$match" ] && continue
-        local ln="${match%%:*}"
-        local lc="${match#*:}"
-        is_comment "$lc" && continue
-        is_allowlisted "$file" "$lc" && continue
-        add_finding "$level" "$file" "$ln" "SHELL_INJECTION" "$desc: \"${lc:0:100}\""
-      done <<< "$matches"
-    }
 
     # Pipe to shell (CRITICAL)
     _check_shell "CRITICAL" '\|\s*(bash|sh|zsh|dash)(\s|$|;)' "Pipe to shell execution"
@@ -439,7 +454,7 @@ scan_tool_poisoning() {
   while IFS= read -r file; do
     [ -f "$REPO_ROOT/$file" ] || continue
     case "$file" in
-      install.sh|install.ps1|bin/hypt-settings-hook|docs/*) continue ;;
+      install.sh|install.ps1|bin/hypt-settings-hook|bin/hypt-security-scan|docs/*) continue ;;
     esac
 
     local matches
@@ -456,7 +471,7 @@ scan_tool_poisoning() {
   while IFS= read -r file; do
     [ -f "$REPO_ROOT/$file" ] || continue
     case "$file" in
-      bin/hypt-settings-hook|install.sh|install.ps1|docs/*) continue ;;
+      bin/hypt-settings-hook|bin/hypt-security-scan|install.sh|install.ps1|docs/*) continue ;;
     esac
 
     local matches
@@ -635,9 +650,18 @@ run_self_test() {
     REPO_ROOT="$orig_root"
 
     local total=$((CRITICAL_COUNT + HIGH_COUNT + MEDIUM_COUNT + LOW_COUNT))
-    if [ "$total" -gt 0 ]; then
-      printf "  PASS  %s (%d finding(s))\n" "$name" "$total"
+    # Verify both: findings were generated AND the correct category was detected
+    local category_found=false
+    if [ -s "$FINDINGS_FILE" ] && grep -q "$category" "$FINDINGS_FILE"; then
+      category_found=true
+    fi
+
+    if [ "$total" -gt 0 ] && $category_found; then
+      printf "  PASS  %s (%d finding(s), category %s confirmed)\n" "$name" "$total" "$category"
       tests_passed=$((tests_passed + 1))
+    elif [ "$total" -gt 0 ]; then
+      printf "  FAIL  %s (%d finding(s), but expected category %s not in output)\n" "$name" "$total" "$category"
+      tests_failed=$((tests_failed + 1))
     else
       printf "  FAIL  %s (no findings)\n" "$name"
       tests_failed=$((tests_failed + 1))
@@ -753,6 +777,12 @@ main() {
     exit $?
   fi
 
+  # Verify perl is available (needed for Unicode detection)
+  if ! command -v perl >/dev/null 2>&1; then
+    echo "Error: perl is required for Unicode detection" >&2
+    exit 2
+  fi
+
   cd "$REPO_ROOT"
   collect_files
 
@@ -761,6 +791,14 @@ main() {
   scan_shell_injection
   scan_tool_poisoning
   scan_structural
+
+  # Generate secondary markdown report if requested (before primary output)
+  if [ -n "$MARKDOWN_REPORT" ]; then
+    local saved_format="$FORMAT"
+    FORMAT="markdown"
+    report_findings > "$MARKDOWN_REPORT" || true
+    FORMAT="$saved_format"
+  fi
 
   report_findings
 }

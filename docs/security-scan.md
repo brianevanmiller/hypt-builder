@@ -64,6 +64,9 @@ bin/hypt-security-scan --mode blocking --diff-only
 # Verify the scanner itself works
 bin/hypt-security-scan --self-test
 
+# GitHub Actions annotations format
+bin/hypt-security-scan --mode blocking --diff-only --format github
+
 # Markdown output (like the PR comment)
 bin/hypt-security-scan --mode advisory --all --format markdown
 ```
@@ -93,6 +96,10 @@ If the scanner finds a real issue, fix the code:
 - **Unicode**: Remove invisible characters (use `cat -A` to see them)
 - **Shell injection**: Use safer patterns (quote variables, avoid eval, don't pipe to shell)
 - **Tool poisoning**: Only use approved tools: `Bash, Read, Write, Edit, Grep, Glob, Agent, Skill`
+
+## Known limitations
+
+- **Line-oriented matching**: Prompt injection patterns match within single lines only. A multi-line injection that splits keywords across lines (e.g., `ignore previous\ninstructions`) will evade detection. This is a deliberate trade-off for speed and simplicity — multi-line regex in bash/grep is brittle. If you suspect a multi-line attack, review the diff manually.
 
 ## CI behavior
 
