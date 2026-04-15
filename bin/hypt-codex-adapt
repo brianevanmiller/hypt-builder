@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# hypt-codex-adapt — transform a SKILL.md / command.md for Codex CLI
+#
+# Usage: hypt-codex-adapt <source-file>
+# Outputs the adapted content to stdout.
+#
+# Transformations:
+#   1. Strip `allowed-tools` from YAML frontmatter
+#   2. Replace ~/.claude/plugins/marketplaces/hypt-claude/bin/ → ~/.hypt/bin/
+#   3. Replace `Invoke the Skill tool with skill: "hypt:XXX"` → file-read instruction
+#   4. Replace `Skill tool` / `Agent tool` references with generic language
+#   5. Strip the Preamble section (handled by global instruction instead)
+
+set -euo pipefail
+
+if [ $# -lt 1 ] || [ ! -f "$1" ]; then
+  echo "Usage: hypt-codex-adapt <source-file>" >&2
+  exit 1
+fi
+
+# All transformations in a single sed + awk pipeline (no intermediate subshells)
+sed -E \
+  -e '/^allowed-tools:.*$/d' \
+  -e 's|~/.claude/plugins/marketplaces/hypt-claude/bin/|~/.hypt/bin/|g' \
+  -e 's|Invoke the Skill tool with skill: "hypt:([^"]+)"|Read and follow the instructions at ~/.hypt/skills/\1.md|g' \
+  -e 's|the Skill tool|the skill system|g' \
+  -e 's|Skill tool|skill system|g' \
+  -e 's|Use the Agent tool to launch|Launch|g' \
+  -e 's|the Agent tool|a subprocess|g' \
+  -e 's|Agent tool|subprocess|g' \
+  "$1" | awk '
+  BEGIN { skip = 0 }
+  /^## Preamble/ { skip = 1; next }
+  /^## / && skip { skip = 0 }
+  !skip { print }
+'
