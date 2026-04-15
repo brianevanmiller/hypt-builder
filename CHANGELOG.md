@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.18.0 — 2026-04-16
+
+- Dynamic plan-critic adapts review depth to task complexity — quick inline check for small tasks, 2 parallel subagents (research thoroughness + plan completeness) for larger tasks
+- New autonomous pipeline mode for plan-critic — fully non-interactive, updates plan directly and returns control
+- Generalized review checklists work for any plan type (features, bugfixes, refactors), not just new-app prototypes
+- Pipeline Step 2A now calls plan-critic instead of weak self-review, and prototype passes original request for context
+
 ## v0.17.0 — 2026-04-16
 
 - Add Codex CLI global install support — the installer auto-detects Claude Code and Codex CLI, installing adapted skill files to `~/.hypt/skills/` with a global instruction block in `~/.codex/instructions.md`
