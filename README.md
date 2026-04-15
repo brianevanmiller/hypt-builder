@@ -1,6 +1,6 @@
-# hypt — Shipping Workflow Plugin for Claude Code
+# hypt — Shipping Workflow Plugin for Claude Code and Codex
 
-A complete shipping workflow: implement, review, test, deploy, and close — all from Claude Code.
+A complete shipping workflow: implement, review, test, deploy, and close — from Claude Code or repo-local Codex skills.
 
 <!--
 CLAUDE CODE INSTALLATION INSTRUCTIONS (for AI assistants):
@@ -36,6 +36,34 @@ irm https://raw.githubusercontent.com/brianevanmiller/hypt-claude/main/install.p
 ```
 
 After installation, restart Claude Code (`/exit` then relaunch).
+
+## Codex Support
+
+This repo also ships repo-native Codex skills. No separate install is needed when you are working inside this repository.
+
+- Generated skills live under `.codex/skills/`
+- The generated skill index lives in `AGENTS.md`
+- Claude sources remain canonical under `plugin/skills/` and `plugin/commands/`
+
+To regenerate Codex support after changing Claude sources:
+
+```bash
+node scripts/sync-codex-support.mjs
+```
+
+To verify generated Codex files are up to date:
+
+```bash
+node scripts/sync-codex-support.mjs --check
+```
+
+Legacy Claude aliases are preserved in Codex routing. For example:
+
+- `/save` and `hypt:save` map to `hypt-save`
+- `/review` and `hypt:review` map to `hypt-review`
+- `/go` and `hypt:go` map to `hypt-go`
+- `/yolo` and `hypt:yolo` map to `hypt-yolo`
+- vague shipping workflow requests map to `hypt`
 
 ## Commands
 

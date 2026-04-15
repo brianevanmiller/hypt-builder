@@ -1,26 +1,26 @@
 ---
-description: "Check off completed items, suggest next tasks, update backlog, confirm before merge, verify deployment, and release"
-allowed-tools: ["Bash", "Read", "Edit", "Grep", "Glob", "Skill"]
+name: "hypt-close"
+description: "Check off completed items, suggest next tasks, update backlog, confirm before merge, verify deployment, and release. Use when the user wants to wrap up a PR, confirm merge readiness, verify deployment, and release, including `/close`, `hypt:close`."
+metadata:
+  short-description: "Merge PR and Wrap Up (With Confirmation)"
 ---
+<!-- Generated from plugin/commands/close.md. Do not edit by hand. Run `node scripts/sync-codex-support.mjs` instead. -->
 
-# /close — Merge PR and Wrap Up (With Confirmation)
+# hypt-close — Merge PR and Wrap Up (With Confirmation)
 
-## Preamble (run silently before the skill)
+When this workflow needs repo-local helper binaries, resolve the repo root first:
 
 ```bash
-_UPD=$(~/.claude/plugins/marketplaces/hypt-claude/bin/hypt-update-check 2>/dev/null || true)
-echo "${_UPD:-UP_TO_DATE}"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
 ```
-
-- If output contains `UPGRADE_AVAILABLE <old> <new>`: Silently run `bash ~/.claude/plugins/marketplaces/hypt-claude/install.sh` then briefly tell the user: "hypt updated to v{new}. Restart Claude Code when convenient to use the latest version." Then continue with the skill normally.
-- If output contains `JUST_UPGRADED <old> <new>`: Briefly say "Running hypt v{new} (updated from v{old})." then continue.
-- Otherwise: continue silently — say nothing about updates.
-
 ## Context
 
-- PR status: !`gh pr view --json number,title,url,state,mergeStateStatus 2>/dev/null || echo "No PR found"`
-- Recent commits: !`git log --oneline -5`
-- Branch: !`git branch --show-current`
+Before starting, gather context by running:
+
+- Run `gh pr view --json number,title,url,state,mergeStateStatus 2>/dev/null || echo "No PR found"` to capture PR status.
+
+- Recent commits: `git log --oneline -5`
+- Branch: `git branch --show-current`
 
 ## Instructions
 
@@ -32,7 +32,7 @@ git log --oneline -10 | grep "chore: touchup"
 ```
 
 If NOT found, run the touchup skill first:
-- Invoke the Skill tool with skill: "hypt:touchup"
+- Use `$hypt-touchup`
 - Wait for it to complete before continuing
 
 ### Step 2: Check off completed items in project docs
@@ -82,7 +82,7 @@ If no items match, move on silently — don't mention it in the output.
 
 Before merging, surface what to work on next and optionally track it in the project backlog.
 
-Invoke the Skill tool with skill: "hypt:suggestions"
+Use `$hypt-suggestions`
 
 Wait for it to complete before continuing. If it adds backlog items, they'll be committed and included in the PR before merge.
 
@@ -115,7 +115,7 @@ gh pr view --json title,body --jq '{title, body}' 2>/dev/null
 <one bullet per logical change, concise — group related commits>
 
 ---
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+🤖 Generated with Codex
 ```
 
 **Update the PR:**
@@ -216,7 +216,7 @@ Instead:
 - Inform the user: "Vercel blocked the auto-deploy — commit author isn't a team member. Deploying via CLI bypass..."
 - Run the bypass script directly:
   ```bash
-  BYPASS_URL=$(~/.claude/plugins/marketplaces/hypt-claude/bin/hypt-vercel-bypass --prod 2>&1)
+  BYPASS_URL=$("$REPO_ROOT"/bin/hypt-vercel-bypass --prod 2>&1)
   BYPASS_EXIT=$?
   echo "EXIT=$BYPASS_EXIT URL=$BYPASS_URL"
   ```
