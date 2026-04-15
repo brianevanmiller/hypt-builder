@@ -21,6 +21,7 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 - [ ] Add a /logs command for deployment error investigation — pull recent Vercel/Netlify build logs when /status shows something is down
 - [ ] Add a `--watch` mode to the security scanner for real-time feedback during local development
 - [x] Add a global Codex install/sync workflow — publish generated hypt skills to `~/.codex/skills` for use outside this repo
+- [ ] Add support for additional AI coding agents — the multi-agent installer framework supports detection; Cursor, Windsurf, or Aider could be added next
 
 ## Performance
 <!-- Speed, loading, optimization -->
@@ -32,6 +33,8 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 - [ ] Add automated tests for the bypass detection heuristic
 - [ ] Add scanner integration test that verifies `--markdown-report` flag and CI workflow exit codes end-to-end
 - [ ] Add sync generator regression tests — verify alias rewriting skips code blocks, stale generated files are removed, and subdirectory `--check` works
+- [ ] Add end-to-end test for Codex install path — verify install.sh detects Codex, generates adapted skills, and writes idempotent instructions.md
+- [ ] Add `--check` flag to hypt-codex-adapt for CI validation — verify adapted skills stay in sync with source SKILL.md files
 
 ## Documentation
 <!-- Docs, guides, and READMEs that need updating -->
