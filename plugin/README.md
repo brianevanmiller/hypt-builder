@@ -11,7 +11,9 @@ A Claude Code plugin that provides a complete shipping workflow: implement, revi
 | `hypt:review` | Thorough PR review with 4 parallel subagents — auto-fixes urgent issues |
 | `hypt:touchup` | Quick pre-merge polish — fix PR comments, build issues, update docs |
 | `hypt:unit-tests` | Smart unit test generation prioritized by business criticality |
+| `hypt:fix` | Diagnose and fix bugs — triage, research, plan, and deliver a tested fix |
 | `hypt:deploy` | Verify deployment health — detects platform automatically |
+| `hypt:status` | Quick deployment status check — is my site up? |
 | `hypt:close` | Suggest next tasks, update backlog, confirm before merge, verify deployment, and release |
 | `hypt:autoclose` | Autonomous close — merge, deploy check, version bump, release (no confirmation) |
 | `hypt:pipeline` | Full development pipeline — research, plan, build, review, test, save PR (no merge) |
@@ -20,6 +22,7 @@ A Claude Code plugin that provides a complete shipping workflow: implement, revi
 | `hypt:suggestions` | Suggest next tasks and track them in your project backlog |
 | `hypt:plan-critic` | Critical plan review — find gaps, ask questions, refine before building |
 | `hypt:prototype` | End-to-end: review plan, implement, review x2, test, and deliver |
+| `hypt:ci-setup` | Set up lightweight CI — runs unit tests on every commit |
 
 ## Installation
 
