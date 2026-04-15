@@ -49,22 +49,42 @@ All commands use the `hypt:` prefix (e.g., type `/start` or `/hypt` and Claude w
 | `/review` | Thorough PR review with 4 parallel subagents — auto-fixes urgent issues |
 | `/touchup` | Quick pre-merge polish — fix PR comments, build issues, update docs |
 | `/unit-tests` | Smart unit test generation prioritized by business criticality |
+| `/fix` | Diagnose and fix bugs — triage, research, plan, and deliver a tested fix |
 | `/deploy` | Verify deployment health — detects platform, auto-bypasses Vercel free-plan blocks |
-| `/close` | Suggest next tasks, update backlog, merge PR, auto-version-bump + release, verify deployment |
+| `/status` | Quick deployment status check — is my site up? |
+| `/close` | Suggest next tasks, update backlog, confirm before merge, verify deployment |
 | `/suggestions` | Suggest next tasks and track them in your project backlog |
 | `/plan-critic` | Critical plan review — find gaps, ask questions, refine before building |
+| `/go` | Autonomous pipeline + confirm before merge |
+| `/yolo` | Fully autonomous pipeline + merge, no stopping |
+| `/pipeline` | Full development pipeline — research, plan, build, review, test, save PR (no merge) |
+| `/autoclose` | Autonomous merge — deploy check, version bump, release (no confirmation) |
+| `/ci-setup` | Set up lightweight CI — runs unit tests on every commit |
 
 ## Workflow
+
+The typical development flow:
 
 ```
 start → prototype → save → review → touchup → unit-tests → deploy → close
 ```
 
-Each command can also be used independently.
+Shortcuts compose the pipeline and close skills:
+
+```
+/go   = pipeline → confirm → autoclose   (autonomous with safety net)
+/yolo = pipeline → autoclose              (fully autonomous)
+```
+
+Each command can also be used independently. For example, use `/save` anytime you want to commit and push, or `/review` for a standalone code review.
 
 ## Supported Deployment Platforms
 
 Vercel, Netlify, Fly.io, Render, Railway, and GitHub Deployments API (fallback).
+
+## Security
+
+Includes a supply chain security scanner that runs in CI on every PR to `main`. Detects prompt injection, invisible Unicode attacks, shell injection, tool poisoning, and structural anomalies. See [docs/security-scan.md](docs/security-scan.md) for details.
 
 ## Requirements
 

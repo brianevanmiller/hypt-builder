@@ -98,10 +98,9 @@ When the review completes and asks about medium/low findings, reply "all" — fi
 
 **Important:** If the review suggests adding unit tests, skip those suggestions. Tests come in Step 6.
 
-After all fixes are applied, commit and push:
-```bash
-git add -A && git commit -m "fix: address PR review — all findings" && git push
-```
+After all fixes are applied, save the changes:
+
+Invoke the Skill tool with skill: "hypt:save"
 
 ---
 
@@ -119,10 +118,9 @@ Invoke the Skill tool with skill: "hypt:review"
 
 Again, fix ALL findings (reply "all"). Still skip any unit test suggestions.
 
-After all fixes:
-```bash
-git add -A && git commit -m "fix: address second review — final quality pass" && git push
-```
+After all fixes, save the changes:
+
+Invoke the Skill tool with skill: "hypt:save"
 
 ---
 
