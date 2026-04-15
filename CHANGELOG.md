@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.16.0 — 2026-04-15
+
+- Add repo-native Codex support by generating `.codex/skills` and `AGENTS.md` from the Claude plugin sources
+- Add deterministic Codex sync checks, safe generated-file handling, and CI enforcement for stale skill output
+- Expand the security scanner to cover Codex instruction surfaces and record follow-up Codex/testing work in the backlog
+
 ## v0.15.0 — 2026-04-15
 
 - Use `/save` skill consistently throughout `/pipeline` and `/prototype` — every checkpoint now rebases on main, writes proper commit messages, and updates the PR description
