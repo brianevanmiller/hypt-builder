@@ -18,7 +18,8 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 - [ ] Add /save progress indicator to pipeline output — when /save runs during pipeline, briefly log which checkpoint triggered it so users can follow along
 - [ ] Add a `--dry-run` flag to `hypt-vercel-bypass` for safer debugging
 - [ ] Add package manager auto-detection to all skills — detect from lockfiles (like /ci-setup does) so /fix, /touchup, /prototype etc. work correctly for npm/yarn/pnpm projects too
-- [ ] Add a /logs command for deployment error investigation — pull recent Vercel/Netlify build logs when /status shows something is down
+- [ ] Add a /logs command for deployment error investigation — pull recent Vercel/Netlify build logs when /status or /restore shows something is down
+- [ ] Add /restore database auto-detection — detect Supabase, PlanetScale, or Neon from project config and provide platform-specific recovery steps automatically
 - [ ] Add a `--watch` mode to the security scanner for real-time feedback during local development
 - [x] Add a global Codex install/sync workflow — publish generated hypt skills to `~/.codex/skills` for use outside this repo
 - [ ] Add support for additional AI coding agents — the multi-agent installer framework supports detection; Cursor, Windsurf, or Aider could be added next
@@ -29,6 +30,7 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 ## Testing
 <!-- Test coverage gaps and missing tests -->
 
+- [ ] Add /restore integration test — verify merge vs squash commit detection and correct revert strategy selection
 - [ ] Add plan-critic complexity classification test — verify small/large detection with sample plans of varying sizes and scopes
 - [ ] Add /save idempotency test — verify /save handles all edge cases cleanly: clean tree, no PR, existing PR, rebase conflicts
 - [ ] Add automated tests for the bypass detection heuristic
