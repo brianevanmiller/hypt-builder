@@ -29,6 +29,7 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 ## Testing
 <!-- Test coverage gaps and missing tests -->
 
+- [ ] Add plan-critic complexity classification test — verify small/large detection with sample plans of varying sizes and scopes
 - [ ] Add /save idempotency test — verify /save handles all edge cases cleanly: clean tree, no PR, existing PR, rebase conflicts
 - [ ] Add automated tests for the bypass detection heuristic
 - [ ] Add scanner integration test that verifies `--markdown-report` flag and CI workflow exit codes end-to-end
