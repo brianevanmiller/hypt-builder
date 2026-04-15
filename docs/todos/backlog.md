@@ -5,6 +5,8 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 ## Security
 <!-- Auth, permissions, data protection, input validation -->
 
+- [ ] Add multi-line prompt injection detection using perl — the scanner currently only matches within single lines
+
 ## Bugs
 <!-- Known issues and things that need fixing -->
 
@@ -14,6 +16,7 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 - [ ] Add a `--dry-run` flag to `hypt-vercel-bypass` for safer debugging
 - [ ] Add package manager auto-detection to all skills — detect from lockfiles (like /ci-setup does) so /fix, /touchup, /prototype etc. work correctly for npm/yarn/pnpm projects too
 - [ ] Add a /logs command for deployment error investigation — pull recent Vercel/Netlify build logs when /status shows something is down
+- [ ] Add a `--watch` mode to the security scanner for real-time feedback during local development
 
 ## Performance
 <!-- Speed, loading, optimization -->
@@ -22,6 +25,7 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 <!-- Test coverage gaps and missing tests -->
 
 - [ ] Add automated tests for the bypass detection heuristic
+- [ ] Add scanner integration test that verifies `--markdown-report` flag and CI workflow exit codes end-to-end
 
 ## Documentation
 <!-- Docs, guides, and READMEs that need updating -->
