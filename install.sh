@@ -214,7 +214,9 @@ CONFIGEOF
 fi
 
 # Symlink bin/ to ~/.hypt/bin/ for generic access
-ln -sfn "$REPO_DIR/bin" "$HYPT_DIR/bin"
+if [ -d "$REPO_DIR/bin" ]; then
+  ln -sfn "$REPO_DIR/bin" "$HYPT_DIR/bin"
+fi
 
 # Make bin scripts executable
 if [ -d "$REPO_DIR/bin" ]; then
@@ -259,6 +261,7 @@ if [ "$HAS_CODEX" = true ]; then
 
   # Write the hypt instruction block to a temp file
   HYPT_BLOCK_FILE=$(mktemp)
+  trap 'rm -f "$HYPT_BLOCK_FILE"' EXIT
   cat > "$HYPT_BLOCK_FILE" << 'INSTREOF'
 <!-- hypt-start -->
 ## hypt — Shipping Workflow
@@ -301,8 +304,8 @@ INSTREOF
       sed -i.bak '/<!-- hypt-start -->/,/<!-- hypt-end -->/d' "$INSTRUCTIONS_FILE"
       rm -f "$INSTRUCTIONS_FILE.bak"
     fi
-    # Append the new block
-    printf '\n' >> "$INSTRUCTIONS_FILE"
+    # Append the new block (only add newline if file doesn't end with one)
+    [ -s "$INSTRUCTIONS_FILE" ] && [ "$(tail -c 1 "$INSTRUCTIONS_FILE" | wc -l)" -eq 0 ] && printf '\n' >> "$INSTRUCTIONS_FILE"
     cat "$HYPT_BLOCK_FILE" >> "$INSTRUCTIONS_FILE"
   else
     # Create the file with the hypt block

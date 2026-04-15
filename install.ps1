@@ -240,7 +240,7 @@ if ($HasCodex) {
             $Output | Set-Content -Path (Join-Path $SkillsDir "$($Cmd.BaseName).md") -Encoding UTF8
         }
 
-        $SkillCount = (Get-ChildItem $SkillsDir -Filter "*.md").Count
+        $SkillCount = @(Get-ChildItem $SkillsDir -Filter "*.md").Count
         Write-Host "  Generated $SkillCount skill files."
     } else {
         Write-Host "  Warning: Git Bash required for skill generation. Install Git Bash and re-run."
