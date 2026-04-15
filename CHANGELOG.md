@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.13.0 — 2026-04-15
+
+- Add `/go` command — autonomous pipeline with confirmation before merge
+- Add `/yolo` command — fully autonomous pipeline + merge, no stopping
+- Extract shared `hypt:pipeline` skill to eliminate duplication between /go and /yolo
+- Split close into `hypt:close` (confirmation gate) and `hypt:autoclose` (autonomous)
+- Move `/fix` to a first-class command
+- `/close` now asks for confirmation before merging (safer default)
+
 ## v0.12.1 — 2026-04-14
 
 - Fix bypass detection so non-authors of the latest commit can trigger the Vercel team access bypass
