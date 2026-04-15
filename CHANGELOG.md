@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.20.0 — 2026-04-16
+
+- Add `/docs` skill — scans and updates project documentation automatically (checklists, READMEs, feature docs, dates/status)
+- Integrate docs into the pipeline (new Step 5 between unit tests and final save) so PRs include doc updates before merge
+- Replace inline checkbox logic in close/autoclose with composable `hypt:docs` skill call
+- Add pipeline continuation reinforcement after plan-critic to prevent mid-pipeline stalls
+
 ## v0.19.0 — 2026-04-16
 
 - Add `/restore` command — roll back to a previous working version when production breaks
