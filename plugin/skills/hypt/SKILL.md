@@ -10,6 +10,10 @@ description: >
   "done", "deploy", "status", "is my site up", "is it live",
   "prototype", "build this feature",
   "implement this plan", "review plan", "critique plan", "check my plan",
+  "yolo", "yolo it", "just ship it", "take it all the way",
+  "go", "go mode", "ship with confirmation", "auto but confirm",
+  "run pipeline", "review and test", "get this PR-ready",
+  "autoclose", "auto merge", "merge without asking",
   "set up CI", "add CI", "fix", "bug", "broken", "not working",
   "something's wrong", "error", "crash", "issue", "debug",
   "suggestions", "backlog", "what should I work on next", "what's next",
@@ -55,6 +59,10 @@ When the user's request matches a shipping workflow action, invoke the appropria
 | Review plan, critique plan, check my plan, plan review, plan critic | `hypt:plan-critic` |
 | Prototype, build this feature, implement this plan | `hypt:prototype` |
 | "Fix", bug, broken, not working, something's wrong, error, crash, issue, debug | `hypt:fix` |
+| "Yolo", "yolo it", "just ship it", "take it all the way", full auto ship | `hypt:yolo` |
+| "Go", "go mode", "ship with confirmation", "auto but confirm", "do everything but ask before merge" | `hypt:go` |
+| "Run pipeline", "review and test", "get this PR-ready" | `hypt:pipeline` |
+| "Autoclose", "auto merge", "merge without asking" | `hypt:autoclose` |
 | Set up CI, add CI, automatic testing, ci setup | `hypt:ci-setup` |
 
 ## Workflow
@@ -72,6 +80,16 @@ The typical flow is:
 8. `hypt:status` — quick read-only deployment status check
 9. `hypt:deploy` — verify deployment is healthy, fix trivial issues
 10. `hypt:suggestions` — suggest next tasks and update project backlog (runs automatically in close)
-11. `hypt:close` — merge PR and wrap up
+11. `hypt:close` — merge PR and wrap up (asks for confirmation before merge)
 
 Skills can be used individually or as part of the full prototype workflow.
+
+### Composition skills
+
+- `hypt:pipeline` — full development pipeline (research → plan → build → review → test → save PR). Does not merge.
+- `hypt:autoclose` — autonomous close (merge, deploy check, version bump, release) without confirmation. Used internally by /yolo and /go.
+
+### Shortcuts
+
+- `hypt:go` = `hypt:pipeline` + confirmation gate + `hypt:autoclose` — autonomous pipeline, confirms before merge
+- `hypt:yolo` = `hypt:pipeline` + `hypt:autoclose` — fully autonomous, no confirmation at any step

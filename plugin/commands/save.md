@@ -71,14 +71,51 @@ Check if a PR already exists for this branch:
 gh pr view --json number,url 2>/dev/null
 ```
 
-- If a PR exists: note the URL
 - If no PR exists: create one:
   ```bash
   gh pr create --fill
   ```
   This auto-fills the title from the branch name and body from commit messages.
 
-### Step 5: Summary
+### Step 5: Update PR description
+
+Whether the PR was just created or already existed, update the description to reflect all changes on the branch.
+
+**Gather the full picture:**
+```bash
+# All commits on this branch vs main
+git log origin/main..HEAD --oneline --no-merges
+# Summary of all files changed
+git diff origin/main..HEAD --stat
+```
+
+**Generate an updated PR body** from all commits on the branch (not just the latest). Use this format:
+
+```
+## Summary
+<2-4 bullet points summarizing what this PR does overall, written from the user's perspective>
+
+## Changes
+<one bullet per commit, concise>
+
+---
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+```
+
+**Update the PR:**
+```bash
+gh pr edit --body "$(cat <<'EOF'
+<generated body>
+EOF
+)"
+```
+
+Also update the PR title if the current title is just the branch name or doesn't reflect the changes well. Use:
+```bash
+gh pr edit --title "<better title>"
+```
+
+### Step 6: Summary
 
 Print a short summary:
 ```
