@@ -26,7 +26,7 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 ## Documentation
 <!-- Docs, guides, and READMEs that need updating -->
 
-- [ ] Update README to document the full command set — cover /status, /fix, /ci-setup, /suggestions and other newer skills
+- [x] Update README to document the full command set — cover /status, /fix, /ci-setup, /suggestions and other newer skills
 
 ## Cleanup
 <!-- Tech debt, refactoring, code quality improvements -->
