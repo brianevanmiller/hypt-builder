@@ -49,6 +49,10 @@ The deploy and close skills automatically detect your deployment platform:
 - **Railway** (`railway.json` or `railway.toml`)
 - **Generic** — falls back to GitHub Deployments API
 
+## Security
+
+Includes a supply chain security scanner (`bin/hypt-security-scan`) that detects prompt injection, invisible Unicode, shell injection, tool poisoning, and structural anomalies. Runs in CI on PRs to `main`. See [docs/security-scan.md](../docs/security-scan.md) for details.
+
 ## Requirements
 
 - [GitHub CLI](https://cli.github.com/) (`gh`) — used for PR management, deployment checks

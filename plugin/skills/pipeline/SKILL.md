@@ -94,12 +94,15 @@ After prototype completes, continue to Step 3.
 
 Only if Stage B was detected.
 
-If there are uncommitted changes, commit and push them first:
-```bash
-git add -A && git commit -m "wip: save in-progress changes" && git push -u origin HEAD
-```
+Save any uncommitted changes and ensure a PR exists:
 
-If no PR exists yet, invoke the Skill tool with skill: "hypt:save"
+Invoke the Skill tool with skill: "hypt:save"
+
+If /save reports "Nothing to save" and no PR exists yet, create one so the rest of the pipeline has something to work with:
+```bash
+git push -u origin HEAD
+gh pr create --fill
+```
 
 Continue to Step 3.
 
@@ -121,10 +124,9 @@ Run review and touchup in a loop until the code is clean. Maximum 3 iterations t
 1. Invoke the Skill tool with skill: "hypt:review"
    - Fix ALL findings — urgent, medium, and low. Reply "all" when asked.
    - Skip unit test suggestions (handled separately in Step 4).
-   - After fixes, commit and push:
-     ```bash
-     git add -A && git commit -m "fix: address review findings" && git push
-     ```
+   - After fixes, save the changes:
+
+     Invoke the Skill tool with skill: "hypt:save"
 
 2. Invoke the Skill tool with skill: "hypt:touchup"
    - This catches PR bot comments, build issues, and remaining polish.
@@ -143,23 +145,19 @@ Check the Context section — the "Has unit tests" field shows whether the proje
 
 **If test files exist:** Invoke the Skill tool with skill: "hypt:unit-tests"
 
-After tests are added and passing, commit and push:
-```bash
-git add -A && git commit -m "test: add unit tests for changes" && git push
-```
+After tests are added and passing, save the changes:
+
+Invoke the Skill tool with skill: "hypt:save"
 
 **If no test files exist:** Skip this step entirely. Do not create a test infrastructure from scratch.
 
 ---
 
-### Step 5: Ensure PR is saved
+### Step 5: Final save
 
-Make sure the PR exists and is up to date:
-```bash
-gh pr view --json number,title,url 2>/dev/null || echo "NO_PR"
-```
+Run one last save to ensure everything is committed, pushed, and the PR description reflects all work:
 
-If no PR exists, invoke the Skill tool with skill: "hypt:save"
+Invoke the Skill tool with skill: "hypt:save"
 
 Confirm the pipeline is complete:
 
