@@ -451,7 +451,7 @@ Next steps:
 
 Always end with a reassuring note for non-technical users when the restore succeeded:
 
-> Your site has been restored to the previous working version. The broken changes have been safely reverted — no data was lost from the revert itself.
+> Your site has been restored to the previous working version. The broken changes have been safely reverted — no data was lost from the revert itself. If you need to re-attempt the feature that caused the issue, start a new branch and try again with `/go` or `/yolo`.
 
 ---
 
@@ -463,4 +463,4 @@ After a successful restore, automatically run the post-mortem skill to document 
 
 Use `$hypt-post-mortem`
 
-This creates a post-mortem document, updates the backlog with the issue, and tells the user how to fix it in a new session.
+This creates a post-mortem document, updates the backlog with the issue, and tells the user how to fix it in a new session. If the root cause isn't obvious from the code diff, the post-mortem will automatically escalate to gstack's `/investigate` for deeper analysis (when gstack is available).

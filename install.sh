@@ -338,3 +338,19 @@ else
   echo "Restart your Codex session to activate."
   echo "Then try: \"save my changes\", \"review my code\", or \"deploy\""
 fi
+
+# ============================================================
+# RECOMMEND GSTACK (optional companion tool)
+# ============================================================
+if [ ! -d "$HOME/.claude/skills/gstack" ]; then
+  echo ""
+  echo "---"
+  echo ""
+  echo "Recommended: install gstack for visual QA testing, design review, and security audits."
+  echo "gstack is a free companion tool (MIT license) that adds 35+ specialist skills to your workflow."
+  echo ""
+  echo "  Tell your AI agent: 'Install gstack' or run:"
+  echo "  git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup"
+  echo ""
+  echo "Learn more: https://github.com/garrytan/gstack"
+fi

@@ -14,7 +14,7 @@ A shipping workflow plugin for AI coding agents (Claude Code, Codex CLI): implem
 | `hypt:fix` | Diagnose and fix bugs — triage, research, plan, and deliver a tested fix |
 | `hypt:deploy` | Verify deployment health — detects platform automatically |
 | `hypt:status` | Quick deployment status check — is my site up? |
-| `hypt:restore` | Restore to a previous working version — rollback, revert, database recovery |
+| `hypt:restore` | Restore to a previous working version — rollback, revert, database recovery, auto-investigates |
 | `hypt:post-mortem` | Analyze what went wrong after a restore — creates incident doc, updates backlog |
 | `hypt:docs` | Scan and update project documentation — checklists, READMEs, feature docs, dates |
 | `hypt:close` | Suggest next tasks, update backlog, confirm before merge, verify deployment, and release |

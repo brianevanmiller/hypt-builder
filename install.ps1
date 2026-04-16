@@ -324,3 +324,20 @@ if ($HasClaude -and $HasCodex) {
     Write-Host "Restart your Codex session to activate."
     Write-Host 'Then try: "save my changes", "review my code", or "deploy"'
 }
+
+# ============================================================
+# RECOMMEND GSTACK (optional companion tool)
+# ============================================================
+$GstackDir = Join-Path $env:USERPROFILE ".claude\skills\gstack"
+if (-not (Test-Path $GstackDir)) {
+    Write-Host ""
+    Write-Host "---"
+    Write-Host ""
+    Write-Host "Recommended: install gstack for visual QA testing, design review, and security audits."
+    Write-Host "gstack is a free companion tool (MIT license) that adds 35+ specialist skills to your workflow."
+    Write-Host ""
+    Write-Host "  Tell your AI agent: 'Install gstack' or run:"
+    Write-Host "  git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup"
+    Write-Host ""
+    Write-Host "Learn more: https://github.com/garrytan/gstack"
+}
