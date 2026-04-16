@@ -16,6 +16,8 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 ## Features
 <!-- New capabilities and enhancements -->
 
+- [ ] Add Codex CLI support for starter CLAUDE.md — append engineering discipline block to `~/.codex/instructions.md` during Codex install path (mirrors the Claude Code CLAUDE.md feature)
+
 - [ ] Add a `/dry-run` mode for pipeline — run the full pipeline without committing or pushing, useful for previewing what would happen
 - [ ] Add /save progress indicator to pipeline output — when /save runs during pipeline, briefly log which checkpoint triggered it so users can follow along
 - [ ] Add a `--dry-run` flag to `hypt-vercel-bypass` for safer debugging
@@ -34,6 +36,8 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 
 ## Testing
 <!-- Test coverage gaps and missing tests -->
+
+- [ ] Add starter CLAUDE.md install test — verify all three paths (fresh install, enhance existing, idempotent update) and non-interactive skip
 
 - [ ] Add /restore integration test — verify merge vs squash commit detection and correct revert strategy selection
 - [ ] Add plan-critic complexity classification test — verify small/large detection with sample plans of varying sizes and scopes
