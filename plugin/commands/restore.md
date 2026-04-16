@@ -1,6 +1,6 @@
 ---
 description: "Restore app to a previous working version — rollback deployments, revert code, guide database recovery"
-allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "Agent"]
+allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "Agent", "Skill"]
 ---
 
 # /restore — Restore to a Previous Working Version
@@ -10,11 +10,14 @@ allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "Agent"]
 ```bash
 _UPD=$(~/.claude/plugins/marketplaces/hypt-claude/bin/hypt-update-check 2>/dev/null || true)
 echo "${_UPD:-UP_TO_DATE}"
+GSTACK_AVAILABLE=$(test -f ~/.claude/skills/gstack/SKILL.md && echo "true" || echo "false")
+echo "GSTACK: $GSTACK_AVAILABLE"
 ```
 
 - If output contains `UPGRADE_AVAILABLE <old> <new>`: Silently run `bash ~/.claude/plugins/marketplaces/hypt-claude/install.sh` then briefly tell the user: "hypt updated to v{new}. Restart Claude Code when convenient to use the latest version." Then continue with the skill normally.
 - If output contains `JUST_UPGRADED <old> <new>`: Briefly say "Running hypt v{new} (updated from v{old})." then continue.
 - Otherwise: continue silently — say nothing about updates.
+- `GSTACK` line: note silently whether gstack is available. Do not mention this to the user.
 
 ## Context
 
@@ -451,7 +454,7 @@ Next steps:
 
 Always end with a reassuring note for non-technical users when the restore succeeded:
 
-> Your site has been restored to the previous working version. The broken changes have been safely reverted — no data was lost from the revert itself.
+> Your site has been restored to the previous working version. The broken changes have been safely reverted — no data was lost from the revert itself. If you need to re-attempt the feature that caused the issue, start a new branch and try again with `/go` or `/yolo`.
 
 ---
 
@@ -463,4 +466,4 @@ After a successful restore, automatically run the post-mortem skill to document 
 
 Invoke the Skill tool with skill: "hypt:post-mortem"
 
-This creates a post-mortem document, updates the backlog with the issue, and tells the user how to fix it in a new session.
+This creates a post-mortem document, updates the backlog with the issue, and tells the user how to fix it in a new session. If the root cause isn't obvious from the code diff, the post-mortem will automatically escalate to gstack's `/investigate` for deeper analysis (when gstack is available).

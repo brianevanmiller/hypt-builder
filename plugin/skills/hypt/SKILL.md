@@ -21,7 +21,10 @@ description: >
   "something's wrong", "error", "crash", "issue", "debug",
   "suggestions", "backlog", "what should I work on next", "what's next",
   "change backlog preference", "update docs", "refresh docs", "check docs",
-  "documentation", or "scan docs".
+  "documentation", "scan docs", "test my site", "QA", "design review",
+  "security check", "security audit", "office hours", "investigate",
+  "root cause", "retro", "benchmark", "design system", "browse",
+  "post-mortem", "postmortem", "incident report", "what went wrong".
 allowed-tools: "Skill"
 version: "1.0.0"
 author: "Brian Miller"
@@ -39,11 +42,14 @@ Complete shipping workflow for Claude Code. Routes user intent to the right skil
 ```bash
 _UPD=$(~/.claude/plugins/marketplaces/hypt-claude/bin/hypt-update-check 2>/dev/null || true)
 echo "${_UPD:-UP_TO_DATE}"
+GSTACK_AVAILABLE=$(test -f ~/.claude/skills/gstack/SKILL.md && echo "true" || echo "false")
+echo "GSTACK: $GSTACK_AVAILABLE"
 ```
 
 - If output contains `UPGRADE_AVAILABLE <old> <new>`: Silently run `bash ~/.claude/plugins/marketplaces/hypt-claude/install.sh` then briefly tell the user: "hypt updated to v{new}. Restart Claude Code when convenient to use the latest version." Then continue with routing normally.
 - If output contains `JUST_UPGRADED <old> <new>`: Briefly say "Running hypt v{new} (updated from v{old})." then continue.
 - Otherwise: continue silently — say nothing about updates.
+- `GSTACK` line: note silently whether gstack is available. Do not mention this to the user.
 
 ## Routing Rules
 
@@ -71,6 +77,53 @@ When the user's request matches a shipping workflow action, invoke the appropria
 | "Autoclose", "auto merge", "merge without asking" | `hypt:autoclose` |
 | "Update docs", "refresh docs", "check docs", "documentation", "scan docs" | `hypt:docs` |
 | Set up CI, add CI, automatic testing, ci setup | `hypt:ci-setup` |
+| "Post-mortem", postmortem, incident report, what went wrong | `hypt:post-mortem` |
+
+### Extended routes (when gstack is available)
+
+If `GSTACK` is `true`, also route these requests:
+
+| User says | Invoke | Brief mention |
+|-----------|--------|---------------|
+| "test my site", "does it work", "QA", "test in browser" | Skill: `qa` | "Using gstack QA tools to test your app in a real browser..." |
+| "design review", "make it prettier", "visual check", "how does it look" | Skill: `design-review` | "Using gstack design review to check visual quality..." |
+| "security check", "is it secure", "security audit", "OWASP" | Skill: `cso` | "Using gstack security officer to run a security audit..." |
+| "brainstorm deeper", "office hours", "rethink this", "is this the right product" | Skill: `office-hours` | "Using gstack office hours for deeper product thinking..." |
+| "investigate", "root cause", "dig deeper into this bug" | Skill: `investigate` | "Using gstack investigate for systematic root-cause analysis..." |
+| "retro", "weekly review", "how did the week go" | Skill: `retro` | "Using gstack retro for your weekly engineering retrospective..." |
+| "benchmark", "performance check", "how fast is my site" | Skill: `benchmark` | "Using gstack benchmark to measure your app's performance..." |
+| "design system", "brand", "build a design" | Skill: `design-consultation` | "Using gstack design consultation to build your design system..." |
+| "show me design options", "design variants" | Skill: `design-shotgun` | "Using gstack to generate design variants..." |
+| "open browser", "browse", "open my site" | Skill: `browse` | "Opening your app in a browser..." |
+
+If `GSTACK` is `false` and the user asks for any of the above capabilities:
+
+> "That feature works best with gstack — a free companion tool that adds visual QA, design review, and security audits to your workflow. I can:
+>
+> A) Install gstack now (free, takes about 30 seconds)
+> B) Skip it — [provide a manual alternative for the specific request, e.g., 'you can check the preview URL yourself']"
+
+If the user chooses A, run:
+```bash
+git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup
+```
+Then set `GSTACK_AVAILABLE=true` and route to the appropriate gstack skill.
+
+### Escalation rules (when gstack is available)
+
+For **review** requests when `GSTACK` is `true`:
+- If diff is ≤200 lines AND does not touch auth/payment/database code → invoke `hypt:review`
+- If diff is >200 lines OR touches auth/payment/database → invoke Skill: `review` (gstack's deeper review). Say: "This is a larger change — using gstack's deep review with specialist modules..."
+
+For **bug/fix** requests when `GSTACK` is `true`:
+- If the user says "quick fix", "small bug", or the description is clearly simple → invoke `hypt:fix`
+- If the user says "investigate", "root cause", or the bug sounds complex/unclear → invoke Skill: `investigate` (gstack). Say: "This needs deeper investigation — using gstack's systematic debugging..."
+- If hypt:fix classifies a bug as "involved" (Step 2), it will delegate to gstack:investigate automatically
+
+For **ship/save** requests (always use hypt regardless of gstack):
+- "save", "commit", "push" → always `hypt:save` (incremental, non-coder friendly)
+- "ship", "create PR" when no PR exists → `hypt:save` (creates PR)
+- "ship" when PR already exists with all reviews done → `hypt:close`
 
 ## Workflow
 

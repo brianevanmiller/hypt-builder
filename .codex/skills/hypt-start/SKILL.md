@@ -74,7 +74,36 @@ Tell the user:
 
 Then skip directly to **Phase 3** (Step 3a will detect what's missing and only set up what's needed). After Phase 3 completes, skip Phase 4 (docs already exist) and proceed to Phase 5 (CI setup).
 
-**If no plan file exists**, proceed to Phase 1 normally.
+**If no plan file exists**, proceed to Phase 0b, then Phase 1 normally.
+
+---
+
+### Phase 0b: Recommend gstack (if not installed)
+
+If `GSTACK` is `false`:
+
+> Before we dive in — I want to mention a free companion tool called **gstack** that adds some powerful capabilities to your workflow:
+>
+> - **Visual QA testing** — I can open your app in a real browser and test it
+> - **Design review** — I can spot visual issues and suggest improvements
+> - **Security audit** — I can check your app for common security problems
+> - **Product thinking** — Deeper questions to help refine your idea
+>
+> These are totally optional — hypt works great on its own.
+>
+> **Install gstack?** (yes / no / tell me more)
+
+If yes:
+```bash
+git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup
+```
+Then set `GSTACK_AVAILABLE=true` and continue.
+
+If "tell me more": explain that gstack is created by Garry Tan, is MIT-licensed, and adds 35+ specialist skills for visual testing, design, security, and deeper product thinking. Then re-ask.
+
+If no: continue without gstack.
+
+If `GSTACK` is already `true`: skip this phase entirely.
 
 ---
 
@@ -114,6 +143,22 @@ After their response, summarize it back in one sentence to confirm you understoo
 **Question 4 — What makes it different? (optional)**
 
 > In one sentence, what makes your app different from what already exists? If nothing comes to mind, totally fine — just say "skip" and we'll move on.
+
+---
+
+### Phase 1b: Deeper product thinking (optional, gstack only)
+
+If `GSTACK` is `true`:
+
+> Want to go deeper on your product thinking? gstack's Office Hours can challenge your assumptions and help you find the strongest version of your idea. This is optional — your current plan is already solid.
+>
+> **Run office hours?** (yes / skip)
+
+If yes: invoke Skill: `office-hours`
+
+After office-hours completes, continue to Phase 2.
+
+If no or `GSTACK` is `false`: skip this phase and continue to Phase 2.
 
 ---
 
@@ -711,7 +756,27 @@ This is a **working prototype** — functional and live on the internet, but not
 git add docs/ && git commit -m "docs: add app description and prototype plan" && git push
 ```
 
-Tell the user:
+If `GSTACK` is `true`, tell the user:
+
+> Your project is set up and your plan is ready! Here's what was created:
+>
+> - **App description:** `docs/YYYY-MM-DD-<idea>.md` — the big picture of your app
+> - **Build plan:** `docs/YYYY-MM-DD-<idea>-plan.md` — the step-by-step plan for what to build
+>
+> Here's your development workflow:
+>
+> 1. **`/prototype`** — Build your app from the plan
+> 2. After the build, I'll automatically test it in a real browser and check the design
+> 3. **`/fix`** — Fix any bugs that come up
+> 4. **`/close`** — Merge and deploy to production
+>
+> Anytime: `/save` (save work) · `/status` (is my site up?) · `/suggestions` (what's next?)
+>
+> Extras: `/cso` (security audit) · `/office-hours` (rethink product) · `/design-review` (visual polish)
+>
+> You can also review or tweak either document before building — they're just text files.
+
+If `GSTACK` is `false`, tell the user:
 
 > Your project is set up and your plan is ready! Here's what was created:
 >

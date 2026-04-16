@@ -66,7 +66,7 @@ All commands use the `hypt:` prefix (e.g., type `/start` or `/hypt` and Claude w
 | `/fix` | Diagnose and fix bugs — triage, research, plan, and deliver a tested fix |
 | `/deploy` | Verify deployment health — detects platform, auto-bypasses Vercel free-plan blocks |
 | `/status` | Quick deployment status check — is my site up? |
-| `/restore` | Restore to a previous working version — rollback, revert, database recovery |
+| `/restore` | Restore to a previous working version — rollback, revert, database recovery, auto-investigates |
 | `/post-mortem` | Analyze what went wrong after a restore — creates incident doc, updates backlog |
 | `/docs` | Scan and update project documentation — checklists, READMEs, feature docs |
 | `/close` | Suggest next tasks, update backlog, confirm before merge, verify deployment |
@@ -104,6 +104,32 @@ Shortcuts compose skills into full pipelines:
 ```
 
 Each command can also be used independently. See [docs/hypt-router-design.md](docs/hypt-router-design.md) for detailed routing diagrams and skill composition.
+
+## gstack Integration (Optional)
+
+hypt works great on its own, but for the full experience, install [gstack](https://github.com/garrytan/gstack) — a free companion tool that adds 35+ specialist skills:
+
+- **Visual QA testing** (`/qa`) — test your app in a real browser
+- **Design review** (`/design-review`) — spot visual issues and AI design slop
+- **Security audit** (`/cso`) — OWASP Top 10 + STRIDE threat model
+- **Product thinking** (`/office-hours`) — YC-style forcing questions to sharpen your idea
+- **Systematic debugging** (`/investigate`) — root-cause analysis for complex bugs
+- **Design exploration** (`/design-shotgun`) — generate AI mockup variants
+- **Performance testing** (`/benchmark`) — Core Web Vitals and page load times
+
+When gstack is installed, hypt automatically detects it and:
+- Routes QA, design, and security requests to gstack's specialist skills
+- Escalates complex code reviews and bug investigations to gstack's deeper tools
+- Offers product thinking via `/office-hours` during `/start` onboarding
+
+Install gstack:
+```bash
+git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup
+```
+
+Or just tell your AI agent: "Install gstack"
+
+**Without gstack**, hypt handles everything itself — code review, testing, deployment, and bug fixes. gstack adds depth for visual testing, design, and security that hypt doesn't cover natively.
 
 ## Supported Deployment Platforms
 

@@ -38,6 +38,6 @@
     "rollback",
     "revert",
     "post-mortem",
-    "incident"
+    "incident-analysis"
   ]
 }

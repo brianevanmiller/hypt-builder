@@ -4,7 +4,7 @@ description: >
   Analyze what went wrong after a restore — review recent changes to main,
   create a post-mortem document, update backlog with findings, and suggest
   next steps. Runs automatically after /restore.
-allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent"]
+allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent", "Skill"]
 version: "1.0.0"
 author: "Brian Miller"
 license: "MIT"
@@ -17,11 +17,14 @@ license: "MIT"
 ```bash
 _UPD=$(~/.claude/plugins/marketplaces/hypt-claude/bin/hypt-update-check 2>/dev/null || true)
 echo "${_UPD:-UP_TO_DATE}"
+GSTACK_AVAILABLE=$(test -f ~/.claude/skills/gstack/SKILL.md && echo "true" || echo "false")
+echo "GSTACK: $GSTACK_AVAILABLE"
 ```
 
 - If output contains `UPGRADE_AVAILABLE <old> <new>`: Silently run `bash ~/.claude/plugins/marketplaces/hypt-claude/install.sh` then briefly tell the user: "hypt updated to v{new}. Restart Claude Code when convenient to use the latest version." Then continue with the skill normally.
 - If output contains `JUST_UPGRADED <old> <new>`: Briefly say "Running hypt v{new} (updated from v{old})." then continue.
 - Otherwise: continue silently — say nothing about updates.
+- `GSTACK` line: note silently whether gstack is available. Do not mention this to the user.
 
 ## Context
 
@@ -49,7 +52,6 @@ Find the problematic changes that were just rolled back. Use the Context section
 REVERT_SHA=$(git log origin/main --oneline --grep="Revert" -i -1 --format="%H" 2>/dev/null)
 if [ -z "$REVERT_SHA" ]; then
   # No revert commit — restore may have used platform rollback (Vercel/Netlify promotion)
-  # Look at the most recent merge/commit that was the "broken" deploy
   REVERT_SHA=""
   echo "NO_REVERT_COMMIT — platform rollback was used"
 fi
@@ -113,7 +115,43 @@ Use a subagent to analyze the diff if it's large. Look for common failure patter
 - **Dependency issues** — incompatible versions, missing packages, lockfile conflicts
 - **UI/UX breaks** — broken layouts, missing assets, wrong routes
 
-Summarize the likely root cause in plain language. If you can't determine the exact cause from the diff alone, note what areas are suspicious and why.
+**Classify the root cause as "obvious" or "involved":**
+
+**Obvious** — the root cause is clearly visible in the diff:
+- A syntax error, missing import, or typo
+- A clearly wrong conditional or variable reference
+- A missing environment variable that's referenced in the new code
+- A build config change with an obvious mistake
+- A single file change with a clear logic error
+
+**Involved** — the root cause is NOT clear from the diff alone:
+- Multiple files changed and the interaction between them could be the issue
+- The diff looks correct but the deploy still broke (runtime/environment issue)
+- The changes involve infrastructure, deployment config, or external services
+- Database migration or schema changes that could have side effects
+- The error could be in how the code interacts with production data or state
+- Multiple possible causes and it's unclear which one is the actual culprit
+
+#### Step 2a: Escalate to /investigate (when the cause is involved)
+
+**If the root cause is classified as "involved" AND `GSTACK` is `true`:**
+
+Tell the user:
+> The root cause isn't obvious from the code changes alone. Running a deeper investigation...
+
+Invoke the Skill tool with skill: "investigate"
+
+The investigate skill will do systematic root-cause analysis — checking logs, testing hypotheses, and using browser-based debugging if needed. After it completes, use its findings to enrich the post-mortem document in Step 3 (replace the "Likely Root Cause" section with the investigation's findings).
+
+**If the root cause is classified as "involved" AND `GSTACK` is `false`:**
+
+Note the uncertainty in the analysis. In the post-mortem document (Step 3), mark the root cause as "Suspected" rather than "Confirmed" and add a recommendation:
+
+> **Note:** The root cause couldn't be definitively determined from the code diff alone. For deeper investigation, install gstack (`git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`) and run `/investigate` in a new session.
+
+**If the root cause is classified as "obvious":**
+
+Continue to Step 3 with the findings — no escalation needed.
 
 ---
 
@@ -139,6 +177,7 @@ mkdir -p docs/post-mortem
 **Date:** YYYY-MM-DD
 **Severity:** <Critical (site down) / High (major feature broken) / Medium (partial breakage)>
 **Restored via:** <Git revert / Vercel rollback / Netlify rollback / etc.>
+**Root cause confidence:** <Confirmed / Suspected>
 
 ## What Happened
 
@@ -156,7 +195,10 @@ Write for a non-coder — avoid technical jargon where possible.>
 
 <Plain-language explanation of what went wrong in the code.
 Be specific about which file or change likely caused the issue.
-If uncertain, list the top 2-3 suspects with reasoning.>
+If uncertain, list the top 2-3 suspects with reasoning.
+
+If /investigate was run, include its findings here — this will be more detailed
+and confident than diff-only analysis.>
 
 ## Impact
 
@@ -220,8 +262,14 @@ Post-mortem complete
 ────────────────────
 Issue:     <one-line description of what broke>
 Cause:     <one-line likely root cause>
+Confidence: <Confirmed / Suspected>
 Document:  docs/post-mortem/YYYY-MM-DD-<topic>-post-mortem.md
 Backlog:   Updated with fix task
+```
+
+If `/investigate` was used, add:
+```
+Investigation: Deep root-cause analysis completed via gstack
 ```
 
 Then suggest the fix workflow:
