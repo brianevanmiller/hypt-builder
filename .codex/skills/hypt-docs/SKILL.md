@@ -151,7 +151,7 @@ Scan documentation for date references and status indicators that should be refr
 Check if any files were modified in Steps 2-5:
 
 ```bash
-git status --short -- docs/ plugin/ README.md TODOS.md TODO.md thoughts/todo.md docs/post-mortem/
+git status --short -- docs/ plugin/ README.md TODOS.md TODO.md thoughts/todo.md
 ```
 
 **If changes exist**, commit them:

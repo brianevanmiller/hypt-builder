@@ -46,7 +46,7 @@ Find the problematic changes that were just rolled back. Use the Context section
 
 ```bash
 # Find the revert commit (just pushed by /restore)
-REVERT_SHA=$(git log origin/main --oneline --grep="Revert" -1 --format="%H" 2>/dev/null)
+REVERT_SHA=$(git log origin/main --oneline --grep="Revert" -i -1 --format="%H" 2>/dev/null)
 if [ -z "$REVERT_SHA" ]; then
   # No revert commit — restore may have used platform rollback (Vercel/Netlify promotion)
   # Look at the most recent merge/commit that was the "broken" deploy
@@ -76,6 +76,8 @@ git log "$BROKEN_SHA" -1 --format="%B" 2>/dev/null
 git diff "$BROKEN_SHA"^.."$BROKEN_SHA" --stat 2>/dev/null
 ```
 
+**Important:** Regardless of which path above was taken (revert commit found or platform rollback), you should now have identified the problematic commit SHA. Use this SHA (referred to as `BROKEN_SHA` below) for the rest of the analysis.
+
 Determine:
 - **What PR/commit caused the issue** — PR number, title, author if available
 - **What files were changed** — the diff stat
@@ -99,7 +101,7 @@ Read the actual code changes from the problematic commit to understand the failu
 ```bash
 # Get the full diff of the problematic changes
 git show "$BROKEN_SHA" --stat 2>/dev/null
-git show "$BROKEN_SHA" -- 2>/dev/null | head -200
+git show "$BROKEN_SHA" 2>/dev/null | head -200
 ```
 
 Use a subagent to analyze the diff if it's large. Look for common failure patterns:
