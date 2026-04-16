@@ -196,8 +196,8 @@ JSEOF
             echo "  You can customize it anytime — it's just a text file."
             ;;
         esac
-      elif ! grep -q '<!-- hypt-engineer-start -->' "$TARGET_CLAUDE_MD"; then
-        # Existing CLAUDE.md without hypt block — offer to enhance
+      elif ! grep -q '<!-- hypt-engineer-start -->' "$TARGET_CLAUDE_MD" || ! grep -q '<!-- hypt-engineer-end -->' "$TARGET_CLAUDE_MD"; then
+        # Existing CLAUDE.md without complete hypt block — offer to enhance
         echo ""
         echo "Found existing ~/.claude/CLAUDE.md."
         echo "Want to enhance it with hypt engineering discipline?"
@@ -209,6 +209,7 @@ JSEOF
           [nN]*) echo "  Skipped. The starter is at: docs/starter-claude-md.md" ;;
           *)
             # Extract the content between markers from the starter file and append
+            [ -s "$TARGET_CLAUDE_MD" ] && [ "$(tail -c 1 "$TARGET_CLAUDE_MD" | wc -l)" -eq 0 ] && printf '\n' >> "$TARGET_CLAUDE_MD"
             printf '\n' >> "$TARGET_CLAUDE_MD"
             sed -n '/<!-- hypt-engineer-start -->/,/<!-- hypt-engineer-end -->/p' "$STARTER_FILE" >> "$TARGET_CLAUDE_MD"
             echo "  Engineering discipline added to ~/.claude/CLAUDE.md"
@@ -218,6 +219,7 @@ JSEOF
         # Already has hypt block — update it idempotently
         sed -i.bak '/<!-- hypt-engineer-start -->/,/<!-- hypt-engineer-end -->/d' "$TARGET_CLAUDE_MD"
         rm -f "$TARGET_CLAUDE_MD.bak"
+        [ -s "$TARGET_CLAUDE_MD" ] && [ "$(tail -c 1 "$TARGET_CLAUDE_MD" | wc -l)" -eq 0 ] && printf '\n' >> "$TARGET_CLAUDE_MD"
         printf '\n' >> "$TARGET_CLAUDE_MD"
         sed -n '/<!-- hypt-engineer-start -->/,/<!-- hypt-engineer-end -->/p' "$STARTER_FILE" >> "$TARGET_CLAUDE_MD"
       fi

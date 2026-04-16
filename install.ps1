@@ -191,8 +191,9 @@ if ($HasClaude) {
                     Write-Host "  Installed to ~/.claude/CLAUDE.md"
                     Write-Host "  You can customize it anytime — it's just a text file."
                 }
-            } elseif (-not (Select-String -Path $TargetClaudeMd -Pattern "hypt-engineer-start" -Quiet)) {
-                # Existing CLAUDE.md without hypt block — offer to enhance
+            } elseif (-not (Select-String -Path $TargetClaudeMd -Pattern "<!-- hypt-engineer-start -->" -SimpleMatch -Quiet) -or
+                     -not (Select-String -Path $TargetClaudeMd -Pattern "<!-- hypt-engineer-end -->" -SimpleMatch -Quiet)) {
+                # Existing CLAUDE.md without complete hypt block — offer to enhance
                 Write-Host ""
                 Write-Host "Found existing ~/.claude/CLAUDE.md."
                 Write-Host "Want to enhance it with hypt engineering discipline?"
@@ -204,22 +205,22 @@ if ($HasClaude) {
                     Write-Host "  Skipped. The starter is at: docs/starter-claude-md.md"
                 } else {
                     # Extract content between markers and append
-                    $StarterContent = Get-Content $StarterFile -Raw
+                    $StarterContent = Get-Content $StarterFile -Raw -Encoding UTF8
                     $Block = [regex]::Match($StarterContent, '(?s)(<!-- hypt-engineer-start -->.*?<!-- hypt-engineer-end -->)')
                     if ($Block.Success) {
-                        Add-Content -Path $TargetClaudeMd -Value "`n$($Block.Value)"
+                        Add-Content -Path $TargetClaudeMd -Value "`n$($Block.Value)" -Encoding UTF8
                     }
                     Write-Host "  Engineering discipline added to ~/.claude/CLAUDE.md"
                 }
             } else {
                 # Already has hypt block — update idempotently
-                $Content = Get-Content $TargetClaudeMd -Raw
+                $Content = Get-Content $TargetClaudeMd -Raw -Encoding UTF8
                 $Content = $Content -replace '(?s)<!-- hypt-engineer-start -->.*?<!-- hypt-engineer-end -->', ''
                 $Content = $Content.TrimEnd()
-                $StarterContent = Get-Content $StarterFile -Raw
+                $StarterContent = Get-Content $StarterFile -Raw -Encoding UTF8
                 $Block = [regex]::Match($StarterContent, '(?s)(<!-- hypt-engineer-start -->.*?<!-- hypt-engineer-end -->)')
                 if ($Block.Success) {
-                    "$Content`n`n$($Block.Value)" | Set-Content -Path $TargetClaudeMd -Encoding UTF8
+                    "$Content`n`n$($Block.Value)`n" | Set-Content -Path $TargetClaudeMd -Encoding UTF8
                 }
             }
         } else {
