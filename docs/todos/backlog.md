@@ -22,6 +22,8 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 - [ ] Add package manager auto-detection to all skills — detect from lockfiles (like /ci-setup does) so /fix, /touchup, /prototype etc. work correctly for npm/yarn/pnpm projects too
 - [ ] Add a /logs command for deployment error investigation — pull recent Vercel/Netlify build logs when /status or /restore shows something is down
 - [ ] Add /restore database auto-detection — detect Supabase, PlanetScale, or Neon from project config and provide platform-specific recovery steps automatically
+- [ ] Add post-mortem history viewer — a /post-mortems command to list all past incidents from docs/post-mortem/ with status
+- [ ] Add post-mortem → fix linking — when /fix resolves a post-mortem issue, auto-check off the action items in the post-mortem doc
 - [ ] Add a `--watch` mode to the security scanner for real-time feedback during local development
 - [x] Add a global Codex install/sync workflow — publish generated hypt skills to `~/.codex/skills` for use outside this repo
 - [ ] Add support for additional AI coding agents — the multi-agent installer framework supports detection; Cursor, Windsurf, or Aider could be added next
