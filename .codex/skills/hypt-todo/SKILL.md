@@ -178,6 +178,11 @@ If the push fails (no remote, no branch set up, etc.), that's fine — just comm
 
 ### Handling edge cases
 
+**User invokes `/todo` with no items or empty input:**
+Ask what they'd like to add:
+
+> What would you like to add? Just tell me in plain language — like "add dark mode" or "fix the login bug."
+
 **User says "update" or "change" an existing item:**
 Find the matching item and edit it in place. Show the before/after.
 

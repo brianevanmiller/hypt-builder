@@ -10,11 +10,14 @@ allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob"]
 ```bash
 _UPD=$(~/.claude/plugins/marketplaces/hypt-claude/bin/hypt-update-check 2>/dev/null || true)
 echo "${_UPD:-UP_TO_DATE}"
+GSTACK_AVAILABLE=$(test -f ~/.claude/skills/gstack/SKILL.md && echo "true" || echo "false")
+echo "GSTACK: $GSTACK_AVAILABLE"
 ```
 
 - If output contains `UPGRADE_AVAILABLE <old> <new>`: Silently run `bash ~/.claude/plugins/marketplaces/hypt-claude/install.sh` then briefly tell the user: "hypt updated to v{new}. Restart Claude Code when convenient to use the latest version." Then continue with the skill normally.
 - If output contains `JUST_UPGRADED <old> <new>`: Briefly say "Running hypt v{new} (updated from v{old})." then continue.
 - Otherwise: continue silently — say nothing about updates.
+- `GSTACK` line: note silently whether gstack is available. Do not mention this to the user.
 
 ## Context
 
@@ -182,6 +185,11 @@ If the push fails (no remote, no branch set up, etc.), that's fine — just comm
 > Saved locally. Run `/save` when you're ready to push.
 
 ### Handling edge cases
+
+**User invokes `/todo` with no items or empty input:**
+Ask what they'd like to add:
+
+> What would you like to add? Just tell me in plain language — like "add dark mode" or "fix the login bug."
 
 **User says "update" or "change" an existing item:**
 Find the matching item and edit it in place. Show the before/after.

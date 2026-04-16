@@ -43,15 +43,15 @@ Analyze these sources to understand what was built and what might come next:
 
 1. **Current PR** — use the title, body, and files changed from the Context section above. If no PR exists, use the branch name and recent commit messages (`git log --oneline -10`) to understand what was built.
 2. **All tracking files** — read every file listed in "Tracking files" from the Context section. This includes `docs/todos/backlog.md`, `TODOS.md`, `TODO.md`, `roadmap.md`, `tasks.md`, or any other markdown tracking file the user has. Collect all unchecked items (`- [ ]`) from every file. Note what's already tracked so you don't suggest duplicates.
-4. **Open GitHub issues:**
+3. **Open GitHub issues:**
    ```bash
    gh issue list --limit 10 --json number,title,labels 2>/dev/null
    ```
-5. **Code-level signals** — look for TODOs, FIXMEs, and hacks added in this PR:
+4. **Code-level signals** — look for TODOs, FIXMEs, and hacks added in this PR:
    ```bash
    (git diff main...HEAD 2>/dev/null || git diff origin/main...HEAD 2>/dev/null) | grep -E '^\+.*\b(TODO|FIXME|HACK|XXX)\b' || true
    ```
-6. **Missing test coverage** — check if files changed in the PR have corresponding test files:
+5. **Missing test coverage** — check if files changed in the PR have corresponding test files:
    ```bash
    (git diff main...HEAD --name-only 2>/dev/null || git diff origin/main...HEAD --name-only 2>/dev/null) | grep -E '\.(ts|tsx|js|jsx)$' | grep -v '\.test\.' | grep -v '\.spec\.' || true
    ```
@@ -155,7 +155,7 @@ Write the file with this content:
 ```markdown
 # Backlog
 
-What to work on next — updated automatically by `/close`. Feel free to edit, reorder, or check things off.
+What to work on next — updated automatically by `/todo` and `/close`. Feel free to edit, reorder, or check things off.
 
 ## Security
 <!-- Auth, permissions, data protection, input validation -->

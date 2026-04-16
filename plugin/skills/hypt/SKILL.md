@@ -81,7 +81,6 @@ When the user's request matches a shipping workflow action, invoke the appropria
 | "Autoclose", "auto merge", "merge without asking" | `hypt:autoclose` |
 | "Update docs", "refresh docs", "check docs", "documentation", "scan docs" | `hypt:docs` |
 | Set up CI, add CI, automatic testing, ci setup | `hypt:ci-setup` |
-| "Post-mortem", postmortem, incident report, what went wrong | `hypt:post-mortem` |
 
 ### Extended routes (when gstack is available)
 
