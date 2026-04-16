@@ -6,7 +6,7 @@ The hypt router is a single entry point that listens to what you say and
 sends you to the right skill automatically. Instead of memorizing 22
 different commands, you just describe what you want in plain English and
 the router figures out which skill to run. Think of it as a receptionist
-who directs you to the right department.
+who directs you to the right department. There are 20 skills in total.
 
 ## How Routing Works
 
@@ -53,7 +53,7 @@ then dispatches the matching skill:
 
 ## Skill Categories
 
-The 22 skills fall into three groups:
+The 20 skills fall into three groups:
 
 ### Atomic Skills (16)
 
@@ -200,11 +200,11 @@ A full project lifecycle from start to finish:
      ┌──────────────────────────────────────────────────┘
      │
      v
- 10          10a          11            12          13
- ┌─────────┐ ┌──────────┐ ┌───────────┐ ┌─────────┐ ┌──────┐
- │ restore │►│  post-   │►│   docs    │►│suggest- │►│close │
- │(if needed)││ mortem   │ └───────────┘ │  ions   │ └──────┘
- └─────────┘ └──────────┘               └─────────┘
+ 10             10a           11            12           13
+ ┌────────────┐ ┌───────────┐ ┌───────────┐ ┌──────────┐ ┌───────┐
+ │  restore   │►│   post-   │►│   docs    │►│suggest-  │►│ close │
+ │ (if needed)│ │  mortem   │ └───────────┘ │  ions    │ └───────┘
+ └────────────┘ └───────────┘               └──────────┘
 ```
 
 Most projects won't need every step. The router lets you jump to
