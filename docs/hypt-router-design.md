@@ -3,10 +3,10 @@
 ## Overview
 
 The hypt router is a single entry point that listens to what you say and
-sends you to the right skill automatically. Instead of memorizing 22
+sends you to the right skill automatically. Instead of memorizing 23
 different commands, you just describe what you want in plain English and
 the router figures out which skill to run. Think of it as a receptionist
-who directs you to the right department. There are 20 skills in total.
+who directs you to the right department. There are 21 skills in total.
 
 ## How Routing Works
 
@@ -48,14 +48,15 @@ then dispatches the matching skill:
   "something's wrong"           ───►  hypt:fix
   "ship it"                     ───►  hypt:close
   "yolo"                        ───►  hypt:yolo
+  "add to my backlog"            ───►  hypt:todo
   "what should I work on next"  ───►  hypt:suggestions
 ```
 
 ## Skill Categories
 
-The 20 skills fall into three groups:
+The 21 skills fall into three groups:
 
-### Atomic Skills (16)
+### Atomic Skills (17)
 
 These do one job. They are the building blocks.
 
@@ -80,10 +81,10 @@ These do one job. They are the building blocks.
  │  prototype   │ │     fix      │ │    docs      │
  │ Build it     │ │ Fix bugs     │ │ Update docs  │
  └──────────────┘ └──────────────┘ └──────────────┘
- ┌──────────────┐
- │   ci-setup   │
- │ Set up CI    │
- └──────────────┘
+ ┌──────────────┐ ┌──────────────┐
+ │   ci-setup   │ │     todo     │
+ │ Set up CI    │ │ Update list  │
+ └──────────────┘ └──────────────┘
 ```
 
 ### Composition Skills (2)
@@ -200,11 +201,11 @@ A full project lifecycle from start to finish:
      ┌──────────────────────────────────────────────────┘
      │
      v
- 10             10a           11            12           13
- ┌────────────┐ ┌───────────┐ ┌───────────┐ ┌──────────┐ ┌───────┐
- │  restore   │►│   post-   │►│   docs    │►│suggest-  │►│ close │
- │ (if needed)│ │  mortem   │ └───────────┘ │  ions    │ └───────┘
- └────────────┘ └───────────┘               └──────────┘
+ 10             10a           11            12       13          14
+ ┌────────────┐ ┌───────────┐ ┌───────────┐ ┌──────┐ ┌──────────┐ ┌───────┐
+ │  restore   │►│   post-   │►│   docs    │►│ todo │►│suggest-  │►│ close │
+ │ (if needed)│ │  mortem   │ └───────────┘ └──────┘ │  ions    │ └───────┘
+ └────────────┘ └───────────┘                        └──────────┘
 ```
 
 Most projects won't need every step. The router lets you jump to
@@ -230,7 +231,8 @@ whichever skill you need at any point.
 | 14 | fix             | Atomic      | Diagnose and fix bugs                                  | "fix", "bug", "broken", "not working", "error"          |
 | 15 | docs            | Atomic      | Update project documentation                           | "update docs", "refresh docs", "documentation"          |
 | 16 | ci-setup        | Atomic      | Set up continuous integration                          | "set up CI", "add CI", "automatic testing"              |
-| 17 | pipeline        | Composition | Full dev flow: research through saved PR               | "run pipeline", "review and test", "get this PR-ready"  |
-| 18 | autoclose       | Composition | Auto-merge, deploy, version bump, release              | "autoclose", "auto merge", "merge without asking"       |
-| 19 | go              | Shortcut    | Pipeline + confirmation + autoclose                    | "go", "go mode", "ship with confirmation"               |
-| 20 | yolo            | Shortcut    | Pipeline + autoclose, no confirmation                  | "yolo", "yolo it", "just ship it"                       |
+| 17 | todo            | Atomic      | Add or update items in your tracking file              | "todo", "add todo", "update backlog", "track this"      |
+| 18 | pipeline        | Composition | Full dev flow: research through saved PR               | "run pipeline", "review and test", "get this PR-ready"  |
+| 19 | autoclose       | Composition | Auto-merge, deploy, version bump, release              | "autoclose", "auto merge", "merge without asking"       |
+| 20 | go              | Shortcut    | Pipeline + confirmation + autoclose                    | "go", "go mode", "ship with confirmation"               |
+| 21 | yolo            | Shortcut    | Pipeline + autoclose, no confirmation                  | "yolo", "yolo it", "just ship it"                       |
