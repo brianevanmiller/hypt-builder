@@ -173,6 +173,61 @@ JSEOF
 
   # Read version for final output (may already be set)
   INSTALLED_VERSION="$VERSION"
+
+  # --- Offer starter CLAUDE.md ---
+  STARTER_FILE="$MARKETPLACE_DIR/docs/starter-claude-md.md"
+  TARGET_CLAUDE_MD="$CLAUDE_DIR/CLAUDE.md"
+
+  if [ -f "$STARTER_FILE" ]; then
+    if [ -t 0 ]; then
+      if [ ! -f "$TARGET_CLAUDE_MD" ]; then
+        # No existing CLAUDE.md — offer fresh install
+        echo ""
+        echo "Optional: install the hypt starter CLAUDE.md?"
+        echo "This gives Claude senior engineering habits — planning, verification,"
+        echo "code quality, and smart git practices — out of the box."
+        echo ""
+        read -r -p "Install starter CLAUDE.md? [Y/n] " response
+        case "$response" in
+          [nN]*) echo "  Skipped. You can find it later at: docs/starter-claude-md.md" ;;
+          *)
+            cp "$STARTER_FILE" "$TARGET_CLAUDE_MD"
+            echo "  Installed to ~/.claude/CLAUDE.md"
+            echo "  You can customize it anytime — it's just a text file."
+            ;;
+        esac
+      elif ! grep -q '<!-- hypt-engineer-start -->' "$TARGET_CLAUDE_MD" || ! grep -q '<!-- hypt-engineer-end -->' "$TARGET_CLAUDE_MD"; then
+        # Existing CLAUDE.md without complete hypt block — offer to enhance
+        echo ""
+        echo "Found existing ~/.claude/CLAUDE.md."
+        echo "Want to enhance it with hypt engineering discipline?"
+        echo "(planning, verification, code quality, smart git practices)"
+        echo "Your existing content will be preserved."
+        echo ""
+        read -r -p "Add engineering discipline to your CLAUDE.md? [Y/n] " response
+        case "$response" in
+          [nN]*) echo "  Skipped. The starter is at: docs/starter-claude-md.md" ;;
+          *)
+            # Extract the content between markers from the starter file and append
+            [ -s "$TARGET_CLAUDE_MD" ] && [ "$(tail -c 1 "$TARGET_CLAUDE_MD" | wc -l)" -eq 0 ] && printf '\n' >> "$TARGET_CLAUDE_MD"
+            printf '\n' >> "$TARGET_CLAUDE_MD"
+            sed -n '/<!-- hypt-engineer-start -->/,/<!-- hypt-engineer-end -->/p' "$STARTER_FILE" >> "$TARGET_CLAUDE_MD"
+            echo "  Engineering discipline added to ~/.claude/CLAUDE.md"
+            ;;
+        esac
+      else
+        # Already has hypt block — update it idempotently
+        sed -i.bak '/<!-- hypt-engineer-start -->/,/<!-- hypt-engineer-end -->/d' "$TARGET_CLAUDE_MD"
+        rm -f "$TARGET_CLAUDE_MD.bak"
+        [ -s "$TARGET_CLAUDE_MD" ] && [ "$(tail -c 1 "$TARGET_CLAUDE_MD" | wc -l)" -eq 0 ] && printf '\n' >> "$TARGET_CLAUDE_MD"
+        printf '\n' >> "$TARGET_CLAUDE_MD"
+        sed -n '/<!-- hypt-engineer-start -->/,/<!-- hypt-engineer-end -->/p' "$STARTER_FILE" >> "$TARGET_CLAUDE_MD"
+      fi
+    else
+      # Non-interactive (piped install) — skip prompt, don't install without consent
+      echo "  Starter CLAUDE.md available at: $MARKETPLACE_DIR/docs/starter-claude-md.md"
+    fi
+  fi
 fi
 
 # ============================================================

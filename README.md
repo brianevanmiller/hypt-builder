@@ -41,6 +41,12 @@ irm https://raw.githubusercontent.com/brianevanmiller/hypt-claude/main/install.p
 
 After installation, restart your agent.
 
+### Starter CLAUDE.md
+
+During installation, hypt offers to install a starter `~/.claude/CLAUDE.md` file. This gives Claude built-in engineering discipline — planning before building, verifying work, learning from corrections, and following git best practices. It's optional and fully customizable.
+
+If you already have a CLAUDE.md, hypt offers to enhance it by appending the engineering discipline section — your existing content is preserved. The starter is always available at [`docs/starter-claude-md.md`](docs/starter-claude-md.md) for reference.
+
 ## Codex CLI Support
 
 **Global install** (for end users): The installer auto-detects Codex CLI and installs adapted skill files to `~/.hypt/skills/` with a global instruction block in `~/.codex/instructions.md`. Skills are available via natural language (e.g., "save my changes", "review my code").
