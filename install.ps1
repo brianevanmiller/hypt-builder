@@ -168,6 +168,64 @@ if ($HasClaude) {
     } else {
         Write-Host "  Note: auto-updates require Git Bash on PATH. To update manually, re-run this script."
     }
+
+    # --- Offer starter CLAUDE.md ---
+    $StarterFile = Join-Path $MarketplaceDir "docs\starter-claude-md.md"
+    $TargetClaudeMd = Join-Path $ClaudeDir "CLAUDE.md"
+
+    if (Test-Path $StarterFile) {
+        $isInteractive = [Environment]::UserInteractive -and -not ([Console]::IsInputRedirected)
+        if ($isInteractive) {
+            if (-not (Test-Path $TargetClaudeMd)) {
+                # No existing CLAUDE.md — offer fresh install
+                Write-Host ""
+                Write-Host "Optional: install the hypt starter CLAUDE.md?"
+                Write-Host "This gives Claude senior engineering habits — planning, verification,"
+                Write-Host "code quality, and smart git practices — out of the box."
+                Write-Host ""
+                $response = Read-Host "Install starter CLAUDE.md? [Y/n]"
+                if ($response -match '^[nN]') {
+                    Write-Host "  Skipped. You can find it later at: docs/starter-claude-md.md"
+                } else {
+                    Copy-Item $StarterFile $TargetClaudeMd
+                    Write-Host "  Installed to ~/.claude/CLAUDE.md"
+                    Write-Host "  You can customize it anytime — it's just a text file."
+                }
+            } elseif (-not (Select-String -Path $TargetClaudeMd -Pattern "hypt-engineer-start" -Quiet)) {
+                # Existing CLAUDE.md without hypt block — offer to enhance
+                Write-Host ""
+                Write-Host "Found existing ~/.claude/CLAUDE.md."
+                Write-Host "Want to enhance it with hypt engineering discipline?"
+                Write-Host "(planning, verification, code quality, smart git practices)"
+                Write-Host "Your existing content will be preserved."
+                Write-Host ""
+                $response = Read-Host "Add engineering discipline to your CLAUDE.md? [Y/n]"
+                if ($response -match '^[nN]') {
+                    Write-Host "  Skipped. The starter is at: docs/starter-claude-md.md"
+                } else {
+                    # Extract content between markers and append
+                    $StarterContent = Get-Content $StarterFile -Raw
+                    $Block = [regex]::Match($StarterContent, '(?s)(<!-- hypt-engineer-start -->.*?<!-- hypt-engineer-end -->)')
+                    if ($Block.Success) {
+                        Add-Content -Path $TargetClaudeMd -Value "`n$($Block.Value)"
+                    }
+                    Write-Host "  Engineering discipline added to ~/.claude/CLAUDE.md"
+                }
+            } else {
+                # Already has hypt block — update idempotently
+                $Content = Get-Content $TargetClaudeMd -Raw
+                $Content = $Content -replace '(?s)<!-- hypt-engineer-start -->.*?<!-- hypt-engineer-end -->', ''
+                $Content = $Content.TrimEnd()
+                $StarterContent = Get-Content $StarterFile -Raw
+                $Block = [regex]::Match($StarterContent, '(?s)(<!-- hypt-engineer-start -->.*?<!-- hypt-engineer-end -->)')
+                if ($Block.Success) {
+                    "$Content`n`n$($Block.Value)" | Set-Content -Path $TargetClaudeMd -Encoding UTF8
+                }
+            }
+        } else {
+            Write-Host "  Starter CLAUDE.md available at: $MarketplaceDir\docs\starter-claude-md.md"
+        }
+    }
 }
 
 # ============================================================
