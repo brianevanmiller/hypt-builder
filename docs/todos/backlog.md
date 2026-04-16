@@ -25,7 +25,7 @@ What to work on next — updated automatically by `/close`. Feel free to edit, r
 - [ ] Add a `--watch` mode to the security scanner for real-time feedback during local development
 - [x] Add a global Codex install/sync workflow — publish generated hypt skills to `~/.codex/skills` for use outside this repo
 - [ ] Add support for additional AI coding agents — the multi-agent installer framework supports detection; Cursor, Windsurf, or Aider could be added next
-- [ ] Regenerate Codex adapted skills to include hypt-docs and hypt-post-mortem — run `node scripts/sync-codex-support.mjs` after merging
+- [x] Regenerate Codex adapted skills to include hypt-docs and hypt-post-mortem — run `node scripts/sync-codex-support.mjs` after merging
 
 ## Performance
 <!-- Speed, loading, optimization -->
