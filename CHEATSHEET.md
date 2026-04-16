@@ -3,7 +3,7 @@
 > Your quick reference for working with your AI coding assistant.
 > Save or print this page so you always have it handy.
 >
-> **hypt v0.23.0**
+> **hypt v0.24.1**
 
 ---
 
@@ -63,4 +63,4 @@ Looks at your project and tells you the most impactful thing to work on. Pick on
 
 ---
 
-*This cheatsheet is for hypt v0.23.0. If your version is newer, some commands may have changed. Run `/hypt` to see the latest options.*
+*This cheatsheet is for hypt v0.24.1. If your version is newer, some commands may have changed. Run `/hypt` to see the latest options.*

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.24.1 — 2026-04-16
+
+- Add printable cheatsheet (`CHEATSHEET.md`) — a one-page quick reference with the 4 most important commands and plain-English trigger phrases for non-coders
+- Integrate cheatsheet into `/start` onboarding flow — users are offered the reference after setup completes
+- Update README and router design doc to link to the cheatsheet
+
 ## v0.24.0 — 2026-04-16
 
 - Add starter CLAUDE.md — a curated engineering discipline template offered during install that gives Claude senior engineering habits (planning, verification, self-improvement, git best practices)
