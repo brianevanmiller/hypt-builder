@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.26.0 — 2026-04-28
+
+- Extend `/start` onboarding for **private, integration-heavy, production-grade** apps without changing the default flow:
+  - **Q5b — allowlist mode** (just me / a few people / open). Solo and team modes scaffold an `allowed_emails` table + `before insert` trigger on `auth.users` so only listed emails can sign in
+  - **Q7b — external services** (Google, Notion, Airtable, Slack, custom). Scaffolds an `integrations` table with per-user RLS, `lib/integrations/<provider>.ts` stubs, an OAuth callback route (Next.js 15 awaited `params`), and an hourly Vercel cron at `/api/cron/sync` gated by `CRON_SECRET`
+  - **Step 4c.5 — production-grade?** Optional branch that appends a Production Hardening checklist (Sentry, structured logs, backup verification, RLS audit, rate limiting, secret rotation, uptime monitoring) to the generated build plan
+- Add `plugin/templates/allowlist.sql` and `plugin/templates/integrations.sql` for /start to copy into scaffolded projects
+- README: new "Brand new to this?" section with one-line install commands for Claude Code and Codex CLI
+
 ## v0.25.0 — 2026-04-19
 
 - **Rename `hypt-claude` → `hypt-builder`** — project now supports Claude Code, Codex CLI, Gemini CLI, and other AI coding agents (no longer Claude-specific). Marketplace folder path changed from `~/.claude/plugins/marketplaces/hypt-claude/` to `~/.claude/plugins/marketplaces/hypt-builder/` — **existing users must reinstall** (see README)
