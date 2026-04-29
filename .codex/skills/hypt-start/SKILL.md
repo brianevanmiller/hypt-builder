@@ -107,6 +107,49 @@ If `GSTACK` is already `true`: skip this phase entirely.
 
 ---
 
+### Phase 0c: Recommend Matt Pocock's companion skills (if not installed)
+
+Skip this phase entirely if both `MATT_GRILL` and `MATT_GUARDRAILS` from the preamble are already `true`.
+
+Otherwise:
+
+> One more optional add-on. **Matt Pocock** (the [Total TypeScript](https://www.totaltypescript.com/) and [AI Hero](https://www.aihero.dev/) guy) maintains a few skills that pair really well with how hypt works:
+>
+> - **`/grill-me`** — gets you relentlessly interviewed about your plan, one question at a time, until every decision is nailed down (great for surfacing things you didn't know you needed to decide)
+> - **git-guardrails** — installs a safety net that blocks dangerous git commands (`push --force`, `reset --hard`, etc.) before they can run
+>
+> Both are MIT-licensed, totally optional, and complement gstack and hypt without overlapping.
+>
+> **Install Matt's companion skills?** (yes / no / pick / tell me more)
+
+If "tell me more": explain that Matt Pocock runs [aihero.dev](https://www.aihero.dev/) (AI engineering courses) and [totaltypescript.com](https://www.totaltypescript.com/) (the de facto TypeScript course), and that his skills repo is open-source at github.com/mattpocock/skills. Then re-ask.
+
+If "pick": present each of the two skills with its description and ask yes/no for each one. Track which ones the user accepted.
+
+If "yes": install both (skipping any whose flag is already `true`).
+
+If "no": continue without them.
+
+To install, run **one command per skill** that needs installing. Use `npx` here (Phase 0c runs before bun is installed in Phase 3) and let the `skills` CLI auto-detect whichever agent is set up (Codex, Codex, etc.):
+
+```bash
+npx skills@latest add mattpocock/skills/grill-me -g -y
+npx skills@latest add mattpocock/skills/git-guardrails-claude-code -g -y
+```
+
+After install, set the corresponding `MATT_*` flag to `true` for the rest of the session.
+
+If `git-guardrails-claude-code` was just installed, immediately invoke it so the actual hooks get wired up:
+
+- Invoke the Skill tool with skill: `git-guardrails-claude-code`
+- When it asks scope, answer "all projects" (global) on the user's behalf — that matches the global install we just did.
+
+If the user later asks "what did you install?", point them at `~/.claude/skills/` for the SKILL.md files and `~/.claude/settings.json` for the git-guardrails hook.
+
+> **Note on Matt's other skills (`to-prd` / `to-issues`):** Matt also publishes skills that turn conversations into PRDs and break plans into tasks — but they hardcode GitHub Issues as the output. hypt prefers `docs/` files and `docs/todos/backlog.md` for tracking, so we don't recommend those two by default. If a hypt-native equivalent ships in the future (writing to `docs/` and optionally syncing to Linear/Notion/etc.), `/start` will offer it here.
+
+---
+
 ### Phase 1: Tell me about your idea
 
 Ask these questions **one at a time**. Wait for a response before asking the next one. After each answer, briefly acknowledge it before moving on.
@@ -940,35 +983,48 @@ If "Prototype is fine" (or no answer): leave the plan as-is and continue to comm
 git add docs/ && git commit -m "docs: add app description and prototype plan" && git push
 ```
 
-If `GSTACK` is `true`, tell the user:
+Build the closing message dynamically based on which optional skills are available.
+
+**Always include** the project status block:
 
 > Your project is set up and your plan is ready! Here's what was created:
 >
 > - **App description:** `docs/YYYY-MM-DD-<idea>.md` — the big picture of your app
 > - **Build plan:** `docs/YYYY-MM-DD-<idea>-plan.md` — the step-by-step plan for what to build
->
+
+If `MATT_GRILL=true`, add a "Before you build" callout:
+
+> Want me to **stress-test the plan** before you build? Say **/grill-me** and I'll walk every decision branch with you, one question at a time.
+
+Then the workflow block. If `GSTACK` is `true`:
+
 > Here's your development workflow:
 >
 > 1. **`/prototype`** — Build your app from the plan
 > 2. After the build, I'll automatically test it in a real browser and check the design
 > 3. **`/fix`** — Fix any bugs that come up
 > 4. **`/close`** — Merge and deploy to production
->
-> Anytime: `/save` (save work) · `/status` (is my site up?) · `/suggestions` (what's next?)
->
-> Extras: `/cso` (security audit) · `/office-hours` (rethink product) · `/design-review` (visual polish)
->
-> You can also review or tweak either document before building — they're just text files.
 
-If `GSTACK` is `false`, tell the user:
+If `GSTACK` is `false`:
 
-> Your project is set up and your plan is ready! Here's what was created:
->
-> - **App description:** `docs/YYYY-MM-DD-<idea>.md` — the big picture of your app
-> - **Build plan:** `docs/YYYY-MM-DD-<idea>-plan.md` — the step-by-step plan for what to build
->
 > When you're ready to start building, just say **`/prototype`** and point it to your plan file. It'll handle the rest — implementing the features, reviewing the code, running tests, and getting it live.
->
+
+Then the "Anytime" line (always shown):
+
+> Anytime: `/save` (save work) · `/status` (is my site up?) · `/suggestions` (what's next?)
+
+Then a single **Extras** line. Build it from whichever of these are true, joining with ` · `:
+
+- Always: `/todo` (capture an idea)
+- If `GSTACK=true`: `/cso` (security audit), `/office-hours` (rethink product), `/design-review` (visual polish)
+- If `MATT_GRILL=true`: `/grill-me` (stress-test plan)
+
+Format as: `> Extras: \`$hypt-todo\` (capture an idea) · \`/cso\` (security audit) · ...`
+
+If neither `GSTACK` nor any `MATT_*` flag is true, omit the Extras line entirely.
+
+Close with:
+
 > You can also review or tweak either document before building — they're just text files.
 
 ---
