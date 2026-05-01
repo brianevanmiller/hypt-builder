@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.28.0 — 2026-05-01
+
+- **Single-PR release flow.** `autoclose` now bumps `VERSION` / `plugin.json` / `CHANGELOG.md` on the feature branch BEFORE merging, so a feature and its version bump squash into one commit on `main`. Eliminates the long-standing "double PR" pattern (every release used to take a feature PR plus a separate `chore: bump version to vX.Y.Z` PR). After merge, `autoclose` only needs to run `gh release create --generate-notes` — no second branch, no second wait for required checks
+- `autoclose` Step 6 now polls `mergeStateStatus` until `CLEAN` before merging, and falls back to `git fetch origin main` when a separate Conductor worktree already has `main` checked out (previous behavior failed with `'main' is already used by worktree`)
+
 ## v0.27.1 — 2026-05-01
 
 - `/start` Phase 3: lock in GitHub-first signup ordering. Bun → GitHub → Vercel → Supabase → Stripe → Resend → Domain, with a note explaining that GitHub MUST come first so users can `Continue with GitHub` to sign up for everything else in one click. Phase 3a silent detection reordered so `gh auth status` runs before any `bunx vercel`/`bunx supabase` invocation, avoiding a Vercel CLI download before GitHub is even checked
