@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.27.1 — 2026-05-01
+
+- `/start` Phase 3: lock in GitHub-first signup ordering. Bun → GitHub → Vercel → Supabase → Stripe → Resend → Domain, with a note explaining that GitHub MUST come first so users can `Continue with GitHub` to sign up for everything else in one click. Phase 3a silent detection reordered so `gh auth status` runs before any `bunx vercel`/`bunx supabase` invocation, avoiding a Vercel CLI download before GitHub is even checked
+
 ## v0.27.0 — 2026-04-29
 
 - **No-terminal install path for non-coders.** README now leads with a 4-step GUI flow (Claude Desktop → Code workspace → paste install line → `/start`). Terminal one-liners demoted to "Manual install (for developers)"
