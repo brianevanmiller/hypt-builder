@@ -100,7 +100,89 @@ EOF
 )"
 ```
 
-### Step 5: Ensure PR exists, then merge
+### Step 5: Version bump on the feature branch (before merge)
+
+To avoid the "double PR" pattern (one PR for the feature, then a second PR just for the version bump), the version bump happens on the feature branch BEFORE merging. The squash merge will roll the version bump into the same commit on `main`, then Step 7 just creates the GitHub release tag — no second PR needed.
+
+**Get the latest release version:**
+```bash
+gh release view --json tagName --jq '.tagName' 2>/dev/null
+```
+
+If no releases exist, start from `v0.1.0`. Otherwise, parse the tag (e.g. `v0.5.0`) into major.minor.patch.
+
+**Determine bump type from the PR:**
+
+Use the PR title and commit messages (already available from earlier steps) to decide:
+
+| PR content | Bump | Example |
+|-----------|------|---------|
+| Bug fixes, chore, docs, small tweaks, touchups, config changes | **Patch** | v0.5.0 → v0.5.1 |
+| New features, new skills/commands, significant enhancements, breaking changes | **Minor** | v0.5.0 → v0.6.0 |
+
+**If ambiguous** (e.g. a mix of features and fixes, or unclear scope), ask the user:
+
+> Version bump: the current release is `v0.5.0`. Should the next version be:
+> 1. **v0.5.1** (patch — bug fixes / small changes)
+> 2. **v0.6.0** (minor — new features / enhancements)
+
+Wait for the user's response before continuing.
+
+**Update version files:**
+
+```bash
+# Update VERSION file (no v prefix)
+echo "<NEW_VERSION>" > VERSION
+
+# Update plugin.json version field — edit the "version": "..." line in plugin/.claude-plugin/plugin.json
+```
+
+**Update changelog:**
+
+Update `CHANGELOG.md` at the repo root. If it doesn't exist, create it with a header.
+
+Get the previous release tag to scope the changes:
+```bash
+PREV_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null)
+git log ${PREV_TAG}..HEAD --oneline --no-merges 2>/dev/null
+```
+
+Write a new entry at the top of CHANGELOG.md (below the header), using this format:
+
+```markdown
+## v<NEW_VERSION> — <YYYY-MM-DD>
+
+- <One-line summary of the PR that's about to ship>
+- <Any other notable changes from the commits, if multiple>
+```
+
+Keep entries concise — one bullet per logical change, no commit hashes, no author names. Write from the user's perspective.
+
+**Commit and push the bump on the feature branch:**
+```bash
+git add VERSION plugin/.claude-plugin/plugin.json CHANGELOG.md
+git commit -m "chore: bump version to v<NEW_VERSION>"
+git push
+```
+
+**Refresh the PR description** to mention the version bump so reviewers aren't surprised. Re-run the polish from Step 4 with an extra line in the Summary noting `Version: v<PREV> → v<NEW>`. Quick edit:
+
+```bash
+gh pr edit --body "$(cat <<'EOF'
+## Summary
+- <existing summary bullets>
+- Version: v<PREV> → v<NEW_VERSION>
+
+## Changes
+<existing changes bullets>
+
+---
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+EOF
+)"
+```
+
+### Step 6: Ensure PR exists, then merge
 
 Check if a PR exists for this branch:
 ```bash
@@ -113,6 +195,11 @@ git push -u origin HEAD
 gh pr create --fill
 ```
 
+Wait for required status checks to pass (the version bump push will have triggered a fresh run). Poll until the PR is mergeable:
+```bash
+until [ "$(gh pr view --json mergeStateStatus --jq '.mergeStateStatus')" = "CLEAN" ]; do sleep 10; done
+```
+
 Then merge:
 ```bash
 gh pr merge --squash --delete-branch
@@ -123,12 +210,12 @@ If merge fails:
 - If there are merge conflicts: report the conflicts and stop.
 - If the PR is not in a mergeable state: report why and stop.
 
-After successful merge, switch to main and pull:
+After successful merge, switch to main and pull (skip if a separate worktree already has `main` checked out — fetch only):
 ```bash
-git checkout main && git pull
+git checkout main && git pull 2>/dev/null || git fetch origin main
 ```
 
-### Step 6: Check deployment
+### Step 7: Check deployment
 
 Detect the deployment platform:
 ```bash
@@ -156,7 +243,7 @@ Then get status for each:
 gh api "repos/$REPO/deployments/<ID>/statuses" --jq '.[0] | {state, target_url, description}' 2>/dev/null
 ```
 
-**Note:** After merging, prefer Method 2 (GitHub Deployments API) for production deployment status, since PR check runs may not update after merge. You are now on `main` after `git checkout main && git pull` from Step 5.
+**Note:** After merging, prefer Method 2 (GitHub Deployments API) for production deployment status, since PR check runs may not update after merge. You are now on `main` (or have fetched it) after Step 6.
 
 **Check for Vercel team access block:**
 
@@ -181,7 +268,7 @@ Report whatever you find:
 If no deployment info is available, say:
 > Deployment info not available. Check your deployment dashboard for status.
 
-### Step 7: Review CI for the new feature
+### Step 8: Review CI for the new feature
 
 After merging, briefly assess whether the feature that was just shipped warrants any CI additions. This is NOT about adding everything — only suggest changes that directly protect against regressions in the new feature.
 
@@ -212,84 +299,21 @@ Read the merged PR title/body and recent commits to understand what was shipped.
 
 Keep it to ONE suggestion max. If nothing is high-value, say nothing about CI — don't clutter the close summary.
 
-### Step 8: Version bump and release
+### Step 9: Create the GitHub release tag
 
-After merging, automatically bump the version and create a GitHub release.
-
-**Get the latest release version:**
-```bash
-gh release view --json tagName --jq '.tagName' 2>/dev/null
-```
-
-If no releases exist, start from `v0.1.0`. Otherwise, parse the tag (e.g. `v0.5.0`) into major.minor.patch.
-
-**Determine bump type from the PR:**
-
-Use the PR title and commit messages (already available from earlier steps) to decide:
-
-| PR content | Bump | Example |
-|-----------|------|---------|
-| Bug fixes, chore, docs, small tweaks, touchups, config changes | **Patch** | v0.5.0 → v0.5.1 |
-| New features, new skills/commands, significant enhancements, breaking changes | **Minor** | v0.5.0 → v0.6.0 |
-
-**If ambiguous** (e.g. a mix of features and fixes, or unclear scope), ask the user:
-
-> Version bump: the current release is `v0.5.0`. Should the next version be:
-> 1. **v0.5.1** (patch — bug fixes / small changes)
-> 2. **v0.6.0** (minor — new features / enhancements)
-
-Wait for the user's response before continuing.
-
-**Update version files and create release:**
+The version files were already bumped on the feature branch in Step 5 and are now on `main` from the squash merge. All that's left is to tag the release:
 
 ```bash
-# Update VERSION file (no v prefix)
-echo "<NEW_VERSION>" > VERSION
-
-# Update plugin.json version field
-# Use sed or edit the file to set "version": "<NEW_VERSION>"
-```
-
-**Update changelog:**
-
-After determining the new version, update `CHANGELOG.md` at the repo root. If it doesn't exist, create it with a header.
-
-Get the previous release tag to scope the changes:
-```bash
-PREV_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null)
-```
-
-Generate the entry by reading the PR title and commits since the previous tag:
-```bash
-git log ${PREV_TAG}..HEAD --oneline --no-merges 2>/dev/null
-```
-
-Write a new entry at the top of CHANGELOG.md (below the header), using this format:
-
-```markdown
-## v<NEW_VERSION> — <YYYY-MM-DD>
-
-- <One-line summary of the PR that was just merged>
-- <Any other notable changes from the commits, if multiple>
-```
-
-Keep entries concise — one bullet per logical change, no commit hashes, no author names. Write from the user's perspective (what changed), not the developer's (what files were touched).
-
-Then commit, push, and release:
-```bash
-git add VERSION plugin/.claude-plugin/plugin.json CHANGELOG.md
-git commit -m "chore: bump version to v<NEW_VERSION>"
-git push origin main
 gh release create v<NEW_VERSION> --title "v<NEW_VERSION>" --generate-notes
 ```
 
 Capture the release URL from the output.
 
-### Step 9: Final summary
+### Step 10: Final summary
 
 ```
 Closed!
-- PR #X merged to main
+- PR #X merged to main (feature + version bump in one commit)
 - Released: v<NEW_VERSION> (<release URL>)
 - Completed: <N items checked off in docs / no items matched>
 - Backlog: <N items added to docs/todos/backlog.md / no changes>
