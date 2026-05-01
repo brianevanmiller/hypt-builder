@@ -296,13 +296,16 @@ Before presenting any setup steps, say:
 
 #### Step 3a: Detect what's already in place
 
-Run these checks silently — do NOT show the output to the user:
+Run these checks silently — do NOT show the output to the user. Order matters: check Bun and GitHub first (foundational), then the GitHub-dependent services (Vercel, Supabase) — this also avoids invoking `bunx` for Vercel/Supabase before we know whether the user even has GitHub set up.
 
 ```bash
 bun --version 2>&1
 ```
 ```bash
 gh auth status 2>&1
+```
+```bash
+git remote get-url origin 2>&1
 ```
 ```bash
 bunx vercel whoami 2>&1
@@ -312,9 +315,6 @@ bunx supabase --version 2>&1
 ```
 ```bash
 bunx supabase projects list 2>&1
-```
-```bash
-git remote get-url origin 2>&1
 ```
 ```bash
 ls .env.local 2>/dev/null && echo "exists" || echo "missing"
@@ -335,6 +335,8 @@ Skip to Phase 4.
 #### Step 3b: Account signup and CLI setup
 
 Present only the steps that are needed. Wait for confirmation after each one before moving on.
+
+**Order matters — always present these in the exact sequence below: Bun → GitHub → Vercel → Supabase → Stripe → Resend → Domain.** GitHub MUST come before Vercel, Supabase, and Resend, because all three offer "Continue with GitHub" as their fastest signup option. If the user creates GitHub first, every subsequent service is a one-click signup using that account. Do NOT reorder these steps even if some are already set up — just skip the ones that are already configured and continue with the next missing one in this order.
 
 **Bun** (if `bun --version` fails)
 
