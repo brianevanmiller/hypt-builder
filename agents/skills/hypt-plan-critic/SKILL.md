@@ -1,323 +1,72 @@
 ---
 name: hypt-plan-critic
-description: "Reviews an implementation plan for gaps and risks. Use before building from a non-trivial plan."
+description: "Stress-tests a non-trivial implementation plan against the request and repository. Use before hypt-build implements planned work or when the user asks for plan review."
 metadata:
-  short-description: "Review a Plan Before Building"
+  short-description: "Stress-test an Implementation Plan"
 ---
 
-# hypt-plan-critic — Review a Plan Before Building
+# hypt-plan-critic — Stress-test a Plan
 
-## Context
+Turn a plausible plan into an executable one. Review the plan against both the originating request and repository evidence.
 
-Before starting, gather context by running:
+## Inputs
 
-- Run `git branch --show-current` to capture Branch.
+Require the plan and original request. Locate the plan from an explicit path, current conversation, or matching `docs/` file. Ask only when more than one candidate remains.
 
-- Docs directory: `ls docs/*.md 2>/dev/null || echo "No docs yet"`
-- Plan files: `ls docs/*-plan*.md docs/roadmap.md TODO.md TODOS.md docs/todos/backlog.md 2>/dev/null || echo "No plans found"`
+Pipeline mode comes from `hypt-build`: update the plan autonomously and return control. Standalone mode presents decisions to the user.
 
-## Instructions
+## 1. Ground
 
-This skill critically reviews any implementation plan — features, bugfixes, refactors, or anything else — to catch gaps, ambiguities, and risks **before** code is written, when they're cheap to fix.
+Read repository instructions and the code, schemas, tests, configs, and docs the plan expects to change. Verify every named file, interface, command, and dependency rather than trusting the plan.
 
-It dynamically adapts its review depth based on task complexity. Small tasks get a quick inline check; larger tasks get parallel subagent analysis.
+Completion: each plan step points to a real seam or explicitly creates one.
 
-**Priority order:** Plan correctness > Codebase understanding > Completeness > Security > Logic gaps
+## 2. Size the review
 
-This skill can be invoked three ways:
-- **Standalone:** User invokes `hypt-plan-critic` — full interactive flow
-- **From `hypt-prototype`:** Called automatically as Step 0a — streamlined flow (still asks blocker questions, but proposes defaults for lesser issues)
-- **From `hypt-build`:** Called autonomously as part of the pipeline — fully non-interactive. Makes its own calls on all non-blocker issues, updates the plan file directly, and returns control immediately.
+Use a quick pass only when the work is local, reversible, and has no auth, data, payment, external integration, or cross-module effect. Everything else gets the full rubric.
 
----
+## 3. Apply the rubric
 
-### Step 0: Get the plan and original request
+Review in this order:
 
-**Required inputs:** This skill needs TWO things for a thorough review:
-1. The plan content (file path or text)
-2. The original user request / task description (so it can evaluate whether the plan addresses the problem)
+1. **Intent:** every requested behavior and acceptance criterion is represented.
+2. **Sequence:** dependencies are ordered and each step ends in a verifiable state.
+3. **Data and security:** auth, authorization, validation, secrets, migrations, destructive behavior, and tenant boundaries are explicit.
+4. **Design:** ownership, interface, error modes, external seams, and affected callers are coherent; avoid speculative abstractions.
+5. **Operations:** environment, rollout, rollback, observability, and post-merge work are covered when relevant.
+6. **Proof:** each distinct behavior has the lightest credible check, including a real user path for user-facing work.
 
-If a plan file path was provided (from `hypt-prototype`, `hypt-build`, or the user), use it directly.
+Classify findings:
 
-If called from `hypt-prototype` or `hypt-build`, both should be provided by the caller.
+- **Blocker:** implementation would guess, break a contract, risk security/data, or lack a credible proof path.
+- **Improvement:** the plan remains executable but should be clearer, smaller, or better ordered.
 
-If called standalone:
-- If no plan was provided, ask:
-  > Which plan should I review? Options:
-  > - A `.md` file path (e.g., `docs/2026-04-13-my-app-plan.md` or `docs/roadmap.md`)
-  > - Paste the plan text here
+Completion: every rubric branch is either addressed or marked not applicable with repository evidence.
 
-- If no original request was provided, ask:
-  > What was the original request or goal this plan is meant to address?
+## 4. Resolve
 
-Wait for the user's response before continuing.
+In pipeline mode:
 
----
+- Repair improvements directly in the plan.
+- Choose a repository-consistent default for reversible issues.
+- Return blockers to `hypt-build` with the exact missing decision.
 
-### Step 1: Read the plan and gather context
+In standalone mode:
 
-Read the plan file fully.
+- Present blockers first with a recommended resolution.
+- Apply accepted changes to the existing plan rather than creating an addendum.
 
-Then gather additional context:
-- If the plan references specific files, spot-check that they exist and contain what the plan assumes (use search/file discovery)
-- If there's a companion description or issue linked, read it for additional context
-- If the plan is at `docs/YYYY-MM-DD-<idea>-plan.md`, check for a companion `docs/YYYY-MM-DD-<idea>.md` and read it if found — it provides business context
+Keep rationale near the decision it changes. Avoid review transcripts and duplicate summaries.
 
----
+## Return
 
-### Step 2: Assess task complexity
+Report:
 
-Based on the plan content, classify the task as **small** or **large**.
+- Plan path
+- Complexity: quick or full
+- Blockers resolved or still open
+- Material improvements applied
+- Evidence inspected
+- Verdict: executable or blocked
 
-**Small** — ALL of these are true:
-- Plan modifies ≤3 files
-- Task is a straightforward bugfix, config change, or small isolated feature
-- Plan is under ~50 lines
-- No architectural decisions or cross-cutting concerns
-- No database schema changes
-- No new public API surfaces
-
-**Large** — ANY of these is true:
-- Plan modifies 4+ files
-- Task involves a new feature, refactor, or multi-component change
-- Plan is 50+ lines or references multiple subsystems
-- Architectural decisions are involved (new patterns, abstractions, service boundaries)
-- Database schema changes or migrations
-- Cross-cutting concerns (auth, logging, error handling changes)
-
-**Err on the side of "small" for borderline cases.** The cost of over-analyzing a small change is higher than under-analyzing it.
-
-If **small**, proceed to Step 3S (Quick Review).
-If **large**, proceed to Step 3L (Deep Review).
-
----
-
-### Step 3S: Quick Review (small tasks only)
-
-Do a quick inline logic check — no subagents needed:
-
-1. **Problem-solution match:** Does the plan actually address the stated problem/request?
-2. **File verification:** Do the files and functions mentioned in the plan actually exist in the codebase? (Use search/file discovery to spot-check the key ones)
-3. **Obvious gaps:** Any missing error handling, edge cases, or logical contradictions?
-4. **Pattern conformance:** Does the approach follow existing codebase patterns? (Quick check — don't over-research)
-
-If issues found, categorize them (blocker / important / nice-to-have) and proceed to Step 4.
-If no issues found, proceed directly to Step 6 (confirm readiness).
-
----
-
-### Step 3L: Deep Review (large tasks)
-
-Spawn parallel sub-agents to launch BOTH agents in a SINGLE message (parallel execution). Provide each agent with: the full plan text, the original user request, and the current branch name.
-
-**Agent 1 — Research Thoroughness**
-> You are evaluating whether an implementation plan demonstrates sufficient understanding of the codebase it will modify.
->
-> Original request: {original_request}
-> Plan: {plan_text}
-> Branch: {branch}
->
-> Your job:
-> - Read the files the plan proposes to modify. Does the plan accurately describe their current state?
-> - Check for related documentation (README, docs/, inline comments) that the plan should reference
-> - Look for existing coding patterns, conventions, or utilities the plan should leverage but doesn't mention
-> - Identify any app behaviors, edge cases, or integrations the plan might not account for
-> - Check if there are tests, types, or validation patterns that the plan should be aware of
->
-> Report each finding as: `severity | description | what the plan should address`
-> Severities: blocker (plan is based on wrong assumptions), important (significant gap in understanding), nice-to-have (would improve the plan)
-
-**Agent 2 — Plan Completeness**
-> You are evaluating whether an implementation plan fully addresses the original request.
->
-> Original request: {original_request}
-> Plan: {plan_text}
-> Branch: {branch}
->
-> Your job:
-> - Does the plan cover every aspect of the original request? List any items from the request that aren't addressed
-> - Are there obvious quality-of-life improvements or polish items that should be included?
-> - Does the plan handle error cases, loading states, and edge cases?
-> - Are there security implications the plan should mention? (auth checks, input validation, data access controls)
-> - Is the plan's scope appropriate? (not too narrow, not bloated with unnecessary extras)
-> - Would an engineer picking up this plan have enough detail to implement it without guessing?
->
-> Report each finding as: `severity | description | suggested addition to plan`
-> Severities: blocker (request fundamentally unmet), important (significant gap), nice-to-have (polish)
-
-After both agents complete, merge their findings into a single list, deduplicate, and sort by severity. Proceed to Step 4.
-
-Also evaluate the plan against this priority checklist for anything the agents may have missed:
-
-#### Priority 1: Completeness (highest priority)
-
-- Does the plan address every aspect of the original request?
-- Does every item have enough detail to implement without guessing?
-- Are all the files that need to change identified?
-- Is the data model or schema change complete (if applicable)?
-- Are there flows or paths that are mentioned but not fully specified?
-- Are there obvious items that any implementation of this type would need that aren't listed?
-
-#### Priority 2: Security
-
-- Does the plan involve user input? Is validation/sanitization addressed?
-- Are there authorization checks needed? (who can access what)
-- Does the plan involve sensitive data? (credentials, PII, tokens — are they handled safely?)
-- Are there API endpoints or server actions that need auth protection?
-- Is there potential for injection (SQL, XSS, command injection) in the proposed approach?
-
-#### Priority 3: Bugs / Logic gaps
-
-- Are there contradictions between different parts of the plan?
-- Are there race conditions or concurrency issues in the proposed flows?
-- Are error states and failure modes considered?
-- Are there edge cases in the data or control flow? (empty inputs, boundary values, concurrent modifications)
-- Does the plan account for existing state? (migrations, backwards compatibility, existing data)
-
-#### Priority 4: Code quality / Best practices
-
-- Does the approach follow the project's existing patterns and conventions?
-- Is the solution appropriately scoped? (not over-engineered, not under-engineered)
-- Are there existing utilities, helpers, or abstractions the plan should reuse?
-- Is the tech approach consistent with the project's stack?
-- Are there opportunities to simplify the approach?
-
----
-
-### Step 4: Present findings and resolve issues
-
-Categorize every issue found:
-
-- **Blocker** — plan is based on wrong assumptions or fundamentally misses the request
-- **Important** — plan will work but has a significant gap or risk
-- **Nice to have** — would improve the plan, but a sensible default exists
-
-**When invoked standalone (`hypt-plan-critic`):**
-
-Present ALL issues, grouped by category, starting with blockers:
-
-> I've reviewed your plan and found a few things to address before building:
->
-> **Blockers** (need your input before we can build):
-> 1. [Issue description + question]
-> 2. [Issue description + question]
->
-> **Important** (should fix, but I can suggest defaults):
-> 1. [Issue description + suggested default]
->
-> **Nice to have** (minor, I'll assume a default unless you say otherwise):
-> 1. [Issue description + what I'd assume]
->
-> Let's start with the blockers — [first blocker question]?
-
-Wait for answers to ALL blockers before continuing. For important and nice-to-have items, propose defaults and ask if they're acceptable.
-
-**When invoked from `hypt-prototype`:**
-
-Same review, but streamlined to avoid friction:
-- Still present and wait for answers to **blockers** — these must be resolved
-- For **important** items: propose defaults, list them, and say "I'll go with these unless you object"
-- For **nice to have** items: silently use sensible defaults (don't even mention them unless they're surprising)
-
-**When invoked from `hypt-build`:**
-
-Fully autonomous — no user interaction at all:
-- **Blockers:** If genuine blockers exist (plan is based on provably wrong assumptions about the codebase), note them in the plan file as a `## Review: Open Questions` section and proceed. Do NOT stop the pipeline.
-- **Important:** Make the call yourself. Apply the most reasonable fix/addition to the plan.
-- **Nice to have:** Silently incorporate sensible defaults.
-
----
-
-### Step 5: Apply fixes to the plan
-
-**When invoked standalone (`hypt-plan-critic`):**
-
-After all questions are resolved, present the improvements:
-
-> I found **[N] things** to improve in your plan. Here's what I'd change:
->
-> **Completeness:**
-> - [change 1]
-> - [change 2]
->
-> **Security:**
-> - [change 1]
->
-> **Logic:**
-> - [change 1]
->
-> How would you like me to handle these?
->
-> 1. **Update the plan directly** — I'll edit the plan file with all improvements
-> 2. **Create an addendum** — I'll write a separate file to read alongside the plan
-> 3. **Skip** — the plan is good enough as-is, let's build
-
-**If option 1 (update directly):**
-
-Edit the plan file in place by editing the file. Make targeted changes — don't rewrite the entire document. Then:
-
-```bash
-git add -A && git commit -m "docs: refine plan after critical review" && git push
-```
-
-**If option 2 (addendum):**
-
-Write `docs/YYYY-MM-DD-<idea>-plan-addendum.md` with:
-
-```markdown
-# [App Name] — Plan Addendum
-
-> This addendum should be read alongside the main plan: `./YYYY-MM-DD-<idea>-plan.md`
-> Generated after critical review on [today's date].
-
-## Additional Details
-
-### [Section name]
-[Additional details, clarifications, or corrections]
-
-### [Section name]
-[...]
-```
-
-Then:
-```bash
-git add docs/ && git commit -m "docs: add plan addendum after critical review" && git push
-```
-
-**If option 3 (skip):**
-
-Continue without changes.
-
-**When invoked from `hypt-prototype`:**
-
-Same options as standalone, but default to option 1 unless the user chooses otherwise.
-
-**When invoked from `hypt-build`:**
-
-Do NOT present options or wait for input.
-
-If Step 4 found no issues (or only nice-to-have items that were silently incorporated with no plan edits needed), skip directly to Step 6 — do not create an empty commit.
-
-If the plan was updated:
-1. Edit the plan file in place by editing the file — add missing details, fix gaps, incorporate improvements
-2. Commit and push the changes:
-```bash
-git add -A && git commit -m "docs: refine plan after automated review" && git push
-```
-3. Return control to the pipeline immediately.
-
----
-
-### Step 6: Confirm readiness
-
-If improvements were made or skipped:
-
-> Plan review complete. Your plan is ready for implementation.
-
-If called from `hypt-prototype`, return control so the prototype workflow continues to Step 1 (implementation).
-
-If called from `hypt-build`, return control so the pipeline continues to the build step.
-
-If called standalone, tell the user:
-
-> When you're ready to build, use `hypt-prototype` and point it to your plan file.
+When executable, return control immediately to the caller.

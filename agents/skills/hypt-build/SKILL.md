@@ -1,160 +1,120 @@
 ---
 name: hypt-build
-description: "Runs the development pipeline through a review-ready PR without merging. Use when a workflow needs research, planning, implementation, review, and tests."
+description: "Builds work from its current readiness state through a proven, reviewed PR. Use for build requests and for yolo, ship it, or publish it; full-auto phrases continue through hypt-close."
 metadata:
-  short-description: "Build to a Review-ready PR (No Merge)"
+  short-description: "Build to a Proven PR or Yolo Through Close"
 ---
 
-# hypt-build — Build to a Review-ready PR (No Merge)
+# hypt-build — Build to a Proven PR
 
-## Context
+Own the path from current state to a remote, review-ready PR. In **yolo mode**, continue into `hypt-close` with its confirmation gate pre-approved.
 
-Before starting, gather context by running:
+## Ground
 
-- Run `git branch --show-current` to capture Branch.
+Read:
 
-- PR status: `gh pr view --json number,title,url,state,mergeStateStatus,reviewDecision 2>/dev/null || echo "NO_PR"`
-- Uncommitted changes: `git status --short 2>/dev/null`
-- Recent commits on branch: `git log --oneline -10 2>/dev/null`
-- Has unit tests: `find . -maxdepth 4 \( -name "*.test.*" -o -name "*.spec.*" -o -name "__tests__" -o -path "*/test/*" -o -path "*/tests/*" \) -not -path "./node_modules/*" -not -path "./.git/*" 2>/dev/null | head -5`
-- Merge status vs main: `git log main..HEAD --oneline 2>/dev/null | wc -l | tr -d ' '`
-- Plan files: `ls docs/*.md docs/**/*.md TODO.md TODOS.md docs/roadmap.md docs/todos/backlog.md 2>/dev/null | head -5`
+- Repository instructions and the user's Identity section in `AGENTS.md` or `CLAUDE.md`
+- `git status`, current branch, recent commits, and the merge-base with the target branch
+- Current PR, comments, checks, and deployment state when present
+- The originating request, spec, plan, and related shipped code
 
-## Instructions
+Use the profile only to shape communication: technical visuals are for coders; non-coders get plain-language outcomes and instructions.
 
-This skill runs the full development pipeline — from whatever state the branch is in, all the way to a reviewed, tested PR that is ready to merge. It does **not** merge or close the PR. That is the caller's responsibility.
+## 1. Route readiness
 
-Use subagents liberally throughout — offload research, parallel analysis, and independent tasks to subagents to keep the main context clean and move fast. Auto-compact context whenever it gets long.
+Classify before editing:
 
----
+| State | Route | Completion |
+|---|---|---|
+| Already shipped | Prove the behavior exists on the target branch and stop. | Show the merged PR or source. |
+| Fog: too large for one session | Use `wayfinder`. | The decision map makes the next build slice executable. |
+| Ambiguous outcome | Use `grilling` or a short discovery pass. | Acceptance criteria distinguish done from not-done. |
+| Open design | Run the design pass below. | One design is chosen with tradeoffs recorded. |
+| Executable | Continue. | Scope, behavior, and verification are concrete. |
 
-### Step 1: Detect current stage
+For complicated design, spawn two read-only subagents over the same problem and code:
 
-Read the Context section above and determine which stage applies:
+1. One uses `codebase-design`.
+2. One uses pstack `architect`.
 
-**Stage A — Starting from scratch (no PR, no meaningful commits on branch)**
-The user provided a feature request, bug description, or idea. There's no PR and no implementation yet (or only a fresh branch with no real commits ahead of main).
+Run the first pass in parallel. Give each subagent the other's summary for one short response, then synthesize their consensus and disagreements before choosing the deepest coherent design. If one companion is unavailable, use the other and report the missing perspective.
 
-**Stage B — Mid-implementation (commits exist, PR may or may not exist)**
-There are commits on the branch with real code changes. A PR may or may not exist. Code hasn't been fully reviewed yet.
+## 2. Plan the slice
 
-**Stage C — Review-ready (PR exists, code is implemented, needs review/merge)**
-A PR exists and the implementation looks complete. Just needs review polish and merge.
+Reuse an existing plan when it still matches the request. Otherwise write a concise plan in the repository's existing tracker or `docs/<YYYY-MM-DD>-<slug>-plan.md`.
 
-**Stage D — Ready to merge (PR exists, reviews look clean, checks passing)**
-The PR is in a mergeable state — reviews are done, checks are passing. Just needs to be closed out.
+For non-trivial work, invoke `hypt-plan-critic` in pipeline mode with the plan and original request. Resolve blockers; let it update lesser issues autonomously.
 
-Announce which stage you detected and proceed to the corresponding step.
+Completion: every acceptance criterion maps to an implementation step and a verification path.
 
----
+## 3. Implement
 
-### Step 2A: From scratch — research, plan, and build
+Create a PR branch when needed, then invoke `hypt-implement` with the approved plan, request, and scope. Continue immediately when it returns.
 
-Only if Stage A was detected.
+Run the smallest relevant checks during implementation. Default testing is light:
 
-**Research the codebase first.** Use subagents to understand:
-- The project structure, tech stack, and patterns in use
-- The database schema if relevant (look for migrations, schema files, Prisma/Drizzle schemas, Supabase types)
-- Related existing code that the feature will interact with
+- Use TDD only when requested or when a cheap, obvious seam can fail first.
+- Keep the crux and distinct behavioral paths.
+- Skip new test infrastructure, per-value permutations, and speculative guard suites.
 
-**Create a plan.** Write a concise implementation plan with checkable items. Choose the plan file location:
-- If the project already has `docs/roadmap.md`, `TODO.md`, `TODOS.md`, or `docs/todos/backlog.md`, append the plan there under a new section.
-- Otherwise, create `docs/<YYYY-MM-DD>-<slug>-plan.md`.
+Completion: the implementation satisfies the plan and targeted checks pass.
 
-The plan should:
-- Break the work into discrete steps
-- Note any files that need to be created or modified
-- Call out edge cases and error handling
+## 4. Open the proof surface
 
-**Review the plan with plan-critic.** Before building, run an automated plan review:
+Commit and push using repository conventions; create or update the PR with the request, approach, and checks. Wait for the preview deployment when the change has a user-facing path.
 
-Use the `hypt-plan-critic` skill.
+Prove behavior through browser or computer use:
 
-Pass the plan file path AND the original user request. State clearly that this is pipeline mode:
+1. Prefer the Vercel preview attached to the PR.
+2. Use another provider's preview when applicable.
+3. Use localhost only when no usable preview exists.
 
-> Review this plan in pipeline mode (fully autonomous, no user interaction).
-> Plan file: `<path to the plan file you chose above>`
-> Original request: [restate the user's original request/description here]
+Exercise the real path, capture the resulting state, and verify important side effects. Spend at most three attempts on browser/tooling access; then record the exact blockage.
 
-Plan-critic will review the plan, make its own calls on non-blocker issues, update the plan file directly, and return control. Do NOT wait for user confirmation — plan-critic in pipeline mode is fully autonomous.
+Completion: the requested path works in a real UI/runtime, or the report names why it could not be proven.
 
-**IMPORTANT: After plan-critic returns, IMMEDIATELY continue to the build step below. Do NOT stop or wait — the pipeline must keep moving.**
+## 5. Review to green
 
-After plan-critic completes, re-read the plan (it may have been updated) and proceed. If plan-critic noted Open Questions in the plan file, these do not stop the pipeline — continue to build.
+### Standards and spec
 
-**Build it.** Use the `hypt-prototype` skill.
+Invoke Matt Pocock's `code-review` against the PR merge-base. Give it the originating spec directly. Keep its two axes separate:
 
-When prototype asks for a plan, point it to the plan file you chose above or provide the plan directly. When prototype asks for user input at any step, make the autonomous choice — fix all review findings, skip nothing.
+- **Standards:** repository rules and code smells
+- **Spec:** missing, extra, or incorrect behavior
 
-After prototype completes, continue to Step 3.
+If `code-review` is unavailable, report the incomplete companion installation and run the same two briefs with independent read-only reviewers. Fix every material finding and rerun affected checks.
 
----
+### Adversarial pass
 
-### Step 2B: Mid-implementation — get to review-ready
+Run one capped adversarial pass with pstack `interrogate`. Require severity, confidence, reachability on real data, `file:line`, and a concrete failure scenario. If unavailable, use one independent read-only reviewer with the same brief.
 
-Only if Stage B was detected.
+Fix material findings. Reject unreachable or incorrect findings with repository evidence. The cap is one pass plus verification of substantial fixes, not an open-ended review loop.
 
-Finish the in-progress implementation, verify it with the repository's relevant checks, then commit and push it using the repository's normal conventions. Ensure a PR exists before continuing.
+Completion: both review axes and the adversarial pass have explicit dispositions; fixes are pushed.
 
-Continue to Step 3.
+## 6. Sweep the contract
 
----
+Sort only comments and tests written during this build:
 
-### Step 2C/2D: Already review-ready or mergeable
+- **Contract:** interface behavior, a plausible regression, invariant, gotcha, semantic definition, or durable ticket pointer
+- **Scaffolding:** build narration, discarded-design rationale, duplicate permutations, change detectors, or temporary probes
 
-If Stage C, continue to Step 3.
-If Stage D, skip directly to Step 6.
+Keep the contract. Move long decision rationale to the tracker when one exists; remove the scaffolding. Re-read docs and comments after late review fixes so they describe the current code.
 
----
+Completion: the remote PR contains every fix, no session journal, current verification notes, and no stale artifact.
 
-### Step 3: Review-and-fix loop
+## 7. Hand off
 
-Review the full branch diff and fix it in a loop until the code is clean. Maximum 3 iterations to avoid infinite loops.
+Confirm local `HEAD` equals the PR head SHA and required checks have started. Report the PR, user-path proof, checks, review dispositions, and any blocked evidence.
 
-**Iteration pattern:**
+For a coder profile, use HumanLayer `show-me` for the smallest useful technical visual. Use Archify only when a substantial architecture or workflow warrants a polished standalone artifact. For a non-coder or uncertain profile, explain behavior and next actions without a technical diagram.
 
-1. Inspect the complete diff for requirement gaps, correctness bugs, security issues, error handling, and regressions.
-2. Read unresolved PR comments and failing checks; distinguish material issues from optional preferences.
-3. Fix every material issue, run the relevant checks, and update the branch.
-4. If material findings remain, run another iteration. Exit when the diff and checks are clean.
+Outside yolo mode, stop at:
 
-If after 3 iterations there are still issues, report what's remaining and continue anyway — don't get stuck in an infinite loop.
+> Pipeline complete. PR is proven, reviewed, and ready.
 
----
+In yolo mode, invoke `hypt-close`, state that the user's original phrase pre-approved its confirmation gate, and continue until close completes or reaches a safety stop.
 
-### Step 4: Tests
+## Safety stops
 
-Check the Context section — the "Has unit tests" field shows whether the project already has test files.
-
-If test infrastructure exists, add or update focused tests for changed behavior, prioritizing business-critical paths and regressions found during review. Run the smallest relevant suite first, then the repository's required checks.
-
-If no test infrastructure exists, verify through the project's existing build, type, lint, or manual workflow rather than creating a test framework solely for this change.
-
----
-
-### Step 5: Documentation updates
-
-Update documentation affected by the implementation: check off completed tracked work, update README or feature docs when behavior changed, and repair stale links. Skip this step when no documentation is affected.
-
----
-
-### Step 6: Final save
-
-Ensure all intended changes are committed and pushed using the repository's normal conventions. Create or update the PR so its title, summary, and verification notes reflect the complete branch.
-
-Confirm the pipeline is complete:
-
-> Pipeline complete. PR is reviewed, tested, and ready.
-
----
-
-## Handling blockers
-
-Throughout this flow, only stop and ask the user if you encounter:
-
-- **Security vulnerabilities** — auth bypass, exposed secrets, SQL injection, XSS, etc. that genuinely put users at risk
-- **Destructive data operations** — migrations that drop data, irreversible state changes
-- **Ambiguous requirements** — the feature request is genuinely unclear and you'd be guessing wrong
-- **Persistent build/test failures** — after 2 attempts to fix, the same failure keeps recurring
-
-For everything else — lint warnings, minor style choices, which approach to take — make the call yourself and keep going.
+Stop for a security vulnerability, destructive data operation, unresolved product ambiguity, or a persistent failure after two focused repair attempts. Make reversible implementation decisions autonomously.

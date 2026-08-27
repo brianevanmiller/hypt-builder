@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.30.0 — 2026-08-27
+
+- Consolidate autonomous shipping into `hypt-build` and `hypt-close`: `yolo`, `ship it`, and `publish it` now run the complete build-to-release path with the close confirmation pre-approved, replacing `hypt-go`, `hypt-yolo`, and `hypt-autoclose`.
+- Replace the overlapping `hypt-prototype` workflow with model-invoked `hypt-implement`, a focused coding seam built around deep modules, tracer bullets, root-cause fixes, light testing, and durable contract code.
+- Add readiness routing, parallel `codebase-design` and pstack `architect` perspectives for complicated designs, Standards and Spec review axes, one capped adversarial review, preview-first browser verification, and scaffolding cleanup to `hypt-build`.
+- Require `hypt-close` to verify pushed fixes, current PR head, gates that actually ran, real user-path evidence, and fresh release artifacts before merging.
+- Extend `hypt-start` with an optional project Identity profile and a mandatory, approval-gated installation check for the required Matt Pocock and pstack companion skills. Technical visualization companions remain coder-profile only.
+- Make deployment and recovery verification revision-aware, make restore operations idempotent, and connect incident analysis to an evidence-backed root-cause loop.
+- Add a cited 101-skill landscape and overlap analysis covering Hypt, Matt Pocock, pstack, HumanLayer, Archify, and local `balto-build`.
+- Apply the `writing-for-agents` discipline across Hypt, reducing the always-loaded main skill bodies from 3,462 lines across 12 skills to 835 lines across 9 skills while moving conditional detail behind context pointers.
+
 ## v0.29.0 — 2026-08-27
 
 - Replace the Claude plugin and generated Codex mirrors with one canonical `agents/skills/` source tree installable through `npx skills`.

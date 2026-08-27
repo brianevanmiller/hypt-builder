@@ -11,7 +11,6 @@ Open follow-up work for hypt.
 
 ## Reliability
 
-- [ ] Reinforce continuation after every composed workflow step, not only after `hypt-plan-critic`.
 - [ ] Add a `--dry-run` flag to the bundled Vercel bypass helper.
 - [ ] Add package-manager detection to workflows that currently assume Bun.
 - [ ] Add deployment-log collection to `hypt-deploy`.
@@ -20,7 +19,7 @@ Open follow-up work for hypt.
 ## Product
 
 - [ ] Add provider OAuth signup walkthroughs to `hypt-start`.
-- [ ] Fold an optional production-hardening pass into `hypt-prototype`.
+- [ ] Fold an optional production-hardening pass into `hypt-build`.
 - [ ] Add an owner-only allowlist administration scaffold when `ALLOWLIST_MODE=team`.
 - [ ] Add a post-mortem history view.
 - [ ] Link fixes back to unresolved post-mortem action items.
