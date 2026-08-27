@@ -4,7 +4,7 @@ hypt-builder includes a supply chain security scanner that detects prompt inject
 
 ## Why this matters
 
-hypt-builder is a plugin for Claude Code, Codex CLI, and other AI coding agents, with an auto-update mechanism. Code merged to `main` is automatically pulled and executed on user machines. A single malicious PR could compromise thousands of users silently.
+hypt-builder distributes executable instructions and helper scripts to Claude Code, Codex, and other AI coding agents. Users can install or update those files directly from `main`, so a malicious contribution could compromise their machines.
 
 ## What it checks
 
@@ -15,8 +15,7 @@ hypt-builder is a plugin for Claude Code, Codex CLI, and other AI coding agents,
 - Variation selectors (invisible text modifiers)
 
 ### Pass 2: Prompt Injection (CRITICAL) — scoped to instruction surfaces
-- `plugin/**/*.md`
-- `.codex/skills/**/*.md`
+- `agents/skills/**/*.md`
 - `AGENTS.md`
 - Instruction override attempts ("ignore previous instructions", "you are now", etc.)
 - Fake role/system delimiters (`<system>`, `[SYSTEM]`, `### Human:`)
@@ -35,12 +34,12 @@ hypt-builder is a plugin for Claude Code, Codex CLI, and other AI coding agents,
 - Non-standard tools in `allowed-tools` YAML frontmatter
 - MCP tool references in skill files
 - `settings.json` manipulation outside established config managers
-- Hook registrations outside `hypt-settings-hook`
+- Hook registrations outside documentation and the scanner
 
 ### Pass 5: Structural Anomalies (MEDIUM/LOW)
-- Executable files outside `bin/`
-- Unexpected file types in `plugin/` (Python, Ruby, binaries)
-- Hidden files in `plugin/`
+- Executable files outside `bin/` and skill-local `scripts/`
+- Binary files in `agents/`
+- Hidden files in `agents/`
 - Symlinks, large files (>50KB)
 
 ## Risk levels
@@ -120,7 +119,7 @@ To make the scanner a required check:
 
 ## Protected files
 
-Because the scanner itself gates the auto-update mechanism, a compromised scanner could silently let malicious code through. The following files are therefore owner-only — only `@brianevanmiller` may modify them:
+Because the scanner gates installable agent sources, a compromised scanner could silently let malicious code through. The following files are therefore owner-only — only `@brianevanmiller` may modify them:
 
 - `docs/security-scan.md`
 - `.github/workflows/security-scan.yml`

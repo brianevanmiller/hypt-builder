@@ -26,8 +26,8 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Check Codex sync
-        run: node scripts/sync-codex-support.mjs --check
+      - name: Validate agent skills
+        run: node scripts/validate-agent-skills.mjs
 
       - name: Make scanner executable
         run: chmod +x bin/hypt-security-scan

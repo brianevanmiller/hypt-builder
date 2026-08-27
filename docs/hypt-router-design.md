@@ -1,240 +1,92 @@
-# Hypt Router Design
+# Hypt router design
 
-## Overview
+## Purpose
 
-The hypt router is a single entry point that listens to what you say and
-sends you to the right skill automatically. Instead of memorizing 23
-different commands, you just describe what you want in plain English and
-the router figures out which skill to run. Think of it as a receptionist
-who directs you to the right department. There are 21 skills in total.
+`hypt` routes the workflows that still need explicit orchestration. It deliberately does not intercept routine requests that modern agents already handle: commit, push, PR creation, code review, bug fixing, tests, documentation, CI, and todo edits.
 
-## How Routing Works
-
-When you type a message, the router scans it for keywords and phrases,
-then dispatches the matching skill:
-
-```
-                        ┌──────────────────────┐
-                        │  You type something  │
-                        │   "fix this bug"     │
-                        └──────────┬───────────┘
-                                   │
-                                   v
-                  ┌────────────────────────────────┐
-                  │       hypt:hypt (router)       │
-                  │                                │
-                  │  Scans your message for phrases│
-                  │  like "fix", "bug", "broken"   │
-                  └────────────────┬───────────────┘
-                                   │
-                          match found?
-                         /            \
-                       yes             no
-                       /                \
-                      v                  v
-        ┌──────────────────┐   ┌──────────────────┐
-        │  Invoke matched  │   │  Ask you to      │
-        │  skill: hypt:fix │   │  clarify         │
-        └──────────────────┘   └──────────────────┘
+```text
+User request
+    │
+    ├── Routine repository work ──► agent defaults + repository instructions
+    │
+    └── Hypt lifecycle workflow ──► matching hypt-* skill
 ```
 
-**Phrase matching examples:**
+## Routes
 
-```
-  Your words                          Matched skill
-  ─────────────────────────────────── ─────────────────
-  "I have an idea"              ───►  hypt:start
-  "commit and push"             ───►  hypt:save
-  "something's wrong"           ───►  hypt:fix
-  "ship it"                     ───►  hypt:close
-  "yolo"                        ───►  hypt:yolo
-  "add to my backlog"            ───►  hypt:todo
-  "what should I work on next"  ───►  hypt:suggestions
-```
+| Intent | Skill |
+|---|---|
+| Start or onboard a project | `hypt-start` |
+| Critique a non-trivial plan | `hypt-plan-critic` |
+| Build a plan end to end | `hypt-prototype` |
+| Produce a reviewed PR without merge | `hypt-build` |
+| Run autonomously, confirm before merge | `hypt-go` |
+| Run autonomously through merge | `hypt-yolo` |
+| Finalize, confirm, merge, and release | `hypt-close` |
+| Finalize and merge without confirmation | `hypt-autoclose` |
+| Check or repair deployment health | `hypt-deploy` |
+| Restore a working release | `hypt-restore` |
+| Analyze an incident | `hypt-post-mortem` |
 
-## Skill Categories
+`hypt-deploy` owns both deployment modes. A status request selects its read-only path; a deploy or remediation request permits changes.
 
-The 21 skills fall into three groups:
+## Composition
 
-### Atomic Skills (17)
+```text
+hypt-prototype
+  plan review
+  implementation
+  diff review and fixes
+  tests and documentation
+  PR finalization
 
-These do one job. They are the building blocks.
+hypt-build
+  research and plan
+  hypt-plan-critic
+  hypt-prototype or finish existing work
+  review-and-fix loop
+  PR finalization
 
-```
- ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
- │    start     │ │    save      │ │   review     │
- │  Onboarding  │ │ Commit & PR  │ │ Code review  │
- └──────────────┘ └──────────────┘ └──────────────┘
- ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
- │   touchup    │ │  unit-tests  │ │    close     │
- │ Quick polish │ │ Write tests  │ │ Merge & wrap │
- └──────────────┘ └──────────────┘ └──────────────┘
- ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
- │ suggestions  │ │   deploy     │ │   status     │
- │  Next tasks  │ │ Ship to prod │ │  Site check  │
- └──────────────┘ └──────────────┘ └──────────────┘
- ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
- │   restore    │ │ post-mortem  │ │ plan-critic  │
- │  Rollback    │ │ What broke?  │ │ Review plan  │
- └──────────────┘ └──────────────┘ └──────────────┘
- ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
- │  prototype   │ │     fix      │ │    docs      │
- │ Build it     │ │ Fix bugs     │ │ Update docs  │
- └──────────────┘ └──────────────┘ └──────────────┘
- ┌──────────────┐ ┌──────────────┐
- │   ci-setup   │ │     todo     │
- │ Set up CI    │ │ Update list  │
- └──────────────┘ └──────────────┘
+hypt-go
+  hypt-build
+  confirmation gate
+  hypt-autoclose
+
+hypt-yolo
+  hypt-build
+  hypt-autoclose
 ```
 
-### Composition Skills (2)
+Review, verification, documentation, and git completion criteria live inside these parent workflows. They are steps, not independently installed skills.
 
-These chain multiple atomic skills together in sequence.
+## Close and recovery
 
-```
- ┌──────────────┐   ┌──────────────┐
- │   pipeline   │   │  autoclose   │
- │ Full dev flow│   │ Auto-merge   │
- └──────────────┘   └──────────────┘
-```
+```text
+hypt-close
+  final quality pass
+  affected documentation
+  follow-up capture
+  confirmation
+  merge
+  deployment health
+  release
 
-### Shortcut Skills (2)
-
-These combine composition skills for maximum speed.
-
-```
- ┌──────────────┐   ┌──────────────┐
- │      go      │   │     yolo     │
- │Ship + confirm│   │ Ship, no ask │
- └──────────────┘   └──────────────┘
-```
-
-## Composition Diagrams
-
-### pipeline
-
-The full development pipeline. Takes code from research all the way
-through to a saved PR.
-
-```
- ┌──────────┐   ┌──────────┐   ┌───────────┐   ┌───────────┐
- │ research │──►│   plan   │──►│plan-critic│──►│ prototype │
- └──────────┘   └──────────┘   └───────────┘   │  (build)  │
-                                                └─────┬─────┘
-                                                      │
-                                                      v
- ┌──────────┐   ┌──────────┐   ┌───────────┐   ┌───────────┐
- │   save   │◄──│   docs   │◄──│unit-tests │◄──│  review   │
- └──────────┘   └──────────┘   └───────────┘   │   loop    │
-                                                └───────────┘
+hypt-restore
+  identify known-good target
+  platform rollback or code revert
+  health check
+  hypt-post-mortem
 ```
 
-### autoclose
+## Naming and installation
 
-Handles everything after the code is ready: polish, merge, deploy,
-and version bump.
+The old Claude plugin namespace used names such as `hypt:deploy`. Standalone Agent Skills use collision-safe names such as `hypt-deploy`.
 
-```
- ┌───────────┐  ┌──────────┐   ┌───────────┐   ┌───────────┐
- │  touchup  │─►│   docs   │──►│suggestions│──►│   merge   │
- │(if needed)│  └──────────┘   └───────────┘   └─────┬─────┘
- └───────────┘                                       │
-                                                     v
-                ┌──────────┐   ┌───────────┐   ┌───────────┐
-                │ release  │◄──│  version  │◄──│  deploy   │
-                └──────────┘   │   bump    │   │   check   │
-                               └───────────┘   └───────────┘
-```
+The router and every routed workflow are installed from `agents/skills/` through the `skills` CLI. See [the migration research](2026-08-27-agent-skills-migration-research.md) for the distribution decision.
 
-### go
+## Related documentation
 
-Runs the full pipeline, pauses for your OK, then autocloses.
-
-```
- ┌──────────────────────────┐     ┌─────────────┐
- │        pipeline          │────►│ CONFIRMATION│
- │ research ► plan ► build  │     │    GATE     │
- │ review ► test ► save     │     │             │
- └──────────────────────────┘     │  You say OK │
-                                  └──────┬──────┘
-                                         │
-                                         v
-                              ┌──────────────────┐
-                              │    autoclose     │
-                              │ merge ► deploy   │
-                              │ version ► release│
-                              └──────────────────┘
-```
-
-### yolo
-
-Same as go, but skips the confirmation gate entirely.
-
-```
- ┌──────────────────────────┐     ┌──────────────────┐
- │        pipeline          │────►│    autoclose     │
- │ research ► plan ► build  │     │ merge ► deploy   │
- │ review ► test ► save     │     │ version ► release│
- └──────────────────────────┘     └──────────────────┘
-
-           No stopping. No asking. Just ships.
-```
-
-## Typical Development Workflow
-
-A full project lifecycle from start to finish:
-
-```
- 0           1            2             3           4
- ┌───────┐  ┌──────────┐  ┌───────────┐  ┌───────┐  ┌──────┐
- │ start │─►│ ci-setup │─►│ prototype │─►│  fix  │─►│ save │
- └───────┘  └──────────┘  └───────────┘  └───────┘  └──┬───┘
-                                                        │
-     ┌──────────────────────────────────────────────────┘
-     │
-     v
- 5           6            7             8           9
- ┌────────┐  ┌──────────┐  ┌───────────┐  ┌───────┐  ┌──────┐
- │ review │─►│ touchup  │─►│unit-tests │─►│status │─►│deploy│
- └────────┘  └──────────┘  └───────────┘  └───────┘  └──┬───┘
-                                                        │
-     ┌──────────────────────────────────────────────────┘
-     │
-     v
- 10             10a           11            12       13          14
- ┌────────────┐ ┌───────────┐ ┌───────────┐ ┌──────┐ ┌──────────┐ ┌───────┐
- │  restore   │►│   post-   │►│   docs    │►│ todo │►│suggest-  │►│ close │
- │ (if needed)│ │  mortem   │ └───────────┘ └──────┘ │  ions    │ └───────┘
- └────────────┘ └───────────┘                        └──────────┘
-```
-
-Most projects won't need every step. The router lets you jump to
-whichever skill you need at any point.
-
-> **New users:** See [CHEATSHEET.md](../CHEATSHEET.md) for a printable one-page reference with the 4 most important commands and plain-English trigger phrases.
-
-## Quick Reference
-
-| #  | Skill           | Category    | What it does                                           | Trigger phrases                                         |
-|----|-----------------|-------------|--------------------------------------------------------|---------------------------------------------------------|
-| 1  | start           | Atomic      | Onboard a new project, understand your idea            | "start", "get started", "I have an idea"                |
-| 2  | save            | Atomic      | Commit, push, and create or update a PR                | "save", "commit", "push", "create PR"                   |
-| 3  | review          | Atomic      | Thorough code review of your diff                      | "code review", "check my diff", "review my work"        |
-| 4  | touchup         | Atomic      | Quick polish before merging                            | "touchup", "quick polish", "fix PR comments"            |
-| 5  | unit-tests      | Atomic      | Write or extend unit tests                             | "unit tests", "add tests", "test coverage"              |
-| 6  | close           | Atomic      | Merge, check off tasks, wrap up                        | "close", "merge", "ship it", "done"                     |
-| 7  | suggestions     | Atomic      | Suggest what to work on next                           | "suggestions", "what should I work on next", "backlog"  |
-| 8  | deploy          | Atomic      | Check or fix deployment health                         | "deploy", "check deployment", "fix deployment"          |
-| 9  | status          | Atomic      | Quick check: is my site up?                            | "status", "is it live", "is my site up"                 |
-| 10 | restore         | Atomic      | Rollback to a previous working version                 | "restore", "rollback", "revert", "undo deploy"          |
-| 11 | post-mortem     | Atomic      | Analyze what went wrong after an incident              | "post-mortem", "incident report", "what went wrong"     |
-| 12 | plan-critic     | Atomic      | Review and critique a plan before building             | "review plan", "critique plan", "check my plan"         |
-| 13 | prototype       | Atomic      | Build a feature end-to-end                             | "prototype", "build this feature", "implement this"     |
-| 14 | fix             | Atomic      | Diagnose and fix bugs                                  | "fix", "bug", "broken", "not working", "error"          |
-| 15 | docs            | Atomic      | Update project documentation                           | "update docs", "refresh docs", "documentation"          |
-| 16 | ci-setup        | Atomic      | Set up continuous integration                          | "set up CI", "add CI", "automatic testing"              |
-| 17 | todo            | Atomic      | Add or update items in your tracking file              | "todo", "add todo", "update backlog", "track this"      |
-| 18 | pipeline        | Composition | Full dev flow: research through saved PR               | "run pipeline", "review and test", "get this PR-ready"  |
-| 19 | autoclose       | Composition | Auto-merge, deploy, version bump, release              | "autoclose", "auto merge", "merge without asking"       |
-| 20 | go              | Shortcut    | Pipeline + confirmation + autoclose                    | "go", "go mode", "ship with confirmation"               |
-| 21 | yolo            | Shortcut    | Pipeline + autoclose, no confirmation                  | "yolo", "yolo it", "just ship it"                       |
+| Document | Description |
+|---|---|
+| [Agent source layout](../agents/README.md) | Defines canonical skill packaging. |
+| [Migration research](2026-08-27-agent-skills-migration-research.md) | Records installer and protocol evidence. |

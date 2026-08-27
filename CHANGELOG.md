@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.29.0 — 2026-08-27
+
+- Replace the Claude plugin and generated Codex mirrors with one canonical `agents/skills/` source tree installable through `npx skills`.
+- Retire bespoke shell and PowerShell installers in favor of interactive, selected, and non-interactive all-skill installation through the cross-agent `skills` CLI.
+- Remove one-purpose skills for save, review, fix, tests, docs, CI, status, touchup, todo, and suggestions. Their completion criteria now live inside the build, deploy, and close workflows or fall back to normal agent behavior.
+- Rename `hypt-pipeline` to `hypt-build` and update its composed workflows.
+- Add a beginner's guide for agent-led prerequisite checks, consent-based installation, safe browser authentication, and optional Claude/ChatGPT connections.
+- Bundle skill-specific scripts and assets inside the skills that use them, enabling independent selected-skill installation.
+- Update validation and supply-chain scanning for the Agent Skills layout.
+
 ## v0.28.0 — 2026-05-01
 
 - **Single-PR release flow.** `autoclose` now bumps `VERSION` / `plugin.json` / `CHANGELOG.md` on the feature branch BEFORE merging, so a feature and its version bump squash into one commit on `main`. Eliminates the long-standing "double PR" pattern (every release used to take a feature PR plus a separate `chore: bump version to vX.Y.Z` PR). After merge, `autoclose` only needs to run `gh release create --generate-notes` — no second branch, no second wait for required checks

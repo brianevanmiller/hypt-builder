@@ -1,5 +1,5 @@
 # Protected files — only the repo owner should change these.
-# The security scanner gates the auto-update mechanism; changing it
+# The security scanner gates installable agent sources; changing it
 # without owner review would weaken supply-chain defenses.
 # See docs/security-scan.md (Protected files) for details.
 
