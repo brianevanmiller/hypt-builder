@@ -1,5 +1,5 @@
 ---
-description: "Suggest next tasks and track them in your project backlog"
+description: "Suggests and tracks next tasks in the project backlog. Use when prioritizing follow-up work."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Skill"]
 ---
 

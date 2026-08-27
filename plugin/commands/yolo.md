@@ -1,5 +1,6 @@
 ---
 description: "Full autonomous ship — from idea or mid-PR all the way to merged, no hand-holding"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent", "Skill"]
 ---
 

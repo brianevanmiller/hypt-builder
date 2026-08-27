@@ -1,6 +1,7 @@
 ---
 name: "hypt-yolo"
-description: "Full autonomous ship — from idea or mid-PR all the way to merged, no hand-holding. Use when the user wants the full shipping pipeline to run autonomously through merge, including `/yolo`, `hypt:yolo`."
+description: "Full autonomous ship — from idea or mid-PR all the way to merged, no hand-holding"
+disable-model-invocation: true
 metadata:
   short-description: "Ship It All the Way, No Stopping"
 ---

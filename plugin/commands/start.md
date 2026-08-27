@@ -1,5 +1,6 @@
 ---
 description: "Onboarding for new projects — understand your idea, set up accounts, and create a build plan"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Write", "Grep", "Glob", "Skill"]
 ---
 

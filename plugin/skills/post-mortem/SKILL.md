@@ -1,9 +1,6 @@
 ---
 name: post-mortem
-description: >
-  Analyze what went wrong after a restore — review recent changes to main,
-  create a post-mortem document, update backlog with findings, and suggest
-  next steps. Runs automatically after /restore.
+description: "Analyzes a failed deployment or restore and records follow-up work. Use after a restore or production incident."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent", "Skill"]
 version: "1.0.0"
 author: "Brian Miller"

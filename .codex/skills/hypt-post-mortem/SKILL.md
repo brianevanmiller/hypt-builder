@@ -1,6 +1,6 @@
 ---
 name: "hypt-post-mortem"
-description: "Analyze what went wrong after a restore — review recent changes to main, create a post-mortem document, update backlog with findings, and suggest next steps. Runs automatically after /restore. Use when the user wants to analyze what went wrong after a restore, create an incident report, or review a production failure, including `/post-mortem`, `hypt:post-mortem`."
+description: "Analyzes a failed deployment or restore and records follow-up work. Use after a restore or production incident."
 metadata:
   short-description: "Post-Restore Incident Analysis"
 ---

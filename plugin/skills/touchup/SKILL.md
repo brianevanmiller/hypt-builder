@@ -1,5 +1,5 @@
 ---
-description: "Quick pre-merge polish — fix PR comments, build issues, and update docs"
+description: "Polishes a PR by resolving review comments, build issues, and stale docs. Use after review and before merge."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob"]
 ---
 

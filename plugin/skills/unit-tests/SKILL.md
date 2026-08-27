@@ -1,5 +1,5 @@
 ---
-description: "Create or extend unit tests for PR changes — lean by default, thorough for critical paths"
+description: "Adds or extends unit tests for changed code. Use when a PR needs targeted test coverage."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent"]
 ---
 

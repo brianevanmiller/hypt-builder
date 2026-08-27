@@ -1,6 +1,7 @@
 ---
 name: "hypt-deploy"
-description: "Verify deployment is healthy — detect platform, check status, fix trivial issues. Use when the user wants deployment verification or minor deploy issue handling, including `/deploy`, `hypt:deploy`."
+description: "Verify deployment is healthy — detect platform, check status, fix trivial issues"
+disable-model-invocation: true
 metadata:
   short-description: "Verify Deployment"
 ---

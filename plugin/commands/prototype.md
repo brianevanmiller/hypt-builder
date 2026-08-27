@@ -1,5 +1,6 @@
 ---
 description: "End-to-end prototype: implement plan, review, test, and deliver a working build"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent", "Skill"]
 ---
 

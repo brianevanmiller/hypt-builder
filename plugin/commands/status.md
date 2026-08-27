@@ -1,5 +1,6 @@
 ---
 description: "Quick deployment status check — is my site up? Read-only, no fixes attempted"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Grep", "Glob"]
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: "hypt-start"
-description: "Onboarding for new projects — understand your idea, set up accounts, and create a build plan. Use when the user wants project onboarding, setup help, or an implementation plan for a new app idea, including `/start`, `hypt:start`."
+description: "Onboarding for new projects — understand your idea, set up accounts, and create a build plan"
+disable-model-invocation: true
 metadata:
   short-description: "New Project Onboarding"
 ---

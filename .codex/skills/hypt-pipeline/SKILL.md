@@ -1,6 +1,6 @@
 ---
 name: "hypt-pipeline"
-description: "Full development pipeline — detect stage, research, plan, build, review, test, and save PR. Does NOT merge. Use when the user says \"run pipeline\", \"review and test\", or \"get this PR-ready\". Use when the user wants the full development pipeline run without merging, including `/pipeline`, `hypt:pipeline`."
+description: "Runs the development pipeline through a saved PR without merging. Use when a workflow needs research, planning, implementation, review, and tests."
 metadata:
   short-description: "Full Development Pipeline (No Merge)"
 ---

@@ -1,9 +1,6 @@
 ---
 name: docs
-description: >
-  Scan and update project documentation — check off completed items, update
-  README tables, feature docs, process workflow diagrams, dates, and references.
-  Used by /pipeline and /close, or standalone via "update docs".
+description: "Updates project documentation to reflect completed work. Use after implementation or before closing a PR."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob"]
 version: "1.0.0"
 author: "Brian Miller"

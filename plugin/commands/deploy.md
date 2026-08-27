@@ -1,5 +1,6 @@
 ---
 description: "Verify deployment is healthy — detect platform, check status, fix trivial issues"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "Write"]
 ---
 

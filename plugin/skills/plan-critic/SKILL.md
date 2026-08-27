@@ -1,5 +1,5 @@
 ---
-description: "Dynamic plan review — adapts to task complexity, uses parallel subagents for larger plans"
+description: "Reviews an implementation plan for gaps and risks. Use before building from a non-trivial plan."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent"]
 ---
 

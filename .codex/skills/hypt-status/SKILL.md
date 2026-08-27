@@ -1,6 +1,7 @@
 ---
 name: "hypt-status"
-description: "Quick deployment status check — is my site up? Read-only, no fixes attempted. Use when the user wants a read-only deployment status check, including `/status`, `hypt:status`."
+description: "Quick deployment status check — is my site up? Read-only, no fixes attempted"
+disable-model-invocation: true
 metadata:
   short-description: "Deployment Status"
 ---
