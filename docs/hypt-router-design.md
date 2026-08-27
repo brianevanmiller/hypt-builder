@@ -18,12 +18,10 @@ User request
 |---|---|
 | Start or onboard a project | `hypt-start` |
 | Critique a non-trivial plan | `hypt-plan-critic` |
-| Build a plan end to end | `hypt-prototype` |
-| Produce a reviewed PR without merge | `hypt-build` |
-| Run autonomously, confirm before merge | `hypt-go` |
-| Run autonomously through merge | `hypt-yolo` |
+| Implement approved executable work | `hypt-implement` |
+| Build and prove work end to end | `hypt-build` |
+| Run autonomously through merge | `hypt-build` in yolo mode, then `hypt-close` |
 | Finalize, confirm, merge, and release | `hypt-close` |
-| Finalize and merge without confirmation | `hypt-autoclose` |
 | Check or repair deployment health | `hypt-deploy` |
 | Restore a working release | `hypt-restore` |
 | Analyze an incident | `hypt-post-mortem` |
@@ -33,28 +31,22 @@ User request
 ## Composition
 
 ```text
-hypt-prototype
-  plan review
-  implementation
-  diff review and fixes
-  tests and documentation
-  PR finalization
+hypt-start
+  person + communication profile
+  required companion installation
+  project + accounts + plan
 
 hypt-build
-  research and plan
+  readiness routing
   hypt-plan-critic
-  hypt-prototype or finish existing work
-  review-and-fix loop
+  hypt-implement
+  real-path proof
+  standards/spec review
+  adversarial review
+  contract sweep
   PR finalization
-
-hypt-go
-  hypt-build
-  confirmation gate
-  hypt-autoclose
-
-hypt-yolo
-  hypt-build
-  hypt-autoclose
+  if yolo mode:
+    hypt-close with pre-approved gate
 ```
 
 Review, verification, documentation, and git completion criteria live inside these parent workflows. They are steps, not independently installed skills.
@@ -90,3 +82,4 @@ The router and every routed workflow are installed from `agents/skills/` through
 |---|---|
 | [Agent source layout](../agents/README.md) | Defines canonical skill packaging. |
 | [Migration research](2026-08-27-agent-skills-migration-research.md) | Records installer and protocol evidence. |
+| [Skill landscape research](2026-08-27-agent-skill-landscape-research.md) | Compares companion skills and integration seams. |

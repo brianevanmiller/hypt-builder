@@ -20,11 +20,10 @@ npx skills add brianevanmiller/hypt-builder \
 |---|---|
 | `hypt-start` | Set up a new project and write its plan |
 | `hypt-plan-critic` | Stress-test a plan before building |
-| `hypt-prototype` | Build, review, test, and open/update the PR |
-| `hypt-build` | Get work to a review-ready PR without merging |
-| `hypt-go` | Run the pipeline and ask before merge |
-| `hypt-yolo` | Run the pipeline and merge without confirmation |
+| `hypt-implement` | Implement approved work without owning the PR lifecycle |
+| `hypt-build` | Get work to a ready PR; yolo mode continues through close |
 | `hypt-close` | Final quality pass, confirm merge, deploy check, release |
+| `yolo`, `ship it`, or `publish it` | Run `hypt-build`, then auto-approved `hypt-close` |
 | `hypt-deploy` | Check status or fix a deployment |
 | `hypt-restore` | Roll back to a working version |
 | `hypt-post-mortem` | Document an incident and its follow-up |

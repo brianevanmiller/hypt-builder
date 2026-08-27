@@ -20,7 +20,8 @@ npx skills add brianevanmiller/hypt-builder
 
 ```bash
 npx skills add brianevanmiller/hypt-builder \
-  --skill hypt-prototype \
+  --skill hypt-build \
+  --skill hypt-implement \
   --skill hypt-plan-critic \
   --agent claude-code \
   --agent codex \
@@ -34,11 +35,11 @@ Composed workflows call sibling skills, and the installer does not resolve those
 
 | Selected workflow | Also select |
 |---|---|
-| `hypt-prototype` | `hypt-plan-critic` |
-| `hypt-build` | `hypt-plan-critic`, `hypt-prototype` |
-| `hypt-go` or `hypt-yolo` | `hypt-build`, `hypt-plan-critic`, `hypt-prototype`, `hypt-autoclose`, `hypt-deploy` |
-| `hypt-close` or `hypt-autoclose` | `hypt-deploy` |
-| `hypt-restore` | `hypt-post-mortem` |
+| `hypt-build` | `hypt-plan-critic`, `hypt-implement` |
+| `hypt-build` with yolo routing | `hypt-close`, `hypt-deploy` |
+| `hypt-close` | `hypt-deploy` |
+| `hypt-deploy` with code remediation | `hypt-build` |
+| `hypt-restore` | `hypt-post-mortem`, `hypt-deploy` |
 | `hypt` router | Install every skill so every route is available |
 
 ### Install every hypt skill for one agent
@@ -55,6 +56,21 @@ Change `claude-code` to `codex`, `cursor`, or another supported agent. Omit `--g
 
 After installation, restart the agent if it does not reload skills automatically.
 
+### Required companion skills
+
+> **Required after installing Hypt:** run `hypt-start` once. Onboarding is incomplete until its companion check passes.
+
+`hypt-start` checks and installs Hypt's required Matt Pocock and pstack companions globally after showing the exact plan and getting approval:
+
+| Source | Skills | Used for |
+|---|---|---|
+| `mattpocock/skills` | `wayfinder`, `grilling`, `codebase-design`, `code-review`, `tdd`, `diagnosing-bugs` | Readiness, discovery, design, review, light TDD, diagnosis |
+| `cursor/plugins` pstack | `architect`, `interrogate` | Second design perspective and adversarial review |
+
+Coder profiles also receive HumanLayer `show-me` and Archify; non-coder profiles skip technical visualization skills. `hypt-start` installs only missing names and verifies them through `npx skills list -g --json`.
+
+The exact source-qualified commands live in [`hypt-start`'s companion reference](agents/skills/hypt-start/references/companion-skills.md).
+
 Installed skills update explicitly:
 
 ```bash
@@ -68,19 +84,18 @@ Installed skills use collision-safe standalone names. The old Claude plugin name
 | Skill | Purpose |
 |---|---|
 | `hypt` | Route requests that span the shipping lifecycle |
-| `hypt-start` | Onboard a new project and create its initial plan |
+| `hypt-start` | Onboard the owner and project, install companions, and create the initial plan |
 | `hypt-plan-critic` | Stress-test a non-trivial implementation plan |
-| `hypt-prototype` | Build, review, test, and deliver a plan end to end |
-| `hypt-build` | Run research through a review-ready PR without merging |
-| `hypt-go` | Run the pipeline, then confirm before merge |
-| `hypt-yolo` | Run the pipeline and merge without a confirmation gate |
+| `hypt-implement` | Implement approved work through a focused coding pass |
+| `hypt-build` | Build to a ready PR; yolo phrases continue through close |
 | `hypt-close` | Final quality pass, merge confirmation, deployment check, and release |
-| `hypt-autoclose` | Merge, verify deployment, and release without confirmation |
 | `hypt-deploy` | Check deployment status or remediate deployment problems |
 | `hypt-restore` | Roll back a failed release or guide database recovery |
 | `hypt-post-mortem` | Analyze an incident and record follow-up work |
 
 You can invoke a skill by name or describe the outcome naturally. The `hypt` router only claims the workflows above; ordinary coding and git requests stay with the agent's normal behavior.
+
+`yolo`, `ship it`, and `publish it` route through `hypt-build` and then `hypt-close`. The phrase pre-approves the close gate so the workflow can merge, verify deployment, and release without another prompt.
 
 ## Source layout
 
@@ -99,9 +114,9 @@ agents/
         └── assets/
 ```
 
-There are no generated Claude/Codex copies and no bespoke installer-managed symlink tree. Each skill carries its own non-skill scripts and assets; composed skill dependencies are listed in the installation table above.
+There are no generated Claude/Codex copies and no bespoke installer-managed symlink tree. Each skill carries its own non-skill scripts, references, and assets; composed Hypt dependencies are listed in the installation table above, while `hypt-start` owns companion installation.
 
-See [`agents/README.md`](agents/README.md) for contributor rules and [`docs/2026-08-27-agent-skills-migration-research.md`](docs/2026-08-27-agent-skills-migration-research.md) for the distribution decision.
+See [`agents/README.md`](agents/README.md) for contributor rules, [`docs/2026-08-27-agent-skills-migration-research.md`](docs/2026-08-27-agent-skills-migration-research.md) for the distribution decision, and [`docs/2026-08-27-agent-skill-landscape-research.md`](docs/2026-08-27-agent-skill-landscape-research.md) for the companion-skill comparison.
 
 For human-facing setup, see the [beginner's guide](BEGINNERS_GUIDE.md) or the [cheatsheet](CHEATSHEET.md).
 

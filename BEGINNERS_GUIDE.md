@@ -24,7 +24,7 @@ Paste the entire message below into Claude Code, Claude Cowork, ChatGPT Codex, o
 >
 > Ask for one confirmation for that complete tool-installation plan. After I approve, install the approved tools, verify their versions, and install every hypt skill for this coding agent with the `skills` CLI. Do not install hypt into agent products I am not using.
 >
-> Then help me authenticate GitHub, Vercel, and Supabase only if my project needs them. Use official browser-based login or OAuth flows. Never ask me to paste passwords, API keys, or access tokens into chat. Finish by listing what succeeded, anything I must finish myself, and how to start `hypt-start`.
+> Then start `hypt-start`. It should offer to create a short Identity section in my project instructions and show me the required companion-skill plan. After I approve that plan, install only the missing Matt Pocock and pstack companions globally. Help me authenticate GitHub, Vercel, and Supabase only if my project needs them. Use official browser-based login or OAuth flows. Never ask me to paste passwords, API keys, or access tokens into chat. Finish by listing what succeeded and anything I must finish myself.
 >
 > If you cannot run terminal commands or edit local files, stop and tell me exactly how to open a coding workspace that can. Do not claim installation succeeded without verifying it.
 
@@ -84,7 +84,7 @@ Restart the coding agent if newly installed skills do not appear, then say:
 
 > Use `hypt-start` to help me plan and build a new project.
 
-`hypt-start` will ask what you want to build and guide you through only the accounts and services that project needs.
+`hypt-start` will offer project-level agent defaults, install Hypt's required companion skills after approval, ask what you want to build, and guide you through only the accounts and services that project needs.
 
 ## Related documentation
 
