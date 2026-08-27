@@ -283,7 +283,7 @@ Present only the accounts required by the chosen project. GitHub comes first bec
 
 **GitHub** (if `gh auth status` fails)
 
-> Next up: GitHub. This is where your app's code is stored — think of it like Google Drive, but for code. It also automatically updates your live website whenever changes are made.
+> Next up: GitHub. This is where your app's code is stored — think of it like Google Drive, but for code. Once we connect your hosting provider, changes merged in GitHub can trigger a new deployment.
 >
 > 1. Go to [github.com/signup](https://github.com/signup) and create a free account
 > 2. Let me know when you're done and I'll connect it from here

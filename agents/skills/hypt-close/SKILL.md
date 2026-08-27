@@ -67,6 +67,21 @@ EOF
 )"
 ```
 
+### Step 4b: Prepare the release on the feature branch
+
+Read the latest GitHub release, `VERSION` when present, and the top changelog entry. If the branch already prepares one coherent version newer than the latest release, record that as `<NEW_VERSION>` and keep it.
+
+Otherwise, choose a patch bump for fixes and small maintenance or a minor bump for features and significant enhancements. Ask the user only when the change type is genuinely ambiguous. Update `VERSION` and `CHANGELOG.md` when the repository uses them, commit the release preparation on the feature branch, and push it:
+
+```bash
+git add CHANGELOG.md
+test ! -f VERSION || git add VERSION
+git diff --cached --quiet || git commit -m "chore: bump version to v<NEW_VERSION>"
+git push
+```
+
+Refresh the PR summary to mention the prepared version. The squash merge carries these files through protected `main`; never create a post-merge version commit directly on `main`.
+
 ### Step 5: Confirmation gate
 
 Before merging, present a clear summary and ask for confirmation.
@@ -104,6 +119,8 @@ git push -u origin HEAD
 gh pr create --fill
 ```
 
+Wait for the release-preparation push to finish its required checks and confirm the PR is mergeable.
+
 Then merge:
 ```bash
 gh pr merge --squash --delete-branch
@@ -114,9 +131,9 @@ If merge fails:
 - If there are merge conflicts: report the conflicts and stop.
 - If the PR is not in a mergeable state: report why and stop.
 
-After successful merge, switch to main and pull:
+After successful merge, switch to main and pull. If another worktree already has `main` checked out, fetch it instead:
 ```bash
-git checkout main && git pull
+git checkout main && git pull 2>/dev/null || git fetch origin main
 ```
 
 ### Step 7: Check deployment
@@ -147,7 +164,7 @@ Then get status for each:
 gh api "repos/$REPO/deployments/<ID>/statuses" --jq '.[0] | {state, target_url, description}' 2>/dev/null
 ```
 
-**Note:** After merging, prefer Method 2 (GitHub Deployments API) for production deployment status, since PR check runs may not update after merge. You are now on `main` after `git checkout main && git pull` from Step 5.
+**Note:** After merging, prefer Method 2 (GitHub Deployments API) for production deployment status, since PR check runs may not update after merge. You are now on `main` or have fetched it after Step 6.
 
 **Check for Vercel team access block:**
 
@@ -196,72 +213,11 @@ Read the merged PR title/body and recent commits to understand what was shipped.
 
 Keep it to ONE suggestion max. If nothing is high-value, say nothing about CI — don't clutter the close summary.
 
-### Step 9: Version bump and release
+### Step 9: Create the GitHub release
 
-After merging, automatically bump the version and create a GitHub release.
-
-**Get the latest release version:**
-```bash
-gh release view --json tagName --jq '.tagName' 2>/dev/null
-```
-
-If no releases exist, start from `v0.1.0`. Otherwise, parse the tag (e.g. `v0.5.0`) into major.minor.patch.
-
-**Determine bump type from the PR:**
-
-Use the PR title and commit messages (already available from earlier steps) to decide:
-
-| PR content | Bump | Example |
-|-----------|------|---------|
-| Bug fixes, chore, docs, small tweaks, touchups, config changes | **Patch** | v0.5.0 → v0.5.1 |
-| New features, new skills, significant enhancements, breaking changes | **Minor** | v0.5.0 → v0.6.0 |
-
-**If ambiguous** (e.g. a mix of features and fixes, or unclear scope), ask the user:
-
-> Version bump: the current release is `v0.5.0`. Should the next version be:
-> 1. **v0.5.1** (patch — bug fixes / small changes)
-> 2. **v0.6.0** (minor — new features / enhancements)
-
-Wait for the user's response before continuing.
-
-**Update version files and create release when the project uses them:**
+The version and changelog prepared in Step 4b are now on `main` through the squash merge. Create the corresponding tag and release without making another commit:
 
 ```bash
-# Update VERSION file (no v prefix) when present
-test ! -f VERSION || echo "<NEW_VERSION>" > VERSION
-```
-
-**Update changelog:**
-
-After determining the new version, update `CHANGELOG.md` at the repo root. If it doesn't exist, create it with a header.
-
-Get the previous release tag to scope the changes:
-```bash
-PREV_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null)
-```
-
-Generate the entry by reading the PR title and commits since the previous tag:
-```bash
-git log ${PREV_TAG}..HEAD --oneline --no-merges 2>/dev/null
-```
-
-Write a new entry at the top of CHANGELOG.md (below the header), using this format:
-
-```markdown
-## v<NEW_VERSION> — <YYYY-MM-DD>
-
-- <One-line summary of the PR that was just merged>
-- <Any other notable changes from the commits, if multiple>
-```
-
-Keep entries concise — one bullet per logical change, no commit hashes, no author names. Write from the user's perspective (what changed), not the developer's (what files were touched).
-
-Then commit, push, and release:
-```bash
-git add CHANGELOG.md
-test ! -f VERSION || git add VERSION
-git commit -m "chore: bump version to v<NEW_VERSION>"
-git push origin main
 gh release create v<NEW_VERSION> --title "v<NEW_VERSION>" --generate-notes
 ```
 

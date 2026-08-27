@@ -29,6 +29,9 @@ jobs:
       - name: Validate agent skills
         run: node scripts/validate-agent-skills.mjs
 
+      - name: Verify skills CLI discovery
+        run: npx --yes skills@1.5.23 add . --list
+
       - name: Make scanner executable
         run: chmod +x bin/hypt-security-scan
 
