@@ -14,8 +14,6 @@ npx skills add brianevanmiller/hypt-builder \
   --yes
 ```
 
-Use `--global --all` only when you want every skill copied or linked to every supported agent target.
-
 ## Core workflows
 
 | Say or invoke | What happens |

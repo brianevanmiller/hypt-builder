@@ -20,10 +20,8 @@ npx skills add brianevanmiller/hypt-builder
 
 ```bash
 npx skills add brianevanmiller/hypt-builder \
-  --skill hypt \
-  --skill hypt-start \
   --skill hypt-prototype \
-  --skill hypt-close \
+  --skill hypt-plan-critic \
   --agent claude-code \
   --agent codex \
   --global \
@@ -31,6 +29,17 @@ npx skills add brianevanmiller/hypt-builder \
 ```
 
 Repeat `--skill` and `--agent` for any combination.
+
+Composed workflows call sibling skills, and the installer does not resolve those dependencies automatically:
+
+| Selected workflow | Also select |
+|---|---|
+| `hypt-prototype` | `hypt-plan-critic` |
+| `hypt-build` | `hypt-plan-critic`, `hypt-prototype` |
+| `hypt-go` or `hypt-yolo` | `hypt-build`, `hypt-plan-critic`, `hypt-prototype`, `hypt-autoclose`, `hypt-deploy` |
+| `hypt-close` or `hypt-autoclose` | `hypt-deploy` |
+| `hypt-restore` | `hypt-post-mortem` |
+| `hypt` router | Install every skill so every route is available |
 
 ### Install every hypt skill for one agent
 
@@ -43,14 +52,6 @@ npx skills add brianevanmiller/hypt-builder \
 ```
 
 Change `claude-code` to `codex`, `cursor`, or another supported agent. Omit `--global` for a project-local install.
-
-To install every skill for every supported agent target, use the broader shorthand:
-
-```bash
-npx skills add brianevanmiller/hypt-builder --global --all
-```
-
-`--all` means all skills and all agent targets; it can create configuration directories for agents you do not currently use.
 
 After installation, restart the agent if it does not reload skills automatically.
 
@@ -98,7 +99,7 @@ agents/
         └── assets/
 ```
 
-There are no generated Claude/Codex copies and no bespoke installer-managed symlink tree. Each skill carries its own scripts and assets so selected installation works independently.
+There are no generated Claude/Codex copies and no bespoke installer-managed symlink tree. Each skill carries its own non-skill scripts and assets; composed skill dependencies are listed in the installation table above.
 
 See [`agents/README.md`](agents/README.md) for contributor rules and [`docs/2026-08-27-agent-skills-migration-research.md`](docs/2026-08-27-agent-skills-migration-research.md) for the distribution decision.
 
@@ -112,7 +113,7 @@ npx skills add . --list
 bin/hypt-security-scan --mode blocking --all
 ```
 
-The local validator checks Agent Skills naming, frontmatter, self-contained paths, and retired plugin references. The installer command verifies real CLI discovery.
+The local validator checks Agent Skills naming, frontmatter, duplicate names, and retired plugin references. The installer command verifies real CLI discovery; review remains responsible for non-skill file references and composed workflow dependencies.
 
 ## Requirements
 

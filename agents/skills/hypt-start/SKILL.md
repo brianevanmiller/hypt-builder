@@ -78,75 +78,7 @@ Tell the user:
 
 Then skip directly to **Phase 3** (Step 3a will detect what's missing and only set up what's needed). After Phase 3 completes, skip Phase 4 (docs already exist) and proceed to Phase 5 (CI setup).
 
-**If no plan file exists**, proceed to Phase 0b, then Phase 1 normally.
-
----
-
-### Phase 0b: Recommend gstack (if not installed)
-
-Treat gstack as installed when its named skills are present in the agent's loaded skill catalog. If they are unavailable:
-
-> Before we dive in — I want to mention a free companion tool called **gstack** that adds some powerful capabilities to your workflow:
->
-> - **Visual QA testing** — I can open your app in a real browser and test it
-> - **Design review** — I can spot visual issues and suggest improvements
-> - **Security audit** — I can check your app for common security problems
-> - **Product thinking** — Deeper questions to help refine your idea
->
-> These are totally optional — hypt works great on its own.
->
-> **Install gstack?** (yes / no / tell me more)
-
-If yes, follow gstack's current installation instructions. Re-check the loaded skill catalog after installation and continue.
-
-If "tell me more": explain that gstack is created by Garry Tan, is MIT-licensed, and adds 35+ specialist skills for visual testing, design, security, and deeper product thinking. Then re-ask.
-
-If no: continue without gstack.
-
-If gstack skills are already available: skip this phase entirely.
-
----
-
-### Phase 0c: Recommend Matt Pocock's companion skills (if not installed)
-
-Check the loaded skill catalog for `grill-me` and `git-guardrails-claude-code`. Skip this phase entirely if both are already available.
-
-Otherwise:
-
-> One more optional add-on. **Matt Pocock** (the [Total TypeScript](https://www.totaltypescript.com/) and [AI Hero](https://www.aihero.dev/) guy) maintains a few skills that pair really well with how hypt works:
->
-> - **`grill-me`** — gets you relentlessly interviewed about your plan, one question at a time, until every decision is nailed down (great for surfacing things you didn't know you needed to decide)
-> - **git-guardrails** — installs a safety net that blocks dangerous git commands (`push --force`, `reset --hard`, etc.) before they can run
->
-> Both are MIT-licensed, totally optional, and complement gstack and hypt without overlapping.
->
-> **Install Matt's companion skills?** (yes / no / pick / tell me more)
-
-If "tell me more": explain that Matt Pocock runs [aihero.dev](https://www.aihero.dev/) (AI engineering courses) and [totaltypescript.com](https://www.totaltypescript.com/) (the de facto TypeScript course), and that his skills repo is open-source at github.com/mattpocock/skills. Then re-ask.
-
-If "pick": present each of the two skills with its description and ask yes/no for each one. Track which ones the user accepted.
-
-If "yes": install both (skipping any whose flag is already `true`).
-
-If "no": continue without them.
-
-To install, use the `skills` CLI's non-interactive flags. Install `grill-me` for all detected agents; install the Claude Code-specific guardrail only when Claude Code is in use:
-
-```bash
-npx skills@latest add mattpocock/skills --skill grill-me --agent '*' -g -y
-npx skills@latest add mattpocock/skills --skill git-guardrails-claude-code --agent claude-code -g -y
-```
-
-After install, treat the corresponding skill as available for the rest of the session.
-
-If `git-guardrails-claude-code` was just installed, immediately invoke it so the actual hooks get wired up:
-
-- Use the `git-guardrails-claude-code` skill.
-- When it asks scope, answer "all projects" (global) on the user's behalf — that matches the global install we just did.
-
-If the user later asks "what did you install?", run `npx skills list -g` and report the installed targets. For the git guardrail hook, refer to that skill's own setup output.
-
-> **Note on Matt's other skills (`to-prd` / `to-issues`):** Matt also publishes skills that turn conversations into PRDs and break plans into tasks — but they hardcode GitHub Issues as the output. hypt prefers `docs/` files and `docs/todos/backlog.md` for tracking, so we don't recommend those two by default. If a hypt-native equivalent ships in the future (writing to `docs/` and optionally syncing to Linear/Notion/etc.), `hypt-start` will offer it here.
+**If no plan file exists**, proceed to Phase 1 normally. Prerequisite detection in Phase 3 owns every tool-installation request so the user sees one complete plan and one approval gate.
 
 ---
 
@@ -191,7 +123,7 @@ After their response, summarize it back in one sentence to confirm you understoo
 
 ### Phase 1b: Deeper product thinking (optional, gstack only)
 
-If `GSTACK` is `true`:
+If an `office-hours` skill is already available in the loaded catalog:
 
 > Want to go deeper on your product thinking? gstack's Office Hours can challenge your assumptions and help you find the strongest version of your idea. This is optional — your current plan is already solid.
 >
@@ -201,7 +133,7 @@ If yes: invoke Skill: `office-hours`
 
 After office-hours completes, continue to Phase 2.
 
-If no or `GSTACK` is `false`: skip this phase and continue to Phase 2.
+If no or that skill is unavailable: skip this phase and continue to Phase 2.
 
 ---
 
@@ -994,22 +926,17 @@ Build the closing message dynamically based on which optional skills are availab
 > - **App description:** `docs/YYYY-MM-DD-<idea>.md` — the big picture of your app
 > - **Build plan:** `docs/YYYY-MM-DD-<idea>-plan.md` — the step-by-step plan for what to build
 
-If `MATT_GRILL=true`, add a "Before you build" callout:
+If `grill-me` is already available:
 
-> Want me to **stress-test the plan** before you build? Say **/grill-me** and I'll walk every decision branch with you, one question at a time.
+> Want me to **stress-test the plan** before you build? Use **`grill-me`** and I'll walk every decision branch with you, one question at a time.
 
-Then the workflow block. If `GSTACK` is `true`:
+Then the workflow block:
 
 > Here's your development workflow:
 >
 > 1. **`hypt-prototype`** — Build your app from the plan
-> 2. After the build, I'll automatically test it in a real browser and check the design
-> 3. Ask your agent normally to fix any bugs that come up
-> 4. **`hypt-close`** — Merge and deploy to production
-
-If gstack skills are unavailable:
-
-> When you're ready to start building, use **`hypt-prototype`** and point it to your plan file. It'll handle the rest — implementing the features, reviewing the code, running tests, and getting it live.
+> 2. Ask your agent normally to fix any bugs or make follow-up changes
+> 3. **`hypt-close`** — Run the final checks, merge, verify deployment, and release
 
 Then the "Anytime" line (always shown):
 
@@ -1042,6 +969,6 @@ After CI setup is complete (or skipped), offer the user a quick-reference guide:
 >
 > **Would you like to see the cheatsheet?** (yes / no)
 
-If yes: read `CHEATSHEET.md` from the project root and display its contents to the user.
+If yes: open or link the canonical [hypt cheatsheet](https://github.com/brianevanmiller/hypt-builder/blob/main/CHEATSHEET.md), then summarize the installed workflows from the loaded skill catalog.
 
-If no: tell the user they can always find it by asking *"show me the cheatsheet"* or reading `CHEATSHEET.md` in their project.
+If no: tell the user they can always ask *"show me the hypt cheatsheet"* later.

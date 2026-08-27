@@ -7,7 +7,7 @@
 - Remove one-purpose skills for save, review, fix, tests, docs, CI, status, touchup, todo, and suggestions. Their completion criteria now live inside the build, deploy, and close workflows or fall back to normal agent behavior.
 - Rename `hypt-pipeline` to `hypt-build` and update its composed workflows.
 - Add a beginner's guide for agent-led prerequisite checks, consent-based installation, safe browser authentication, and optional Claude/ChatGPT connections.
-- Bundle skill-specific scripts and assets inside the skills that use them, enabling independent selected-skill installation.
+- Bundle skill-specific scripts and assets inside the skills that use them, and document composed workflow dependencies for selected installation.
 - Update validation and supply-chain scanning for the Agent Skills layout.
 
 ## v0.28.0 — 2026-05-01

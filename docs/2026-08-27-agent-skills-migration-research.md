@@ -6,7 +6,7 @@ Make `agents/skills/` the canonical, installer-facing source tree and distribute
 
 - Remove the Claude plugin namespace and its `hypt:skill` invocation format.
 - Keep collision-safe standalone names such as `hypt-deploy`; installed skills from different repositories share one namespace.
-- Keep each skill self-contained so selected-skill installation works.
+- Bundle each skill's non-skill scripts and assets, and document sibling skill dependencies for selected installation.
 - Defer an Agent Plugins manifest. The current package only needs skills, while Agent Plugins deliberately leaves installation and distribution outside its specification.
 
 ## Evidence
@@ -50,7 +50,7 @@ npx skills add brianevanmiller/hypt-builder \
   --yes
 ```
 
-The broader `--global --all` shorthand installs every skill for every supported agent target and may create directories for agents that are not currently in use.
+The `--all` shorthand also selects every supported agent target, so hypt documents `--skill '*'` with an explicit `--agent` instead.
 
 ## Agent Plugins compatibility
 

