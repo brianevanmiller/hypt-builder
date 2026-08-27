@@ -32,7 +32,7 @@ This skill runs after `hypt-restore` to document what went wrong. It is designed
 Find the problematic changes that were just rolled back. Use the Context section above and dig deeper:
 
 ```bash
-# Find the revert commit (just pushed by /restore)
+# Find the revert commit (just pushed by hypt-restore)
 REVERT_SHA=$(git log origin/main --oneline --grep="Revert" -i -1 --format="%H" 2>/dev/null)
 if [ -z "$REVERT_SHA" ]; then
   # No revert commit — restore may have used platform rollback (Vercel/Netlify promotion)
@@ -116,7 +116,7 @@ Use a subagent to analyze the diff if it's large. Look for common failure patter
 - The error could be in how the code interacts with production data or state
 - Multiple possible causes and it's unclear which one is the actual culprit
 
-#### Step 2a: Escalate to /investigate (when the cause is involved)
+#### Step 2a: Escalate to `investigate` (when the cause is involved)
 
 **If the root cause is classified as "involved" and gstack's `investigate` skill is available:**
 

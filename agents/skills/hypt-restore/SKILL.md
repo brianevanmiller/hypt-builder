@@ -82,7 +82,7 @@ Restore target identified:
 Proceeding with restore...
 ```
 
-If the user is in a YOLO/pipeline context (autonomous mode), proceed immediately. Otherwise, ask: "Proceed with restore?" and wait for confirmation.
+If the user is in a `hypt-go` or `hypt-yolo` context (autonomous mode), proceed immediately. Otherwise, ask: "Proceed with restore?" and wait for confirmation.
 
 ---
 
@@ -412,7 +412,7 @@ Restored to:  <sha_short> — <message>
 Method:       Git revert (pushed to main)
 Production:   HTTP <code> — site may still be deploying
 
-Check again in a few minutes with /status.
+Check again in a few minutes with `hypt-deploy` in read-only mode.
 If the site is still down, the issue may predate this deploy.
 ```
 
