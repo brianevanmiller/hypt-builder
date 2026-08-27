@@ -1,6 +1,6 @@
 ---
 name: "hypt-unit-tests"
-description: "Create or extend unit tests for PR changes — lean by default, thorough for critical paths. Use when the user wants tests added or extended for the current PR, including `/unit-tests`, `hypt:unit-tests`."
+description: "Adds or extends unit tests for changed code. Use when a PR needs targeted test coverage."
 metadata:
   short-description: "Smart Unit Tests for PR Changes"
 ---

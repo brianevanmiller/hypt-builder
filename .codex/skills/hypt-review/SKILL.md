@@ -1,6 +1,6 @@
 ---
 name: "hypt-review"
-description: "Thorough PR review with parallel subagents — auto-fixes urgent issues. Use when the user wants a PR review, diff review, or readiness check, including `/review`, `hypt:review`."
+description: "Reviews a code diff for correctness and readiness. Use when changes need a thorough pre-merge review."
 metadata:
   short-description: "Thorough PR Review"
 ---

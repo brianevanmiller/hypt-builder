@@ -1,5 +1,6 @@
 ---
 description: "Diagnose and fix bugs — triage, research, plan, and deliver a tested fix"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent", "Skill"]
 ---
 

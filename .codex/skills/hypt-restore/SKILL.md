@@ -1,6 +1,7 @@
 ---
 name: "hypt-restore"
-description: "Restore app to a previous working version — rollback deployments, revert code, guide database recovery. Use when the user wants to rollback, revert, or restore the app to a previous working version, including `/restore`, `hypt:restore`."
+description: "Restore app to a previous working version — rollback deployments, revert code, guide database recovery"
+disable-model-invocation: true
 metadata:
   short-description: "Restore to a Previous Working Version"
 ---

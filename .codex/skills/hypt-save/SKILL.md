@@ -1,6 +1,7 @@
 ---
 name: "hypt-save"
-description: "Save all changes — commit, push, and create/update PR automatically. Use when the user wants to commit, push, or create or update a PR, including `/save`, `hypt:save`."
+description: "Save all changes — commit, push, and create/update PR automatically"
+disable-model-invocation: true
 metadata:
   short-description: "Commit, Push, Create PR"
 ---

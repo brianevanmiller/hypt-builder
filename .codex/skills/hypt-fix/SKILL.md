@@ -1,6 +1,7 @@
 ---
 name: "hypt-fix"
-description: "Diagnose and fix bugs — triage, research, plan, and deliver a tested fix. Use when the user wants a bug diagnosed and fixed, including `/fix`, `hypt:fix`."
+description: "Diagnose and fix bugs — triage, research, plan, and deliver a tested fix"
+disable-model-invocation: true
 metadata:
   short-description: "Diagnose and Fix Bugs"
 ---

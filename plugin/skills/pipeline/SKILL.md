@@ -1,9 +1,6 @@
 ---
 name: pipeline
-description: >
-  Full development pipeline — detect stage, research, plan, build, review, test,
-  and save PR. Does NOT merge. Use when the user says "run pipeline",
-  "review and test", or "get this PR-ready".
+description: "Runs the development pipeline through a saved PR without merging. Use when a workflow needs research, planning, implementation, review, and tests."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent", "Skill"]
 version: "1.0.0"
 author: "Brian Miller"

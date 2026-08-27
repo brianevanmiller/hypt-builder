@@ -1,5 +1,5 @@
 ---
-description: "Set up lightweight CI — runs unit tests automatically on every commit via GitHub Actions"
+description: "Configures GitHub Actions to run lint and unit tests. Use when a project needs lightweight CI."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob"]
 ---
 

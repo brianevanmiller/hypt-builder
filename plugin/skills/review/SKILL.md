@@ -1,5 +1,5 @@
 ---
-description: "Thorough PR review with parallel subagents — auto-fixes urgent issues"
+description: "Reviews a code diff for correctness and readiness. Use when changes need a thorough pre-merge review."
 allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "Agent"]
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: "hypt-prototype"
-description: "End-to-end prototype: implement plan, review, test, and deliver a working build. Use when the user wants a plan implemented into a working prototype end to end, including `/prototype`, `hypt:prototype`."
+description: "End-to-end prototype: implement plan, review, test, and deliver a working build"
+disable-model-invocation: true
 metadata:
   short-description: "Build a Working Prototype from a Plan"
 ---

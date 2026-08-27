@@ -1,8 +1,6 @@
 ---
 name: autoclose
-description: >
-  Autonomous close — merge PR, deploy check, version bump, and release without
-  confirmation. Used by /yolo and /go after their own confirmation handling.
+description: "Merges a ready PR, verifies deployment, bumps the version, and creates a release. Use after a parent workflow has handled merge confirmation."
 allowed-tools: ["Bash", "Read", "Edit", "Grep", "Glob", "Skill"]
 version: "1.0.0"
 author: "Brian Miller"

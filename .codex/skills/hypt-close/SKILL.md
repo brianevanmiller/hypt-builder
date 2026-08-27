@@ -1,6 +1,7 @@
 ---
 name: "hypt-close"
-description: "Check off completed items, suggest next tasks, update backlog, confirm before merge, verify deployment, and release. Use when the user wants to wrap up a PR, confirm merge readiness, verify deployment, and release, including `/close`, `hypt:close`."
+description: "Check off completed items, suggest next tasks, update backlog, confirm before merge, verify deployment, and release"
+disable-model-invocation: true
 metadata:
   short-description: "Merge PR and Wrap Up (With Confirmation)"
 ---

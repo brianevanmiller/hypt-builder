@@ -1,6 +1,7 @@
 ---
 name: "hypt-go"
-description: "Autonomous ship with final confirmation — research, plan, build, review, then ask before merging. Use when the user wants the full shipping pipeline with an explicit merge confirmation gate, including `/go`, `hypt:go`."
+description: "Autonomous ship with final confirmation — research, plan, build, review, then ask before merging"
+disable-model-invocation: true
 metadata:
   short-description: "Ship It, But Confirm Before Merge"
 ---

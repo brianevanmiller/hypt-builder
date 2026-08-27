@@ -1,6 +1,6 @@
 ---
 name: "hypt-autoclose"
-description: "Autonomous close — merge PR, deploy check, version bump, and release without confirmation. Used by /yolo and /go after their own confirmation handling. Use when the user wants merge, deploy verification, version bump, and release without confirmation, including `/autoclose`, `hypt:autoclose`."
+description: "Merges a ready PR, verifies deployment, bumps the version, and creates a release. Use after a parent workflow has handled merge confirmation."
 metadata:
   short-description: "Merge PR and Wrap Up (No Confirmation)"
 ---

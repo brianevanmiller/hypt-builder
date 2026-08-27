@@ -1,6 +1,6 @@
 ---
 name: "hypt-docs"
-description: "Scan and update project documentation — check off completed items, update README tables, feature docs, process workflow diagrams, dates, and references. Used by /pipeline and /close, or standalone via \"update docs\". Use when the user wants to scan and update project documentation, including checklists, READMEs, feature docs, and dates, including `/docs`, `hypt:docs`."
+description: "Updates project documentation to reflect completed work. Use after implementation or before closing a PR."
 metadata:
   short-description: "Documentation Updater"
 ---

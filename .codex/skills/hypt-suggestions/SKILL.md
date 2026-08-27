@@ -1,6 +1,6 @@
 ---
 name: "hypt-suggestions"
-description: "Suggest next tasks and track them in your project backlog. Use when the user wants next-task suggestions or backlog updates, including `/suggestions`, `hypt:suggestions`."
+description: "Suggests and tracks next tasks in the project backlog. Use when prioritizing follow-up work."
 metadata:
   short-description: "Suggest Next Tasks and Update Backlog"
 ---

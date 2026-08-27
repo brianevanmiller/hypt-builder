@@ -1,5 +1,5 @@
 ---
-description: "Add or update todos, backlog items, or roadmap entries in your project's tracking file"
+description: "Adds or updates project backlog, roadmap, or todo items. Use when work needs to be tracked."
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob"]
 ---
 

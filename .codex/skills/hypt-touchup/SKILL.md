@@ -1,6 +1,6 @@
 ---
 name: "hypt-touchup"
-description: "Quick pre-merge polish — fix PR comments, build issues, and update docs. Use when the user wants quick polish before merge, including PR feedback, docs, and build fixes, including `/touchup`, `hypt:touchup`."
+description: "Polishes a PR by resolving review comments, build issues, and stale docs. Use after review and before merge."
 metadata:
   short-description: "Quick Pre-Merge Polish"
 ---

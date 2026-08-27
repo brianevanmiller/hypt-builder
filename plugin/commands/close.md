@@ -1,5 +1,6 @@
 ---
 description: "Check off completed items, suggest next tasks, update backlog, confirm before merge, verify deployment, and release"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Edit", "Grep", "Glob", "Skill"]
 ---
 

@@ -1,5 +1,6 @@
 ---
 description: "Autonomous ship with final confirmation — research, plan, build, review, then ask before merging"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Edit", "Write", "Grep", "Glob", "Agent", "Skill"]
 ---
 

@@ -1,5 +1,6 @@
 ---
 description: "Restore app to a previous working version — rollback deployments, revert code, guide database recovery"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "Agent", "Skill"]
 ---
 

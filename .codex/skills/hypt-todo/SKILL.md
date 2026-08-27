@@ -1,6 +1,6 @@
 ---
 name: "hypt-todo"
-description: "Add or update todos, backlog items, or roadmap entries in your project's tracking file. Use when the user wants to add, update, or manage items in their project's tracking file (backlog, roadmap, todos), including `/todo`, `hypt:todo`."
+description: "Adds or updates project backlog, roadmap, or todo items. Use when work needs to be tracked."
 metadata:
   short-description: "Update Your Project Backlog"
 ---

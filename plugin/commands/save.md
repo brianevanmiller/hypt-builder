@@ -1,5 +1,6 @@
 ---
 description: "Save all changes — commit, push, and create/update PR automatically"
+disable-model-invocation: true
 allowed-tools: ["Bash", "Read", "Grep"]
 ---
 

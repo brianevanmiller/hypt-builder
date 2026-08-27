@@ -1,6 +1,6 @@
 ---
 name: "hypt-plan-critic"
-description: "Dynamic plan review — adapts to task complexity, uses parallel subagents for larger plans. Use when the user wants a plan critiqued before implementation, including `/plan-critic`, `hypt:plan-critic`."
+description: "Reviews an implementation plan for gaps and risks. Use before building from a non-trivial plan."
 metadata:
   short-description: "Review a Plan Before Building"
 ---

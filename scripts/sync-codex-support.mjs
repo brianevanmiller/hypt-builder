@@ -19,133 +19,111 @@ const SKILLS = [
     sourcePath: "plugin/skills/hypt/SKILL.md",
     targetName: "hypt",
     aliases: ["/hypt", "hypt"],
-    useCase: "the user asks for a general shipping workflow, `/hypt`, or a vague request that should be routed to the right hypt workflow",
   },
   {
     sourcePath: "plugin/commands/start.md",
     targetName: "hypt-start",
     aliases: ["/start", "hypt:start"],
-    useCase: "the user wants project onboarding, setup help, or an implementation plan for a new app idea",
   },
   {
     sourcePath: "plugin/commands/prototype.md",
     targetName: "hypt-prototype",
     aliases: ["/prototype", "hypt:prototype"],
-    useCase: "the user wants a plan implemented into a working prototype end to end",
   },
   {
     sourcePath: "plugin/commands/save.md",
     targetName: "hypt-save",
     aliases: ["/save", "hypt:save"],
-    useCase: "the user wants to commit, push, or create or update a PR",
   },
   {
     sourcePath: "plugin/skills/review/SKILL.md",
     targetName: "hypt-review",
     aliases: ["/review", "hypt:review"],
-    useCase: "the user wants a PR review, diff review, or readiness check",
   },
   {
     sourcePath: "plugin/skills/touchup/SKILL.md",
     targetName: "hypt-touchup",
     aliases: ["/touchup", "hypt:touchup"],
-    useCase: "the user wants quick polish before merge, including PR feedback, docs, and build fixes",
   },
   {
     sourcePath: "plugin/skills/unit-tests/SKILL.md",
     targetName: "hypt-unit-tests",
     aliases: ["/unit-tests", "hypt:unit-tests"],
-    useCase: "the user wants tests added or extended for the current PR",
   },
   {
     sourcePath: "plugin/commands/fix.md",
     targetName: "hypt-fix",
     aliases: ["/fix", "hypt:fix"],
-    useCase: "the user wants a bug diagnosed and fixed",
   },
   {
     sourcePath: "plugin/commands/deploy.md",
     targetName: "hypt-deploy",
     aliases: ["/deploy", "hypt:deploy"],
-    useCase: "the user wants deployment verification or minor deploy issue handling",
   },
   {
     sourcePath: "plugin/commands/status.md",
     targetName: "hypt-status",
     aliases: ["/status", "hypt:status"],
-    useCase: "the user wants a read-only deployment status check",
   },
   {
     sourcePath: "plugin/commands/restore.md",
     targetName: "hypt-restore",
     aliases: ["/restore", "hypt:restore"],
-    useCase: "the user wants to rollback, revert, or restore the app to a previous working version",
   },
   {
     sourcePath: "plugin/skills/docs/SKILL.md",
     targetName: "hypt-docs",
     aliases: ["/docs", "hypt:docs"],
-    useCase: "the user wants to scan and update project documentation, including checklists, READMEs, feature docs, and dates",
   },
   {
     sourcePath: "plugin/commands/close.md",
     targetName: "hypt-close",
     aliases: ["/close", "hypt:close"],
-    useCase: "the user wants to wrap up a PR, confirm merge readiness, verify deployment, and release",
   },
   {
     sourcePath: "plugin/skills/suggestions/SKILL.md",
     targetName: "hypt-suggestions",
     aliases: ["/suggestions", "hypt:suggestions"],
-    useCase: "the user wants next-task suggestions or backlog updates",
   },
   {
     sourcePath: "plugin/skills/plan-critic/SKILL.md",
     targetName: "hypt-plan-critic",
     aliases: ["/plan-critic", "hypt:plan-critic"],
-    useCase: "the user wants a plan critiqued before implementation",
   },
   {
     sourcePath: "plugin/commands/go.md",
     targetName: "hypt-go",
     aliases: ["/go", "hypt:go"],
-    useCase: "the user wants the full shipping pipeline with an explicit merge confirmation gate",
   },
   {
     sourcePath: "plugin/commands/yolo.md",
     targetName: "hypt-yolo",
     aliases: ["/yolo", "hypt:yolo"],
-    useCase: "the user wants the full shipping pipeline to run autonomously through merge",
   },
   {
     sourcePath: "plugin/skills/pipeline/SKILL.md",
     targetName: "hypt-pipeline",
     aliases: ["/pipeline", "hypt:pipeline"],
-    useCase: "the user wants the full development pipeline run without merging",
   },
   {
     sourcePath: "plugin/skills/autoclose/SKILL.md",
     targetName: "hypt-autoclose",
     aliases: ["/autoclose", "hypt:autoclose"],
-    useCase: "the user wants merge, deploy verification, version bump, and release without confirmation",
   },
   {
     sourcePath: "plugin/skills/ci-setup/SKILL.md",
     targetName: "hypt-ci-setup",
     aliases: ["/ci-setup", "hypt:ci-setup"],
-    useCase: "the user wants lightweight CI added for linting and unit tests",
   },
   {
     sourcePath: "plugin/skills/post-mortem/SKILL.md",
     targetName: "hypt-post-mortem",
     aliases: ["/post-mortem", "hypt:post-mortem"],
-    useCase: "the user wants to analyze what went wrong after a restore, create an incident report, or review a production failure",
   },
   {
     sourcePath: "plugin/skills/todo/SKILL.md",
     targetName: "hypt-todo",
     aliases: ["/todo", "hypt:todo"],
-    useCase: "the user wants to add, update, or manage items in their project's tracking file (backlog, roadmap, todos)",
   },
 ];
 
@@ -169,6 +147,7 @@ function main() {
   );
 
   validateSourceManifest();
+  validateInvocationMetadata();
   stale = reconcileGeneratedArtifacts(expectedSkillFiles, expectedDirectories, checkMode) || stale;
 
   for (const skill of SKILLS) {
@@ -227,6 +206,26 @@ function validateSourceManifest() {
   }
 }
 
+function validateInvocationMetadata() {
+  const invalidSources = SKILLS.filter((skill) => {
+    const sourceMeta = extractSourceMeta(skill);
+    const disablesModelInvocation = sourceMeta["disable-model-invocation"] === "true";
+    const isUserInvokedCommand = skill.sourcePath.startsWith("plugin/commands/");
+    return disablesModelInvocation !== isUserInvokedCommand;
+  });
+
+  if (invalidSources.length) {
+    throw new Error(
+      [
+        "Invocation metadata does not match the source type.",
+        "Files in plugin/commands must set disable-model-invocation: true;",
+        "files in plugin/skills must remain model-invocable.",
+        `Invalid sources: ${invalidSources.map((skill) => skill.sourcePath).join(", ")}`,
+      ].join(" "),
+    );
+  }
+}
+
 function reconcileGeneratedArtifacts(expectedFiles, expectedDirectories, checkMode) {
   let stale = false;
   const actualFiles = listManagedFiles(join(repoRoot, ".codex/skills"));
@@ -261,13 +260,14 @@ function generateSkill(skill) {
   const sourceMeta = parseFrontmatter(frontmatter);
   const sourceDescription = normalizeWhitespace(sourceMeta.description || "");
   const shortDescription = extractShortDescription(body, sourceDescription);
-  const description = buildDescription(skill, sourceDescription);
+  const disablesModelInvocation = sourceMeta["disable-model-invocation"] === "true";
   const normalizedBody = normalizeBody(skill, body);
 
   return [
     "---",
     `name: ${yamlString(skill.targetName)}`,
-    `description: ${yamlString(description)}`,
+    `description: ${yamlString(sourceDescription)}`,
+    ...(disablesModelInvocation ? ["disable-model-invocation: true"] : []),
     "metadata:",
     `  short-description: ${yamlString(shortDescription)}`,
     "---",
@@ -279,14 +279,15 @@ function generateSkill(skill) {
 }
 
 function generateAgentsFile() {
-  const skillLines = SKILLS.map((skill) => {
-    const aliases = skill.aliases.map((alias) => `\`${alias}\``).join(", ");
-    return `- ${skill.targetName}: ${buildDescription(skill, extractSourceDescription(skill))} (aliases: ${aliases}; file: \`.codex/skills/${skill.targetName}/SKILL.md\`)`;
-  }).join("\n");
-
-  const aliasLines = SKILLS.flatMap((skill) =>
-    skill.aliases.map((alias) => `- \`${alias}\` -> \`${skill.targetName}\``),
-  ).join("\n");
+  const modelInvokedSkills = SKILLS.filter(
+    (skill) => extractSourceMeta(skill)["disable-model-invocation"] !== "true",
+  );
+  const skillLines = modelInvokedSkills
+    .map(
+      (skill) =>
+        `- ${skill.targetName}: ${extractSourceDescription(skill)} (file: \`.codex/skills/${skill.targetName}/SKILL.md\`)`,
+    )
+    .join("\n");
 
   return [
     "<!-- Generated from plugin/skills and plugin/commands. Do not edit by hand. Run `node scripts/sync-codex-support.mjs` instead. -->",
@@ -294,29 +295,28 @@ function generateAgentsFile() {
     "",
     "## Codex Support",
     "",
-    "This repo exposes repo-local Codex skills under `.codex/skills/`. Use them automatically when the user asks for the matching workflow, and prefer the router skill `hypt` only when the request is broad enough that the correct workflow still needs to be chosen.",
+    "This repo exposes repo-local Codex skills under `.codex/skills/`. Model-invoked skills are listed below; user-invoked workflows are intentionally omitted from always-loaded instructions.",
     "",
-    "## Available Skills",
+    "## Model-Invoked Skills",
     "",
     skillLines,
     "",
     "## Trigger Rules",
     "",
-    "- Use `hypt` for vague shipping workflow requests, `/hypt`, or when the user wants hypt to route them to the right workflow.",
-    "- Use the specific `hypt-*` skill when the user explicitly names a workflow, uses a legacy Claude alias, or clearly describes that workflow.",
-    "- Treat legacy Claude aliases as synonyms for the generated Codex skills.",
-    "",
-    "## Legacy Alias Map",
-    "",
-    aliasLines,
+    "- Use the specific skill when its one-line description matches the work.",
+    "- Use `hypt` when a request spans the shipping lifecycle or the right workflow is unclear.",
     "",
   ].join("\n");
 }
 
 function extractSourceDescription(skill) {
+  return normalizeWhitespace(extractSourceMeta(skill).description || "");
+}
+
+function extractSourceMeta(skill) {
   const source = readFileSync(join(repoRoot, skill.sourcePath), "utf8");
   const { frontmatter } = splitFrontmatter(source);
-  return normalizeWhitespace(parseFrontmatter(frontmatter).description || "");
+  return parseFrontmatter(frontmatter);
 }
 
 function normalizeBody(skill, body) {
@@ -474,12 +474,6 @@ function replaceTitleHeading(body, targetName) {
     const titleSuffix = line.match(/\s+[—-]\s+(.+)$/);
     return titleSuffix ? `# ${targetName} — ${titleSuffix[1]}` : `# ${targetName}`;
   });
-}
-
-function buildDescription(skill, sourceDescription) {
-  const base = sourceDescription.replace(/\.$/, "");
-  const aliasList = skill.aliases.map((alias) => `\`${alias}\``).join(", ");
-  return `${base}. Use when ${skill.useCase}, including ${aliasList}.`;
 }
 
 function extractShortDescription(body, fallback) {

@@ -128,6 +128,8 @@ If you already have a CLAUDE.md, hypt offers to enhance it by appending the engi
 node scripts/sync-codex-support.mjs
 ```
 
+Workflows in `plugin/commands/` are user-invoked and set `disable-model-invocation: true`. Workflows in `plugin/skills/` are model-invoked and use a concise one-line description that says what the skill does and when to use it. The sync script validates this distinction and carries it into the generated Codex files.
+
 ## Cheatsheet
 
 New to hypt? See **[CHEATSHEET.md](CHEATSHEET.md)** for a printable one-page reference with the commands you'll use most. After running `/start`, you'll be offered the cheatsheet automatically.

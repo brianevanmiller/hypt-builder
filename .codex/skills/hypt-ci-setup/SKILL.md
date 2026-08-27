@@ -1,6 +1,6 @@
 ---
 name: "hypt-ci-setup"
-description: "Set up lightweight CI — runs unit tests automatically on every commit via GitHub Actions. Use when the user wants lightweight CI added for linting and unit tests, including `/ci-setup`, `hypt:ci-setup`."
+description: "Configures GitHub Actions to run lint and unit tests. Use when a project needs lightweight CI."
 metadata:
   short-description: "Lightweight CI for Your Project"
 ---
