@@ -60,14 +60,14 @@ After installation, restart the agent if it does not reload skills automatically
 
 > **Required after installing Hypt:** run `hypt-start` once. Onboarding is incomplete until its companion check passes.
 
-`hypt-start` checks and installs Hypt's required Matt Pocock and pstack companions globally after showing the exact plan and getting approval:
+`hypt-start` checks and installs Hypt's required Matt Pocock and pstack companions globally after showing the exact plan and getting approval. When a new startup idea needs direction or vetting, it can also approval-gate and invoke gstack's conditional `office-hours` skill:
 
 | Source | Skills | Used for |
 |---|---|---|
 | `mattpocock/skills` | `wayfinder`, `grilling`, `codebase-design`, `code-review`, `tdd`, `diagnosing-bugs` | Readiness, discovery, design, review, light TDD, diagnosis |
 | `cursor/plugins` pstack | `architect`, `interrogate` | Second design perspective and adversarial review |
 
-Coder profiles also receive HumanLayer `show-me` and Archify; non-coder profiles skip technical visualization skills. `hypt-start` installs only missing names and verifies them through `npx skills list -g --json`.
+Coder profiles also receive HumanLayer `show-me` and Archify; non-coder profiles skip technical visualization skills. `hypt-start` installs only missing names and verifies them through `npx skills list -g --json`. It batches website/web-app/desktop intake, always establishes GitHub and Vercel access, explicitly installs and authenticates the Vercel CLI, and creates/links Supabase only for selected public-account or backend branches. Website intake can preserve a content brief, Google Drive assets, navigation, audience, vibe, and inspiration; web-app intake can record a WorkOS AuthKit evaluation for high-scale B2B products without silently provisioning a second auth system.
 
 The exact source-qualified commands live in [`hypt-start`'s companion reference](agents/skills/hypt-start/references/companion-skills.md).
 
@@ -137,7 +137,8 @@ Individual workflows may require:
 - Git and the GitHub CLI (`gh`) for branches, pull requests, deployments, and releases
 - Node.js for the `skills` installer and local validation
 - Bun in projects whose selected workflow uses Bun commands
-- Deployment-provider CLIs only when that provider's remediation path needs them
+- Vercel CLI for every onboarded project, to verify the Vercel project, GitHub connection, domain, and deployment
+- Supabase CLI only when the selected project uses Supabase for auth, data, or backend work
 
 ## Agent Plugins protocol
 

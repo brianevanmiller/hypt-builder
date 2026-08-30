@@ -1,10 +1,17 @@
 # Changelog
 
-## v0.31.0 — 2026-08-30
+## v0.32.0 — 2026-08-30
 
 - Extend `hypt-close` with Balto-inspired branch hygiene, including diff-scoped comment harvesting, automatic routine test cleanup, and explicit approval for critical test changes.
 - Add repository-driven migration and post-merge reconciliation guidance, with safe stops for undocumented, interactive, irreversible, failed, or uncertain operations.
 - Make stacked-PR rechecks, worktree-safe merging, tracker-neutral follow-up, and yolo safety boundaries explicit.
+
+## v0.31.0 — 2026-08-30
+
+- Extend `hypt-start` to distinguish website, web-app, and desktop onboarding branches.
+- Batch project intake for briefs, website copy, Drive assets, navigation, audience, design direction, account strategy, scale, domain, and startup-vetting decisions.
+- Require explicit GitHub and Vercel account/CLI setup and verification for every project, while keeping Supabase conditional and recording WorkOS AuthKit evaluations for suitable high-scale B2B apps.
+- Add approval-gated gstack `office-hours` support for requested startup idea direction or vetting.
 
 ## v0.30.0 — 2026-08-27
 

@@ -1,21 +1,41 @@
 # Default web stack setup
 
-Consult only the branches selected during product discovery. Existing repository conventions override this default.
+Consult only the branches selected during product discovery. Existing repository conventions override this default. `website`, `webapp`, and `desktop` are distinct setup branches; do not scaffold a web app into a desktop-only project or create a backend that the intake did not select.
 
 ## Tools and accounts
 
-Default tools are Git, Node/npm/npx, GitHub CLI, and Bun. Use the OS package manager or official signed distribution. Run Vercel and Supabase CLIs on demand rather than installing them globally.
+Default tools are Git, Node/npm/npx, GitHub CLI, Bun, and the Vercel CLI. Use the OS package manager or official signed distribution. Install Vercel explicitly when onboarding begins; use the project's package manager or official Vercel instructions rather than relying on a transient `bunx vercel` download. Install the Supabase CLI as a project dependency for Supabase branches, or through the official system package when the user needs a standalone CLI; do not silently add it to unrelated projects.
 
-Authenticate in this order:
+Authenticate in this order for every project:
 
-1. GitHub with `gh auth login --web`
-2. Vercel with GitHub OAuth and `bunx vercel login`
-3. Supabase with GitHub OAuth and `bunx supabase login`
+1. GitHub with `gh auth login --web`, then verify with `gh auth status`
+2. Vercel with `vercel login`, then verify with `vercel whoami`
+3. Supabase with `supabase login` (or the selected package-runner equivalent), then verify with `supabase projects list` — web-app account/backend branches only
 4. Stripe only for payments
 5. Resend only for email
 6. Integration providers only when selected
 
-Each OAuth flow needs its own human interaction. Credentials go into official browser pages, a gitignored local file, or the provider's secret store.
+GitHub account access is required even when the repository is not created yet. Connect the selected GitHub repository to Vercel after both accounts are authenticated. The Vercel GitHub App must be installed for the repository owner and granted access to the selected repository; organization owners may need to approve it. Confirm the linked Vercel project and repository rather than treating a local `.vercel` directory as proof of a GitHub connection.
+
+Each OAuth flow needs its own human interaction. Credentials go into official browser pages, a gitignored local file, or the provider's secret store. Never request passwords, API keys, or access tokens in chat.
+
+## Project shape branches
+
+### Website
+
+Use a content-first static or server-rendered web scaffold appropriate to the selected repository. Preserve the main brief, website copy source, Google Drive asset folder, navigation tabs, audience, vibe, and inspiration links in the project record. If the source material is inaccessible, pause the content implementation and record the exact human action needed to grant access or attach/export the source.
+
+Create or link the Vercel project from the GitHub repository, enable automatic deployments, and attach the selected custom domain. For a new domain, check availability and price first; require a final user confirmation immediately before purchase. Vercel supports `vercel domains check`, `vercel domains price`, `vercel domains buy`, and `vercel domains add`. A Vercel-registered domain can use Vercel nameservers and automatic DNS records; an external registrar requires the owner to approve or perform DNS changes.
+
+### Web app
+
+If other users sign up or the app needs a selected Supabase backend, install `@supabase/supabase-js`, `@supabase/ssr`, and the Supabase CLI, then create and link a remote project. For owner-only apps, do not assume public signup. For an open or invited service, configure the selected auth policy and verify the user journey. When growth and B2B/enterprise requirements make it plausible, record a WorkOS AuthKit evaluation as a decision or follow-up; provisioning WorkOS is a separate approved choice.
+
+For owner/team access, copy `assets/allowlist.sql` to a uniquely timestamped migration and replace the placeholder with the approved email rows. For external integrations, copy `assets/integrations.sql` to the next unique migration. Create one server-only provider adapter per selected integration, an OAuth callback that validates the provider and `state`, and a scheduled sync route protected by `CRON_SECRET`.
+
+### Desktop
+
+Keep the desktop runtime, packaging, signing, and update channel in the repository's selected toolchain. Use Vercel only for the explicitly selected companion web surface, API, update metadata, or download/landing site. A local-only desktop app does not require Supabase, `.env.local`, or a Vercel-hosted backend. If the desktop app has accounts or sync, apply the web-app account and backend branch to its companion service.
 
 ## Scaffold
 

@@ -24,7 +24,7 @@ Paste the entire message below into Claude Code, Claude Cowork, ChatGPT Codex, o
 >
 > Ask for one confirmation for that complete tool-installation plan. After I approve, install the approved tools, verify their versions, and install every hypt skill for this coding agent with the `skills` CLI. Do not install hypt into agent products I am not using.
 >
-> Then start `hypt-start`. It should offer to create a short Identity section in my project instructions and show me the required companion-skill plan. After I approve that plan, install only the missing Matt Pocock and pstack companions globally. Help me authenticate GitHub, Vercel, and Supabase only if my project needs them. Use official browser-based login or OAuth flows. Never ask me to paste passwords, API keys, or access tokens into chat. Finish by listing what succeeded and anything I must finish myself.
+> Then start `hypt-start`. It should offer to create a short Identity section in my project instructions and show me the required companion-skill plan. After I approve that plan, install only the missing Matt Pocock and pstack companions globally. Have `hypt-start` ask one batched intake question covering whether this is a website, web app, or desktop project; the main project brief; website copy and Google Drive assets when relevant; design inspiration, tabs, audience, and vibe; web-app signup, scale, and B2B/enterprise needs; desktop targets and companion web surface; GitHub/Vercel/Supabase status; domain purchase and connection; and whether startup idea vetting is needed. Every project must establish GitHub and Vercel, explicitly install and authenticate the Vercel CLI, and set up Supabase only when the selected app needs it. If startup vetting is requested, use gstack's `office-hours` skill when available or approval-gate its official installation. Use official browser-based login or OAuth flows. Never ask me to paste passwords, API keys, or access tokens into chat. Finish by listing what succeeded and anything I must finish myself.
 >
 > If you cannot run terminal commands or edit local files, stop and tell me exactly how to open a coding workspace that can. Do not claim installation succeeded without verifying it.
 
@@ -50,7 +50,9 @@ This installs every hypt workflow for the coding agent you are using, without cr
 | Node.js LTS, npm, and npx | Runs the standard `skills` installer |
 | GitHub CLI (`gh`) | Creates repositories, pull requests, and releases |
 | Bun | Runs app tooling and project dependencies used by the default workflow |
-| Vercel and Supabase CLIs | Run on demand when the selected project uses those services |
+| Vercel CLI | Install and authenticate for every project so Vercel projects, GitHub connections, domains, and deployments can be verified
+| Supabase CLI | Install and authenticate only when the selected project uses Supabase for auth, data, or backend work
+
 
 These are normal developer tools, not hidden background services. The agent should install them from your operating system's package manager or the vendor's official distribution, show you what it plans to run, and verify each installation afterward.
 
@@ -58,9 +60,9 @@ These are normal developer tools, not hidden background services. The agent shou
 
 Tool installation and account connection are separate:
 
-1. **GitHub:** let the agent start `gh auth login --web`, then approve the sign-in in your browser.
-2. **Vercel:** if your project deploys to Vercel, let the agent start the official Vercel browser login.
-3. **Supabase:** if your project needs a database or authentication, let the agent start the official Supabase browser login.
+1. **GitHub:** let the agent start `gh auth login --web`, then approve the sign-in in your browser. Vercel's GitHub connection needs access to the selected repository; an organization owner may need to approve the GitHub App.
+2. **Vercel:** let the agent install the Vercel CLI, start the official `vercel login` browser flow, and verify `vercel whoami`. It can then create/link the Vercel project, connect the GitHub repository, and attach the selected domain.
+3. **Supabase:** if your project needs a database or authentication, let the agent install the selected Supabase CLI, start the official `supabase login` flow, and verify access before creating/linking the project.
 
 Browser login is preferable to copying credentials. Keep passwords, API keys, recovery codes, and access tokens out of chat.
 
@@ -84,7 +86,7 @@ Restart the coding agent if newly installed skills do not appear, then say:
 
 > Use `hypt-start` to help me plan and build a new project.
 
-`hypt-start` will offer project-level agent defaults, install Hypt's required companion skills after approval, ask what you want to build, and guide you through only the accounts and services that project needs.
+`hypt-start` will offer project-level agent defaults, install Hypt's required companion skills after approval, collect a single batched project intake, and guide you through the accounts and services that the selected website, web app, or desktop project needs. It records links to source documents and assets rather than pretending inaccessible files were read, and it can invoke gstack's `office-hours` for requested startup direction or vetting.
 
 ## Related documentation
 
