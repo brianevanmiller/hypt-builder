@@ -42,6 +42,21 @@ npx skills add tt-a1i/archify \
 
 `show-me` supplies compact technical views. Archify is reserved for substantial architecture or workflow artifacts. A non-coder profile does not install or invoke either through Hypt.
 
+## Conditional product-vetting companion
+
+`office-hours` is not part of the default required set. It is a conditional companion for a new startup idea when the user requests direction, brainstorming, or vetting during `hypt-start` intake. Check the installed global catalog before invoking it. If it is missing, show the user this exact approval-gated command before installing it:
+
+```bash
+npx skills add garrytan/gstack \
+  --skill office-hours \
+  --global \
+  <agent-flags> \
+  --yes \
+  --full-depth
+```
+
+After installation, verify the exact `office-hours` name through `npx skills list -g --json`, then invoke that skill. Do not emulate or paraphrase Office Hours when the user explicitly requested it. If installation is declined or unavailable, record the vetting step as a human follow-up and do not finalize startup scope as though vetting occurred.
+
 ## Verification
 
 Parse `npx skills list -g --json` and require these core names:
