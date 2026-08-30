@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.31.0 — 2026-08-30
+
+- Extend `hypt-close` with Balto-inspired branch hygiene, including diff-scoped comment harvesting, automatic routine test cleanup, and explicit approval for critical test changes.
+- Add repository-driven migration and post-merge reconciliation guidance, with safe stops for undocumented, interactive, irreversible, failed, or uncertain operations.
+- Make stacked-PR rechecks, worktree-safe merging, tracker-neutral follow-up, and yolo safety boundaries explicit.
+
 ## v0.30.0 — 2026-08-27
 
 - Consolidate autonomous shipping into `hypt-build` and `hypt-close`: `yolo`, `ship it`, and `publish it` now run the complete build-to-release path with the close confirmation pre-approved, replacing `hypt-go`, `hypt-yolo`, and `hypt-autoclose`.
