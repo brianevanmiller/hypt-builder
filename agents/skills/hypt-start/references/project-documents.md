@@ -2,26 +2,50 @@
 
 Write dated, kebab-case files. Adapt headings to existing repository documentation rather than creating duplicate sources of truth.
 
-## App document
+## Project record
+
+Use this shape for a `website`, `webapp`, or `desktop` project. Preserve source links rather than copying a source document's full contents into a second, stale source of truth.
 
 ```markdown
-# <App name>
+# <Project name>
 
-## Purpose
-<Who it helps, what they accomplish, and why it matters.>
+## Shape and purpose
+- **Shape:** <website | webapp | desktop | other>
+- **Purpose:** <Who it helps, what they accomplish, and why it matters.>
+- **Distinctive idea:** <Difference, or not yet known>
+
+## Source material
+| Source | Kind | Access status | How it is used |
+|---|---|---|---|
+| <path or URL> | <brief, website copy, assets, inspiration> | <read / attached / inaccessible> | <content or decision>
+
+## Users and access
+<User groups, sign-in method, and allowlist/invite/open policy.>
 
 ## Day-one experience
 - <User-visible action and outcome>
 
-## Users and access
-<User groups, sign-in method, and allowlist/open policy.>
+## Website or desktop surface
+- **Navigation/content:** <tabs, copy source, and audience, or N/A>
+- **Assets:** <Google Drive/local asset source, or N/A>
+- **Design direction:** <Brand, tone, accessibility, inspiration, and examples.>
+- **Desktop targets and distribution:** <OS, packaging, signing, update path, or N/A>
+
+## Accounts and growth
+- **GitHub/Vercel:** <account, repository, team, project, and GitHub App permission status>
+- **Supabase:** <project and auth/backend decision, or N/A>
+- **WorkOS:** <evaluation and rationale, or N/A>
+- **Growth posture:** <prototype, normal production, sensitive/critical; expected scale and consumer/B2B context>
 
 ## Integrations
 | Provider | Read/write purpose | Human setup |
 |---|---|---|
 
-## Design direction
-<Brand, tone, accessibility, and examples.>
+## Domain and deployment
+- **Desired domain:** <name and alternatives>
+- **Ownership/purchase:** <Vercel purchase, existing registrar, or deferred>
+- **DNS/connection status:** <status and remaining human action>
+- **Preview/deployment URL:** <URL or pending>
 
 ## Scope
 ### Included
@@ -34,13 +58,20 @@ Write dated, kebab-case files. Adapt headings to existing repository documentati
 ## Build plan
 
 ```markdown
-# <App name> — Build plan
+# <Project name> — Build plan
+
+> Project record: [relative link to the project record]
 
 ## Outcome
-<Observable definition of done.>
+<Observable definition of done for the selected website, web app, desktop app, or companion surface.>
+
+## Source and setup dependencies
+- **Source material:** <links/paths and access status>
+- **Accounts/resources:** <GitHub, Vercel, Supabase, WorkOS decision, domain>
+- **Human-only actions:** <OAuth, organization approval, payment, DNS, signing credentials>
 
 ## Constraints
-- <Security, data, product, or operational constraint>
+- <Security, data, product, platform, distribution, or operational constraint>
 
 ## Tracer bullets
 
@@ -48,14 +79,14 @@ Write dated, kebab-case files. Adapt headings to existing repository documentati
 - **Behavior:** <user-visible result>
 - **Implementation:** <modules/interfaces affected>
 - **Acceptance:** <checkable criteria>
-- **Proof:** <browser/runtime path and smallest automated check>
+- **Proof:** <browser/runtime/package path and smallest automated check>
 - **Depends on:** <prior slice or none>
 
 ## Data and integrations
-<Authoritative schemas, migrations, external seams, and rollback.>
+<Authoritative schemas, migrations, external seams, auth strategy, and rollback.>
 
-## Operations
-<Environment, observability, deployment, and post-merge work.>
+## Operations and distribution
+<Environment, observability, deployment, desktop packaging/signing/update path, and post-merge work.>
 
 ## Production hardening
 <Only the level the user selected: prototype, normal production, or sensitive/critical.>
