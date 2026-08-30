@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.31.0 — 2026-08-30
+
+- Extend `hypt-start` to distinguish website, web-app, and desktop onboarding branches.
+- Batch project intake for briefs, website copy, Drive assets, navigation, audience, design direction, account strategy, scale, domain, and startup-vetting decisions.
+- Require explicit GitHub and Vercel account/CLI setup and verification for every project, while keeping Supabase conditional and recording WorkOS AuthKit evaluations for suitable high-scale B2B apps.
+- Add approval-gated gstack `office-hours` support for requested startup idea direction or vetting.
+
 ## v0.30.0 — 2026-08-27
 
 - Consolidate autonomous shipping into `hypt-build` and `hypt-close`: `yolo`, `ship it`, and `publish it` now run the complete build-to-release path with the close confirmation pre-approved, replacing `hypt-go`, `hypt-yolo`, and `hypt-autoclose`.
