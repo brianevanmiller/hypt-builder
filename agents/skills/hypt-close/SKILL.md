@@ -7,28 +7,30 @@ metadata:
 
 # hypt-close — Merge, Verify, and Release
 
-Own the transition from a ready remote PR to a verified release. A direct invocation confirms before merge. A `hypt-build` yolo handoff arrives pre-approved.
+Own the transition from a ready remote PR to a verified release. A direct invocation confirms before merge. A `hypt-build` yolo handoff pre-approves only that ordinary confirmation; it never bypasses failed gates, critical-test decisions, migration safety, or destructive production actions.
 
 ## Ground
 
-Read the repository instructions, current branch, merge-base, PR, unresolved comments, required checks, deployments, latest release, `VERSION`, changelog, and affected project tracking.
+Read the repository instructions, current branch, actual PR base and head, merge-base, PR, unresolved comments, required checks, deployments, latest release, `VERSION`, changelog, migration configuration, and any configured project tracker. Record the expected PR head SHA before making decisions. Inspect `git worktree list --porcelain` before any branch cleanup.
 
 ## 1. Refresh the PR
 
-Review the complete branch diff and fix material correctness, security, or build issues. Update affected docs and actionable follow-up tracking without creating a new tracking system.
+Review the complete branch diff against the PR's actual base (`git diff <base>...<head>`), not a guessed `main`. Fix material correctness, security, or build issues; update affected docs and existing follow-up records without creating a new tracking system.
 
-Polish the PR title and body from the full branch, using repository conventions. Include the user-visible outcome and verification evidence.
+Polish the PR title and body from the full branch. Include the user-visible outcome, migration or rollout work, and verification evidence. Preserve unrelated local changes; do not discard them merely to make close clean.
 
 Completion:
 
-- Worktree is clean.
-- Local `HEAD` equals the PR head SHA.
+- The PR is open and local `HEAD` equals its remote head SHA.
 - Every intended commit and review fix is pushed.
-- No blocking comment remains.
+- No uncommitted PR changes remain and no unrelated work was discarded.
+- The title, body, and evidence describe the same head.
 
 ## 2. Prove the gates
 
-Inspect required checks by name, status, and conclusion. “No failure” is not enough: every required gate must be present and have run on the current PR head.
+Inspect required checks by name, status, conclusion, and head SHA. “No failure” is not enough: every required gate must be present and must have run on the current PR head. Also verify the required review approval and triage comments into actionable blockers versus discussion that can remain open.
+
+When a check is missing, diagnose whether a base-branch filter, path filter, workflow trigger, stacked-PR retarget, or stale head explains it. A local check is useful evidence but never substitutes for a required remote gate. If the repository has no declared required checks, report that fact rather than inventing a gate.
 
 For user-facing changes, require current real-path evidence:
 
@@ -36,61 +38,89 @@ For user-facing changes, require current real-path evidence:
 2. Another provider's preview
 3. Localhost as fallback
 
-If `hypt-build` already captured proof on the current head and later fixes could not affect that path, reuse it. Otherwise re-drive the path. After three browser/tooling attempts, record the exact blocker instead of claiming proof.
+Reuse `hypt-build` evidence only when it targets the current head and later changes could not affect that path. Otherwise re-drive it. After three browser/tooling attempts, record the exact blocker instead of claiming proof.
 
-Stop when a required gate is missing, pending beyond its normal duration, or failing. Report the gate and current head SHA.
+Stop when a required gate is missing, pending beyond its normal duration, failing, approval is absent, or a must-fix review finding remains. Report the gate or finding and current head SHA.
 
-## 3. Sweep freshness
+## 3. Audit branch hygiene
 
-Re-read comments, tests, docs, PR text, and release notes touched by this work. They must describe the code on the current PR head, including any late review reversal.
+When the branch introduces multi-line comments or test changes, read and execute [`references/branch-hygiene.md`](references/branch-hygiene.md). Audit only branch-introduced material against the PR base.
 
-Keep durable contract; remove only session-written scaffolding:
+Apply routine comment cleanup and clearly redundant, non-critical test cleanup automatically. Preserve tests whose removal could brick the application, corrupt or expose data, break authentication or payments, or remove the only proof of a critical deploy/user path; present those exact candidates for explicit approval instead. Record harvested rationale in one durable destination, including an existing tracker, PR description, repository decision document, or an initialized Beadcrumbs ledger when `bdc` is installed.
 
-- Keep interface behavior, plausible regression tests, invariants, gotchas, semantic definitions, and ticket pointers.
-- Remove build narration, discarded-design rationale, duplicate permutations, change detectors, and temporary probes.
+After any hygiene edit, commit with repository conventions, push, and return to Step 2. Do not call the PR ready from checks or approval attached to an older head.
 
-Completion: remote code, proof, and prose all describe the same revision.
+## 4. Sweep freshness
 
-## 4. Prepare the release
+Re-read comments, tests, docs, PR text, release notes, migration notes, and verification evidence touched by this work. They must describe the current PR head, including any late review reversal.
+
+Keep interface behavior, plausible regression tests, invariants, gotchas, semantic definitions, and durable ticket pointers. Remove build narration, discarded-design rationale, duplicate permutations, change detectors, and temporary probes according to Step 3's reference.
+
+Completion: remote code, proof, and prose all describe the same revision, and every hygiene candidate has either been handled or explicitly held for the user.
+
+## 5. Resolve migration and rollout work
+
+If changed files or the PR imply schema, migration, seed, backfill, environment, queue, cache, or other post-merge operations, read and execute [`references/migration-reconciliation.md`](references/migration-reconciliation.md). It detects the repository's documented migration mode instead of assuming a framework.
+
+Offer the exact documented pre-merge command when the merged code can read a schema or data change before deployment guarantees that change. Run it only after the user explicitly approves the pre-merge operation; yolo approval does not cover migration decisions. Never invent a command or use reset/force/dev/destructive operations as a substitute.
+
+After a successful merge, automatically run the repository's documented, deploy-safe migration command when migrations are not already part of the provider deployment. Run it once, capture the result, verify the target environment and migration state, and be loud about any failure. An interactive production confirmation, irreversible migration, missing command, or uncertain target is a human safety stop, not a reason to guess. A migration failure blocks the release.
+
+Completion: migration status is `none`, or the exact pre-merge and post-merge actions, target, verification, and any blocker are recorded.
+
+## 6. Prepare the release
 
 If the repository versions releases, compare the latest GitHub release, `VERSION`, and changelog:
 
 - Keep an already prepared coherent version newer than the latest release.
-- Otherwise choose a patch for fixes/small maintenance or a minor for features/significant enhancements.
+- Otherwise choose a patch for fixes or small maintenance, or a minor for features and significant enhancements.
 - Ask only when the bump is genuinely ambiguous.
 
-Update version and changelog on the feature branch, commit, push, and wait for the required gates on the new head. Refresh the PR summary.
+Update version and changelog on the feature branch, commit, and push. Return to Step 2, then refresh the PR summary and Step 4 freshness evidence on the new head.
 
-## 5. Confirm or accept yolo
+## 7. Confirm or accept yolo
 
-Present the PR, URL, change size, checks, real-path proof, and prepared version.
+If a configured tracker is available, identify referenced tickets from the PR title, body, and commits. Present proposed ticket closure separately and never infer closure from a merge. Keep any ticket with outstanding rollout work open. Ask before changing ticket state; if no tracker is configured, record follow-up in the PR or repository convention instead.
 
-When `hypt-build` invoked this skill in yolo mode, mark the gate auto-approved and continue. Otherwise ask:
+Present the PR number and URL, base and head SHA, change size, approval, required checks that ran, real-path proof, hygiene result, migration result, prepared version, and worktree cleanup plan.
+
+When `hypt-build` invoked this skill in yolo mode, mark this ordinary merge/deploy/release confirmation as pre-approved and continue. Otherwise ask:
 
 > Merge, deploy, and release? (yes/no)
 
-Proceed only after direct confirmation or the recorded yolo pre-approval.
+Proceed only after direct confirmation or the recorded yolo pre-approval. Critical-test changes, migration operations, irreversible actions, and ticket closure still require their own explicit decisions.
 
-## 6. Merge
+## 8. Merge safely
 
-Confirm the PR is mergeable, then squash-merge and delete the branch using repository conventions. On failure, stop with the failing check, conflict, or merge-state reason.
+Immediately before merging, refresh the PR and re-check state, head SHA, base branch, approval, actionable comments, required checks, and mergeability. If a stacked parent changed the base, rebase or resolve conflicts, let newly applicable gates run, and repeat the checks.
 
-Fetch the target branch after merge. Record the merged PR number and commit.
+Use squash merge without branch deletion:
 
-## 7. Verify production
+```bash
+gh pr merge <PR_NUMBER> --squash
+```
 
-Invoke `hypt-deploy` in production mode. Carry its production URL and health evidence forward. A provider access block follows `hypt-deploy`'s remediation path; it is not silently treated as success.
+Never pass `--delete-branch` from a worktree. If `git worktree list --porcelain` shows the branch, leave the worktree and branch intact; do not switch, reset, or clean it merely to finish close. On merge failure, stop with the exact conflict, check, or merge-state reason.
 
-Stop when production is unhealthy or unavailable after remediation. A release requires production evidence.
+Fetch the target branch after merge and record the merged PR number and commit. A successful merge is not yet a release.
 
-## 8. Release and re-check
+## 9. Verify production and post-merge operations
+
+Invoke `hypt-deploy` in production mode for the merged commit. Wait within its bounds for the expected deployment. When Step 5 identified a documented migration command that the provider did not execute, run it after the merged deployment is available, exactly once, then repeat the health and migration-state checks. If the command fails, targets the wrong environment, requests an interactive confirmation, or leaves state uncertain, stop loudly and do not create a release; carry the exact evidence into the follow-up or recovery path.
+
+Require both provider success for the merged SHA and application health on the real target path. A provider access block follows `hypt-deploy`'s remediation path and is never silently treated as success. A release requires production evidence.
+
+Apply only previously confirmed ticket closures after their rollout work is complete. Never close tickets silently.
+
+## 10. Release and re-check
 
 Create the GitHub release from the prepared version without another version commit. Then refresh:
 
-- PR merged state and target branch
-- Production deployment and URL
+- PR merged state, target branch, and merge commit
+- Production deployment, merged SHA, migration result, and URL
 - Release URL
 - Any stacked-branch merge state affected by the merge
+- Configured ticket state and outstanding follow-up
 
 Report:
 
@@ -100,8 +130,11 @@ Closed
 - Merge: <commit>
 - Release: <version and URL>
 - Production: <URL and health>
-- Gates: <required checks that ran>
+- Gates: <required checks that ran on <head SHA>>
 - Proof: <real user path>
+- Hygiene: <clean / comments trimmed or harvested / routine tests removed / critical tests held>
+- Migrations: <none / pre-merge command / post-merge command and verification / blocker>
+- Tickets: <closed with confirmation / left open with reason / tracker unavailable>
 - Follow-up: <items or none>
 ```
 
