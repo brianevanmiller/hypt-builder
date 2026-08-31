@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.32.1 — 2026-08-30
+
+- Give `hypt-close` gates commands whose output decides their status: branch hygiene (test-file and added-comment-line greps), migration and rollout paths, and release versioning.
+- Split hygiene statuses so `skipped (no comment or test surface)` means the trigger had nothing to run on and `clean` means the rubric ran, mapped in a two-column table; spell every status value in the close report.
+- Order the hygiene audit work-first with a run-biased tiebreaker, confirm recorded statuses before merging, and give `hypt-build`'s contract sweep the same trigger with `hypt-close` Step 3 as its named backstop.
+
 ## v0.32.0 — 2026-08-30
 
 - Extend `hypt-close` with Balto-inspired branch hygiene, including diff-scoped comment harvesting, automatic routine test cleanup, and explicit approval for critical test changes.
