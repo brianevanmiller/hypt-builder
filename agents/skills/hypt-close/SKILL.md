@@ -7,7 +7,7 @@ metadata:
 
 # hypt-close — Merge, Verify, and Release
 
-Own the transition from a ready remote PR to a verified release. A direct invocation confirms before merge. A `hypt-build` yolo handoff pre-approves only that ordinary confirmation; it never bypasses failed gates, critical-test decisions, migration safety, or destructive production actions.
+Own the transition from a ready remote PR to a verified release. A direct invocation confirms before merge. A `hypt-build` yolo handoff pre-approves only that ordinary confirmation; it never bypasses failed gates, critical-test decisions, migration safety, or destructive production actions. Every step's recorded status is read off its trigger check's output, not off a sense of the branch.
 
 ## Ground
 
@@ -44,9 +44,25 @@ Stop when a required gate is missing, pending beyond its normal duration, failin
 
 ## 3. Audit branch hygiene
 
-When the branch introduces multi-line comments or test changes, read and execute [`references/branch-hygiene.md`](references/branch-hygiene.md). Audit only branch-introduced material against the PR base.
+AI-authored branches carry residue: rationale comments written as landmarks for their author, and tests that were build scaffolding rather than regression contracts. Audit both, over branch-introduced material against the PR base. Pre-merge, so a run that stops short of merging still owes a hygiene status.
 
-Apply routine comment cleanup and clearly redundant, non-critical test cleanup automatically. Preserve tests whose removal could brick the application, corrupt or expose data, break authentication or payments, or remove the only proof of a critical deploy/user path; present those exact candidates for explicit approval instead. Record harvested rationale in one durable destination, including an existing tracker, PR description, repository decision document, or an initialized Beadcrumbs ledger when `bdc` is installed.
+Run the trigger check — it decides the status, so read the status off its output rather than off your sense of the branch:
+
+```bash
+# Base is the PR's actual base; a stacked parent's comments and tests are out of bounds.
+git diff --name-only <base>...<head> | grep -Ei '\.(test|spec)\.|_test\.|/tests?/'
+git diff -U0 <base>...<head> -- . ':(exclude)*.md' ':(exclude)*.txt' ':(exclude)*.json' ':(exclude)*.html' ':(exclude)*.xml' ':(exclude)*.csv' ':(exclude)*.rst' | grep -cE '^\+\s*(//|/\*|\*|#|--)'
+```
+
+| Trigger check | Hygiene status |
+|---|---|
+| Both outputs empty | `skipped (no comment or test surface)` |
+| Either non-empty, the rubric flags nothing | `clean` |
+| Either non-empty, the rubric flags material | `N blocks harvested · M tests cut · K held` |
+
+`clean` says the rubric ran over the diff; `skipped` says the trigger had nothing to run on.
+
+When either output is non-empty, read and execute [`references/branch-hygiene.md`](references/branch-hygiene.md) here: apply routine comment cleanup and clearly redundant, non-critical test cleanup automatically. Preserve tests whose removal could brick the application, corrupt or expose data, break authentication or payments, or remove the only proof of a critical deploy/user path; present those exact candidates for explicit approval instead. Record harvested rationale in one durable destination — an existing tracker, the PR description, a repository decision document, or an initialized Beadcrumbs ledger when `bdc` is installed. This audit is the backstop for `hypt-build`'s contract sweep; a non-empty trigger means that sweep never ran. Unsure? Run it — a false run costs one clean pass; a missed one ships scaffolding to the default branch under a green check.
 
 After any hygiene edit, commit with repository conventions, push, and return to Step 2. Do not call the PR ready from checks or approval attached to an older head.
 
@@ -60,17 +76,29 @@ Completion: remote code, proof, and prose all describe the same revision, and ev
 
 ## 5. Resolve migration and rollout work
 
-If changed files or the PR imply schema, migration, seed, backfill, environment, queue, cache, or other post-merge operations, read and execute [`references/migration-reconciliation.md`](references/migration-reconciliation.md). It detects the repository's documented migration mode instead of assuming a framework.
+Run the trigger check:
+
+```bash
+git diff --name-only <base>...<head> | grep -Ei '(^|/)migrat(e|ion)s?(/|$)|(^|/)(seeds?|backfills?)(/|$)|\.sql$|schema\.|(^|/)\.env|docker-compose'
+```
+
+Scan the PR title, body, and changed docs for environment, queue, cache, and other post-merge operations the paths cannot reveal. When either finds one, read and execute [`references/migration-reconciliation.md`](references/migration-reconciliation.md). It detects the repository's documented migration mode instead of assuming a framework.
 
 Offer the exact documented pre-merge command when the merged code can read a schema or data change before deployment guarantees that change. Run it only after the user explicitly approves the pre-merge operation; yolo approval does not cover migration decisions. Never invent a command or use reset/force/dev/destructive operations as a substitute.
 
 After a successful merge, automatically run the repository's documented, deploy-safe migration command when migrations are not already part of the provider deployment. Run it once, capture the result, verify the target environment and migration state, and be loud about any failure. An interactive production confirmation, irreversible migration, missing command, or uncertain target is a human safety stop, not a reason to guess. A migration failure blocks the release.
 
-Completion: migration status is `none`, or the exact pre-merge and post-merge actions, target, verification, and any blocker are recorded.
+Completion: migration status is `none` when the trigger output and scan are both empty, or the exact pre-merge and post-merge actions, target, verification, and any blocker are recorded.
 
 ## 6. Prepare the release
 
-If the repository versions releases, compare the latest GitHub release, `VERSION`, and changelog:
+Check whether the repository versions releases:
+
+```bash
+git ls-files VERSION 'CHANGELOG*' && gh release list --limit 1
+```
+
+Empty output from both means the repository does not version releases; record `Release: none (not versioned)` and move on. Otherwise compare the latest GitHub release, `VERSION`, and changelog:
 
 - Keep an already prepared coherent version newer than the latest release.
 - Otherwise choose a patch for fixes or small maintenance, or a minor for features and significant enhancements.
@@ -92,7 +120,7 @@ Proceed only after direct confirmation or the recorded yolo pre-approval. Critic
 
 ## 8. Merge safely
 
-Immediately before merging, refresh the PR and re-check state, head SHA, base branch, approval, actionable comments, required checks, and mergeability. If a stacked parent changed the base, rebase or resolve conflicts, let newly applicable gates run, and repeat the checks.
+Immediately before merging, refresh the PR and re-check state, head SHA, base branch, approval, actionable comments, required checks, and mergeability. Confirm Steps 3 and 5 each recorded a status from their trigger checks; run any gate whose status is missing before merging. If a stacked parent changed the base, rebase or resolve conflicts, let newly applicable gates run, and repeat the checks.
 
 Use squash merge without branch deletion:
 
@@ -128,12 +156,12 @@ Report:
 Closed
 - PR: <number and URL>
 - Merge: <commit>
-- Release: <version and URL>
+- Release: <version and URL / none (not versioned)>
 - Production: <URL and health>
 - Gates: <required checks that ran on <head SHA>>
 - Proof: <real user path>
-- Hygiene: <clean / comments trimmed or harvested / routine tests removed / critical tests held>
-- Migrations: <none / pre-merge command / post-merge command and verification / blocker>
+- Hygiene: <skipped (no comment or test surface) / clean / N blocks harvested · M tests cut · K held>
+- Migrations: <none (trigger output empty) / pre-merge command / post-merge command and verification / blocker>
 - Tickets: <closed with confirmation / left open with reason / tracker unavailable>
 - Follow-up: <items or none>
 ```
