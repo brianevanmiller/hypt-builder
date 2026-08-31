@@ -62,11 +62,7 @@ Wait for the user's explicit approval before deleting or folding a critical cand
 
 ## Session artifact sweep
 
-Scope: files this branch **added** under `docs/`, plus stray `.html` / `.png` / `.csv` anywhere in the diff — exactly what the third trigger check in Step 3 returns:
-
-```bash
-git diff --name-only --diff-filter=A <base>...<head> -- 'docs/**' '*.html' '*.png' '*.csv' ':(exclude)docs/*-app.md' ':(exclude)docs/*-plan.md'
-```
+Scope: the third trigger check in Step 3 — files this branch **added** under `docs/`, plus stray `.html` / `.png` / `.csv` anywhere in the diff, with the project record and plan excluded by name-shape.
 
 Modified pre-existing docs are out of bounds — someone put them there on purpose — and `<slug>-app.md` / `<slug>-plan.md` are the project's durable spine, excluded by name-shape in the trigger check rather than by judgment. A stacked parent's additions are out of scope with everything else pre-branch.
 
