@@ -94,12 +94,19 @@ Completion: both review axes and the adversarial pass have explicit dispositions
 
 ## 6. Sweep the contract
 
-Sort only comments and tests written during this build:
+Run the trigger check over the branch diff against the merge-base — its output decides whether the sweep has surface:
+
+```bash
+git diff --name-only <merge-base>...HEAD | grep -Ei '\.(test|spec)\.|_test\.|/tests?/'
+git diff -U0 <merge-base>...HEAD -- . ':(exclude)*.md' ':(exclude)*.txt' ':(exclude)*.json' ':(exclude)*.html' ':(exclude)*.xml' ':(exclude)*.csv' ':(exclude)*.rst' | grep -cE '^\+\s*(//|/\*|\*|#|--)'
+```
+
+Sort the comments and tests it surfaces:
 
 - **Contract:** interface behavior, a plausible regression, invariant, gotcha, semantic definition, or durable ticket pointer
 - **Scaffolding:** build narration, discarded-design rationale, duplicate permutations, change detectors, or temporary probes
 
-Keep the contract. Move long decision rationale to the tracker when one exists; remove the scaffolding. Re-read docs and comments after late review fixes so they describe the current code.
+Keep the contract. Move long decision rationale to the tracker when one exists; remove the scaffolding. Re-read docs and comments after late review fixes so they describe the current code. `hypt-close` Step 3 is the backstop for this sweep — it firing means this sweep didn't run.
 
 Completion: the remote PR contains every fix, no session journal, current verification notes, and no stale artifact.
 

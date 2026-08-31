@@ -1,6 +1,6 @@
 # Branch Hygiene: Comments and Tests
 
-Run this reference from `hypt-close` only when the PR diff introduces a multi-line comment block or a test change. Resolve the PR's actual base first, then scope every inspection to:
+Run this reference from `hypt-close` when either branch-hygiene trigger check in Step 3 is non-empty. Resolve the PR's actual base first, then scope every inspection to:
 
 ```bash
 git diff <base>...<head>
