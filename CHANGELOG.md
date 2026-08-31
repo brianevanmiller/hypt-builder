@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.32.3 — 2026-09-01
+
+- Add a third branch-hygiene scan to `hypt-close`: session artifacts a branch added under `docs/` (plus stray `.html`/`.png`/`.csv`) move to the work item — a configured tracker, or the PR when none is configured — with no approval gate, but the close report names every move and its landing place.
+- Scope the artifact sweep to branch-added files only, excluding the `<slug>-app.md` project record and `-plan.md` by name-shape in the trigger check so the durable spine is never eaten.
+- Promote the comment-harvest destination ladder into a shared § Destinations section serving both the harvest and the artifact sweep, one list with two consumers.
+- Make `hypt-build` treat `show-me`/Archify output and other session-produced prose as session artifacts: attach them to the tracker or PR as produced, rewrite repo-relative links first, and supersede in place instead of accumulating versions.
+
 ## v0.32.2 — 2026-09-01
 
 - Offer optional Beads and Beadcrumbs during first `hypt-start`: one-line Beadcrumbs pitch, Beads when no hosted tracker is in use, Beads-first install order, and the `beadcrumbs` skill whenever `bdc` is installed.

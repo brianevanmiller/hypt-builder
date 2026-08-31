@@ -1,4 +1,4 @@
-# Branch Hygiene: Comments and Tests
+# Branch Hygiene: Comments, Tests, and Session Artifacts
 
 Run this reference from `hypt-close` when either branch-hygiene trigger check in Step 3 is non-empty. Resolve the PR's actual base first, then scope every inspection to:
 
@@ -20,14 +20,18 @@ Classify every branch-introduced multi-line comment block:
 
 A mixed block is **Harvest** when it is mostly history. Preserve only a live invariant as a **Trim** one-liner. Do not preserve prose that merely restates the diff.
 
-Use the first suitable destination already supported by the repository:
+Keep one consolidated harvest per close run. On a re-run, extend the existing record instead of creating a duplicate. If no destination is clear, ask before making an external tracker write; a short PR-description note is the default when the repository allows it.
 
-1. An existing issue, ticket, or project tracker record, including a Beads issue when `bd` is initialized.
+## Destinations
+
+One ladder serves both the comment harvest and the session artifact sweep. Use the first rung already supported by the repository:
+
+1. An existing issue, ticket, or project tracker record, including a Beads issue when `bd` is initialized — a hypt project's record (`docs/<YYYY-MM-DD>-<slug>-app.md`) names its tracker when onboarding established one.
 2. An initialized Beadcrumbs ledger when `bdc` is installed. Capture the concise conclusion, not a transcript or secret, and follow the installed `beadcrumbs` skill for provenance, harvest, and any Beads destination. Do not initialize a ledger without asking.
-3. The PR description or an existing decision/ADR document.
+3. The PR description, a PR comment, or an existing decision/ADR document.
 4. The repository's normal follow-up file when no better destination exists.
 
-Keep one consolidated harvest per close run. On a re-run, extend the existing record instead of creating a duplicate. If no destination is clear, ask before making an external tracker write; a short PR-description note is the default when the repository allows it.
+With no tracker, the PR is the default landing for a session artifact — not an emergency fallback.
 
 ## Test cleanup
 
@@ -54,15 +58,43 @@ For every automatic cut or fold, retain the crux assertion and mention the resul
 <test name> → hold for approval → <failure or safety path it protects>
 ```
 
-Wait for the user's explicit approval before deleting or folding a critical candidate. A yolo handoff does not approve these edits. If the user declines, record that decision in the existing tracker, PR description, or Beadcrumbs record so a later close run does not repeatedly raise the same unchanged test.
+Wait for the user's explicit approval before deleting or folding a critical candidate. A yolo handoff does not approve these edits. If the user declines, record that decision in the selected § Destinations rung so a later close run does not repeatedly raise the same unchanged test.
+
+## Session artifact sweep
+
+Scope: files this branch **added** under `docs/`, plus stray `.html` / `.png` / `.csv` anywhere in the diff — exactly what the third trigger check in Step 3 returns:
+
+```bash
+git diff --name-only --diff-filter=A <base>...<head> -- 'docs/**' '*.html' '*.png' '*.csv' ':(exclude)docs/*-app.md' ':(exclude)docs/*-plan.md'
+```
+
+Modified pre-existing docs are out of bounds — someone put them there on purpose — and `<slug>-app.md` / `<slug>-plan.md` are the project's durable spine, excluded by name-shape in the trigger check rather than by judgment. A stacked parent's additions are out of scope with everything else pre-branch.
+
+A **session artifact** is anything a session produces whose whole job is to serve one unit of work: a trace, a verify-or-fix verdict, a root-cause writeup, a `show-me`/Archify HTML explainer, a diagram, a one-off audit. One question per file: **would anyone read this who is not working this change?** Left in the repo it becomes a snapshot of numbers nobody re-runs; on the work item it sits beside the work it explains and ages honestly.
+
+| Verdict | What it is | Action |
+|---|---|---|
+| **Durable** | A methodology, contract, architecture or design doc a future build opens, cited by something outside this change | Stays in `docs/`. Nothing to do. |
+| **Session artifact** (default) | Everything else — including anything that reads durable but only this change cites it | Attach to the work item, delete from the repo, repoint every inbound link |
+
+Attaching loses nothing, so **move first, then report — unlike the test scan.** The move is one revert away, so no approval gate; instead the close report **names every file moved and where it landed** so the user can promote any of them back to `docs/`. Never silently drop one from the report.
+
+Moving one is three steps, and skipping the third leaves a dead link on the default branch:
+
+1. Attach where the § Destinations ladder resolves — prose inline on the tracker issue or PR, binaries and standalone files as an attachment or gist-style link per what the platform allows. **Rewrite repo-relative links and same-file anchors first**; neither resolves once the file leaves the repo. Attach nothing containing a secret.
+2. `git rm` the file.
+3. Repoint every inbound reference — other docs, the PR body — at the artifact's destination. `grep -rn "<basename>"` to find them; there is usually more than one.
+
+If the artifact already exists at the destination from an earlier round, **supersede it** rather than adding a second copy: edit the record in place, or delete-then-reattach. Two versions of one trace is worse than none — the reader cannot tell which is live, and the stale one is the more confident-looking. Updating an artifact is part of whatever review round invalidated it, not follow-up work.
 
 ## Execution order
 
-1. Classify comments and tests from the branch diff.
-2. Prepare one concise harvest record and the critical-test hold list.
-3. Write the harvest to the selected durable destination. Use `bdc` only when it is installed and initialized; absence is not a blocker.
-4. Apply routine comment trims and non-critical test cuts/folds. Keep critical candidates unchanged until approved.
-5. Commit hygiene edits with repository conventions, push, and repeat the gate-presence check on the new head.
-6. Report `hygiene: clean` when no branch-introduced material needs action, otherwise report the destination, edits, and held decisions.
+1. Classify comments, tests, and session artifacts from the branch diff.
+2. Prepare the harvest record, the critical-test hold list, and each artifact's destination.
+3. Attach every artifact move per § Session artifact sweep — links rewritten, superseding in place.
+4. Write the harvest to the selected § Destinations rung. Use `bdc` only when it is installed and initialized; absence is not a blocker.
+5. Apply routine comment trims and non-critical test cuts/folds, `git rm` moved artifacts, and repoint inbound links. Keep critical candidates unchanged until approved.
+6. Commit hygiene edits with repository conventions, push, and repeat the gate-presence check on the new head.
+7. Report `hygiene: clean` when no branch-introduced material needs action, otherwise report the destination, edits, held decisions, and every artifact moved with where it landed.
 
-An audit that changes nothing does not need a commit. Never widen the audit to unrelated tests or comments merely to make the report look complete.
+An audit that changes nothing does not need a commit. Never widen the audit to unrelated tests, comments, or docs merely to make the report look complete.
