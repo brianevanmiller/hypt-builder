@@ -18,13 +18,13 @@ Paste the entire message below into Claude Code, Claude Cowork, ChatGPT Codex, o
 
 > Install hypt from <https://github.com/brianevanmiller/hypt-builder>.
 >
-> First read `BEGINNERS_GUIDE.md` from that repository. Before changing my computer, identify my operating system and run read-only checks for Git, a supported Node.js LTS release with npm/npx, GitHub CLI, and Bun. Also check whether the package manager you intend to use is available. Do not install provider-specific CLIs globally; hypt can run Vercel and Supabase CLIs on demand.
+> First read `BEGINNERS_GUIDE.md` from that repository. Before changing my computer, identify my operating system and run read-only checks for Git, a supported Node.js LTS release with npm/npx, GitHub CLI, and Bun. Also check whether the package manager you intend to use is available. Do not install provider-specific CLIs by hand; hypt sets up Vercel through Vercel's official agent playbook, and can run the Supabase CLI on demand.
 >
 > Show me one combined table of everything missing or outdated, why hypt uses each tool, the official source or system package manager you will use, whether administrator access or a restart may be needed, and the exact changes you can make. Explain in plain language that these are mainstream developer tools commonly used by coding agents, while making clear that I should still review the commands and approve them.
 >
 > Ask for one confirmation for that complete tool-installation plan. After I approve, install the approved tools, verify their versions, and install every hypt skill for this coding agent with the `skills` CLI. Do not install hypt into agent products I am not using.
 >
-> Then start `hypt-start`. It should offer to create a short Identity section in my project instructions and show me the required companion-skill plan. After I approve that plan, install only the missing Matt Pocock and pstack companions globally. Have `hypt-start` ask one batched intake question covering whether this is a website, web app, or desktop project; the main project brief; website copy and Google Drive assets when relevant; design inspiration, tabs, audience, and vibe; web-app signup, scale, and B2B/enterprise needs; desktop targets and companion web surface; GitHub/Vercel/Supabase status; domain purchase and connection; and whether startup idea vetting is needed. Every project must establish GitHub and Vercel, explicitly install and authenticate the Vercel CLI, and set up Supabase only when the selected app needs it. If startup vetting is requested, use gstack's `office-hours` skill when available or approval-gate its official installation. Use official browser-based login or OAuth flows. Never ask me to paste passwords, API keys, or access tokens into chat. Finish by listing what succeeded and anything I must finish myself.
+> Then start `hypt-start`. It should offer to create a short Identity section in my project instructions and show me the required companion-skill plan. After I approve that plan, install only the missing Matt Pocock and pstack companions globally. Have `hypt-start` ask one batched intake question covering whether this is a website, web app, or desktop project; the main project brief; website copy and Google Drive assets when relevant; design inspiration, tabs, audience, and vibe; web-app signup, scale, and B2B/enterprise needs; desktop targets and companion web surface; GitHub/Vercel/Supabase status; domain purchase and connection; and whether startup idea vetting is needed. Every project must establish GitHub and Vercel — Vercel through its official onboarding: "Set up Vercel for me. Fetch https://vercel.com/get-started.md and follow it." — and set up Supabase only when the selected app needs it. If startup vetting is requested, use gstack's `office-hours` skill when available or approval-gate its official installation. Use official browser-based login or OAuth flows. Never ask me to paste passwords, API keys, or access tokens into chat. Finish by listing what succeeded and anything I must finish myself.
 >
 > If you cannot run terminal commands or edit local files, stop and tell me exactly how to open a coding workspace that can. Do not claim installation succeeded without verifying it.
 
@@ -50,7 +50,7 @@ This installs every hypt workflow for the coding agent you are using, without cr
 | Node.js LTS, npm, and npx | Runs the standard `skills` installer |
 | GitHub CLI (`gh`) | Creates repositories, pull requests, and releases |
 | Bun | Runs app tooling and project dependencies used by the default workflow |
-| Vercel CLI | Install and authenticate for every project so Vercel projects, GitHub connections, domains, and deployments can be verified
+| Vercel CLI | Installed and authenticated through Vercel's official agent playbook (https://vercel.com/get-started.md) for every project, so Vercel projects, GitHub connections, domains, and deployments can be verified
 | Supabase CLI | Install and authenticate only when the selected project uses Supabase for auth, data, or backend work
 
 
@@ -61,7 +61,7 @@ These are normal developer tools, not hidden background services. The agent shou
 Tool installation and account connection are separate:
 
 1. **GitHub:** let the agent start `gh auth login --web`, then approve the sign-in in your browser. Vercel's GitHub connection needs access to the selected repository; an organization owner may need to approve the GitHub App.
-2. **Vercel:** let the agent install the Vercel CLI, start the official `vercel login` browser flow, and verify `vercel whoami`. It can then create/link the Vercel project, connect the GitHub repository, and attach the selected domain.
+2. **Vercel:** let the agent run Vercel's official onboarding — "Set up Vercel for me. Fetch https://vercel.com/get-started.md and follow it." — which installs the CLI, starts the official `vercel login` browser flow, and verifies `vercel whoami`. It can then create/link the Vercel project, connect the GitHub repository, and attach the selected domain.
 3. **Supabase:** if your project needs a database or authentication, let the agent install the selected Supabase CLI, start the official `supabase login` flow, and verify access before creating/linking the project.
 
 Browser login is preferable to copying credentials. Keep passwords, API keys, recovery codes, and access tokens out of chat.

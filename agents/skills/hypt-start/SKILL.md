@@ -27,7 +27,7 @@ Determine the project shape before judging readiness: `website`, `webapp`, `desk
 
 - A date-prefixed plan and project record exist, and the selected source documents are linked or attached.
 - An appropriate scaffold exists, a GitHub remote exists, and GitHub CLI authentication succeeds.
-- Vercel account access and the Vercel CLI are present, the required Vercel project is linked to the web surface (or the desktop companion surface), and the domain decision is recorded.
+- Vercel is onboarded through the official playbook at https://vercel.com/get-started.md (CLI installed and authenticated, Vercel guidance present, Vercel MCP connected), the required Vercel project is linked to the web surface (or the desktop companion surface), and the domain decision is recorded.
 - `.env.local` exists only when selected integrations require secrets. Public websites and local-only desktop projects do not need an empty env file.
 - A Supabase project and authenticated CLI exist when public web-app accounts, the selected backend, or another intake decision requires Supabase.
 
@@ -108,7 +108,7 @@ Completion: project shape, source material, visible outcome, users, setup choice
 
 Read `references/default-web-stack.md` only for setup branches the intake requires. Present one table covering every missing tool, account, permission, project resource, domain action, and proposed repository change. Include official sources, browser pages, admin prompts, likely cost/renewal for purchases, and any human-only action.
 
-Every project must establish GitHub and Vercel access. GitHub comes first because Vercel's GitHub connection uses it. Install the Vercel CLI explicitly; do not treat a one-off package-runner download as installation. Request the least permissions that enable the selected repository/team/project and GitHub App connection; an organization owner may need to approve access. When the project uses public accounts or a selected Supabase backend, install and authenticate the Supabase CLI and create/link the Supabase project. Recommend WorkOS AuthKit for further evaluation when the growth and B2B/enterprise answers make it a fit, without silently replacing Supabase or provisioning a second auth system.
+Every project must establish GitHub and Vercel access. GitHub comes first because Vercel's GitHub connection uses it. Onboard Vercel the official way: "Set up Vercel for me. Fetch https://vercel.com/get-started.md and follow it." That playbook installs the Vercel CLI, adds Vercel guidance, and connects the Vercel MCP once per machine and agent; it deliberately links no project, so link the required Vercel project to the web surface during project setup. Request the least permissions that enable the selected repository/team/project and GitHub App connection; an organization owner may need to approve access. When the project uses public accounts or a selected Supabase backend, install and authenticate the Supabase CLI and create/link the Supabase project. Recommend WorkOS AuthKit for further evaluation when the growth and B2B/enterprise answers make it a fit, without silently replacing Supabase or provisioning a second auth system.
 
 Get one approval for the complete setup plan, then execute it. Browser account creation, OAuth consent, organization approval, and a paid domain checkout remain human actions; pause at the exact confirmation or consent screen. Domain purchase requires a final confirmation of the selected available domain and price immediately before checkout.
 
