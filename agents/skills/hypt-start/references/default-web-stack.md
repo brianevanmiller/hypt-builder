@@ -4,12 +4,12 @@ Consult only the branches selected during product discovery. Existing repository
 
 ## Tools and accounts
 
-Default tools are Git, Node/npm/npx, GitHub CLI, Bun, and the Vercel CLI. Use the OS package manager or official signed distribution. Install Vercel explicitly when onboarding begins; use the project's package manager or official Vercel instructions rather than relying on a transient `bunx vercel` download. Install the Supabase CLI as a project dependency for Supabase branches, or through the official system package when the user needs a standalone CLI; do not silently add it to unrelated projects.
+Default tools are Git, Node/npm/npx, GitHub CLI, Bun, and the Vercel CLI. Use the OS package manager or official signed distribution. Onboard Vercel with the official playbook: "Set up Vercel for me. Fetch https://vercel.com/get-started.md and follow it." It installs the Vercel CLI globally, adds Vercel guidance, and connects the Vercel MCP; do not rely on a transient `bunx vercel` download or a hand-rolled install instead of the playbook. Install the Supabase CLI as a project dependency for Supabase branches, or through the official system package when the user needs a standalone CLI; do not silently add it to unrelated projects.
 
 Authenticate in this order for every project:
 
 1. GitHub with `gh auth login --web`, then verify with `gh auth status`
-2. Vercel with `vercel login`, then verify with `vercel whoami`
+2. Vercel through the official https://vercel.com/get-started.md playbook (run during onboarding; re-verify with `vercel whoami`)
 3. Supabase with `supabase login` (or the selected package-runner equivalent), then verify with `supabase projects list` — web-app account/backend branches only
 4. Stripe only for payments
 5. Resend only for email

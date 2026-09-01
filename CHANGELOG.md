@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.32.2 — 2026-08-30
+
+- Replace bespoke Vercel CLI installation guidance with Vercel's official agent onboarding playbook: `hypt-start` now onboards Vercel by running "Set up Vercel for me. Fetch https://vercel.com/get-started.md and follow it.", which installs the CLI, adds Vercel guidance, and connects the Vercel MCP.
+- Update `hypt-start`'s default web stack reference, the beginner's guide, and the README so account setup, verification, and requirements all point at the official playbook instead of hand-rolled install and login steps.
+
 ## v0.32.1 — 2026-08-30
 
 - Give `hypt-close` gates commands whose output decides their status: branch hygiene (test-file and added-comment-line greps), migration and rollout paths, and release versioning.
