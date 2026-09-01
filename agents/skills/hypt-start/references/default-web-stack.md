@@ -25,7 +25,7 @@ Each OAuth flow needs its own human interaction. Credentials go into official br
 
 Use a content-first static or server-rendered web scaffold appropriate to the selected repository. Preserve the main brief, website copy source, Google Drive asset folder, navigation tabs, audience, vibe, and inspiration links in the project record. If the source material is inaccessible, pause the content implementation and record the exact human action needed to grant access or attach/export the source.
 
-Create or link the Vercel project from the GitHub repository, enable automatic deployments, and attach the selected custom domain. For a new domain, check availability and price first; require a final user confirmation immediately before purchase. Vercel supports `vercel domains check`, `vercel domains price`, `vercel domains buy`, and `vercel domains add`. A Vercel-registered domain can use Vercel nameservers and automatic DNS records; an external registrar requires the owner to approve or perform DNS changes.
+Create or link the Vercel project from the GitHub repository, enable automatic deployments, and attach the selected custom domain. For a new domain, check availability and price first; require a final user confirmation immediately before purchase. Vercel supports `vercel domains check`, `vercel domains price`, `vercel domains buy`, and `vercel domains add`. A Vercel-registered domain can use Vercel nameservers and automatic DNS records; an external registrar requires the owner to approve or perform DNS changes. Adding the domain or seeing SSL provision does not publish the app: deploy the intended project to production and verify the custom HTTPS URL afterward. A preview deployment is not sufficient.
 
 ### Web app
 
@@ -91,5 +91,6 @@ Verify:
 3. Supabase and Vercel report the expected linked project.
 4. The local development server returns a successful response.
 5. The first preview deployment starts.
+6. When a custom domain is selected, DNS is verified, HTTPS is active, a production deployment is assigned to the domain, and both HTTPS hostnames (including the chosen redirect) return the intended app.
 
 Debug a failed condition before declaring setup complete.

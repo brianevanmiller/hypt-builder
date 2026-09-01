@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.33.0 — 2026-09-01
+
+- Guide non-coders through custom-domain purchase or connection, DNS, automatic HTTPS provisioning, and the separate production-deployment requirement during `hypt-start`.
+- Record the registrar, canonical hostname and redirect, DNS/HTTPS/production evidence, final verification URL, and remaining human-only action in each onboarding record and build plan.
+- Explain Vercel's properly-configured-domain/no-production-deployment state and require production HTTPS proof before domain onboarding is complete.
+
 ## v0.32.3 — 2026-09-01
 
 - Add a third branch-hygiene scan to `hypt-close`: session artifacts a branch added under `docs/` (plus stray `.html`/`.png`/`.csv`) move to the work item — a configured tracker, or the PR when none is configured — with no approval gate, but the close report names every move and its landing place.

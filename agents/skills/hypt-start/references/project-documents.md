@@ -46,8 +46,16 @@ Use this shape for a `website`, `webapp`, or `desktop` project. Preserve source 
 ## Domain and deployment
 - **Desired domain:** <name and alternatives>
 - **Ownership/purchase:** <Vercel purchase, existing registrar, or deferred>
-- **DNS/connection status:** <status and remaining human action>
+- **Registrar/provider:** <Vercel, provider name, or N/A>
+- **Vercel project:** <team/project or pending>
+- **Canonical hostname:** <apex or www>
+- **Redirect:** <other hostname and redirect direction>
+- **DNS status:** <verified / pending / not configured, evidence, and remaining human action>
+- **SSL status:** <active / pending / failed / not applicable>
+- **Production deployment:** <live / missing / pending, evidence>
 - **Preview/deployment URL:** <URL or pending>
+- **Final verification URL:** <HTTPS URL or pending>
+- **Remaining human-only action:** <action, or none>
 
 ## Scope
 ### Included
@@ -71,6 +79,7 @@ Use this shape for a `website`, `webapp`, or `desktop` project. Preserve source 
 - **Source material:** <links/paths and access status>
 - **Accounts/resources:** <GitHub, Vercel, Supabase, WorkOS decision, domain, Beads/Beadcrumbs>
 - **Human-only actions:** <OAuth, organization approval, payment, DNS, signing credentials>
+- **Domain evidence:** <purchase/deferred decision, DNS, SSL, production deployment, canonical redirect, and final HTTPS check>
 
 ## Constraints
 - <Security, data, product, platform, distribution, or operational constraint>
