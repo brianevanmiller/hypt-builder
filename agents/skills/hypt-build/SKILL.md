@@ -104,20 +104,23 @@ git diff --name-only <merge-base>...HEAD | grep -Ei '\.(test|spec)\.|_test\.|/te
 git diff -U0 <merge-base>...HEAD -- . ':(exclude)*.md' ':(exclude)*.txt' ':(exclude)*.json' ':(exclude)*.html' ':(exclude)*.xml' ':(exclude)*.csv' ':(exclude)*.rst' | grep -cE '^\+\s*(//|/\*|\*|#|--)'
 ```
 
-Sort the comments and tests it surfaces:
+Sort the comments, tests, and session artifacts it surfaces:
 
 - **Contract:** interface behavior, a plausible regression, invariant, gotcha, semantic definition, or durable ticket pointer
 - **Scaffolding:** build narration, discarded-design rationale, duplicate permutations, change detectors, or temporary probes
+- **Session artifact:** anything whose whole job is to serve this change — a trace, verdict, root-cause writeup, `show-me`/Archify HTML, diagram, or one-off audit. Attach it where the work lives (Step 7) as soon as it is produced, and keep it out of the repo.
 
-Keep the contract. Move long decision rationale to the tracker when one exists, or capture and harvest it with Beadcrumbs when that ledger is initialized; remove the scaffolding. Re-read docs and comments after late review fixes so they describe the current code. `hypt-close` Step 3 is the backstop for this sweep — it firing means this sweep didn't run.
+Keep the contract. Move long decision rationale to the tracker when one exists, or capture and harvest it with Beadcrumbs when that ledger is initialized; remove the scaffolding; attach session artifacts rather than committing them. Re-read docs and comments after late review fixes so they describe the current code. `hypt-close` Step 3 is the backstop for this sweep — it firing means this sweep didn't run.
 
-Completion: the remote PR contains every fix, no session journal, current verification notes, and no stale artifact.
+Completion: the remote PR contains every fix, no session journal, current verification notes, and nothing describing an earlier revision.
 
 ## 7. Hand off
 
 Confirm local `HEAD` equals the PR head SHA and required checks have started. Report the PR, user-path proof, checks, review dispositions, and any blocked evidence.
 
-For a coder profile, use HumanLayer `show-me` for the smallest useful technical visual. Use Archify only when a substantial architecture or workflow warrants a polished standalone artifact. For a non-coder or uncertain profile, explain behavior and next actions without a technical diagram.
+For a coder profile, use HumanLayer `show-me` for the smallest useful technical visual. Use Archify only when a substantial architecture or workflow warrants a polished standalone explainer. For a non-coder or uncertain profile, explain behavior and next actions without a technical diagram.
+
+That visual is a **session artifact**: it serves only this change, so it attaches where the work lives — a configured tracker issue, or the PR description or a PR comment when none is configured — as soon as it is produced, and it is never committed to the repository. Rewrite repo-relative links and same-file anchors before attaching. When a later review round invalidates what it depicts, replace it in place rather than adding a second copy.
 
 Outside yolo mode, stop at:
 

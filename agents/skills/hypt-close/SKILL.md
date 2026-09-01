@@ -44,7 +44,7 @@ Stop when a required gate is missing, pending beyond its normal duration, failin
 
 ## 3. Audit branch hygiene
 
-AI-authored branches carry residue: rationale comments written as landmarks for their author, and tests that were build scaffolding rather than regression contracts. Audit both, over branch-introduced material against the PR base. Pre-merge, so a run that stops short of merging still owes a hygiene status.
+AI-authored branches carry residue: rationale comments written as landmarks for their author, tests that were build scaffolding rather than regression contracts, and session artifacts — traces, verdicts, explainers, one-off audits — committed into the repository instead of attached to the work item. Audit all three, over branch-introduced material against the PR base. Pre-merge, so a run that stops short of merging still owes a hygiene status.
 
 Run the trigger check — it decides the status, so read the status off its output rather than off your sense of the branch:
 
@@ -52,17 +52,19 @@ Run the trigger check — it decides the status, so read the status off its outp
 # Base is the PR's actual base; a stacked parent's comments and tests are out of bounds.
 git diff --name-only <base>...<head> | grep -Ei '\.(test|spec)\.|_test\.|/tests?/'
 git diff -U0 <base>...<head> -- . ':(exclude)*.md' ':(exclude)*.txt' ':(exclude)*.json' ':(exclude)*.html' ':(exclude)*.xml' ':(exclude)*.csv' ':(exclude)*.rst' | grep -cE '^\+\s*(//|/\*|\*|#|--)'
+# Session artifacts: files this branch added under docs/ (spine excluded), or stray .html/.png/.csv.
+git diff --name-only --diff-filter=A <base>...<head> -- 'docs/**' '*.html' '*.png' '*.csv' ':(exclude)docs/*-app.md' ':(exclude)docs/*-plan.md'
 ```
 
 | Trigger check | Hygiene status |
 |---|---|
-| Both outputs empty | `skipped (no comment or test surface)` |
-| Either non-empty, the rubric flags nothing | `clean` |
-| Either non-empty, the rubric flags material | `N blocks harvested · M tests cut · K held` |
+| All three outputs empty | `skipped (no comment, test, or artifact surface)` |
+| Any non-empty, the rubric flags nothing | `clean` |
+| Any non-empty, the rubric flags material | `N blocks harvested · M tests cut · K held · A artifacts moved` |
 
 `clean` says the rubric ran over the diff; `skipped` says the trigger had nothing to run on.
 
-When either output is non-empty, read and execute [`references/branch-hygiene.md`](references/branch-hygiene.md) here: apply routine comment cleanup and clearly redundant, non-critical test cleanup automatically. Preserve tests whose removal could brick the application, corrupt or expose data, break authentication or payments, or remove the only proof of a critical deploy/user path; present those exact candidates for explicit approval instead. Record harvested rationale in one durable destination — an existing tracker, the PR description, a repository decision document, or an initialized Beadcrumbs ledger when `bdc` is installed. This audit is the backstop for `hypt-build`'s contract sweep; a non-empty trigger means that sweep never ran. Unsure? Run it — a false run costs one clean pass; a missed one ships scaffolding to the default branch under a green check.
+When any output is non-empty, read and execute [`references/branch-hygiene.md`](references/branch-hygiene.md) here: apply routine comment cleanup and clearly redundant, non-critical test cleanup automatically; move session artifacts per its sweep. Preserve tests whose removal could brick the application, corrupt or expose data, break authentication or payments, or remove the only proof of a critical deploy/user path; present those exact candidates for explicit approval instead. Record harvested rationale in one durable destination resolved by the reference's § Destinations ladder. Unlike a test cut, an artifact move needs no approval — nothing is lost, the file lands on the work item — but the close report names every file moved and where it landed. This audit is the backstop for `hypt-build`'s contract sweep; a non-empty trigger means that sweep never ran. Unsure? Run it — a false run costs one clean pass; a missed one ships scaffolding to the default branch under a green check.
 
 After any hygiene edit, commit with repository conventions, push, and return to Step 2. Do not call the PR ready from checks or approval attached to an older head.
 
@@ -160,7 +162,8 @@ Closed
 - Production: <URL and health>
 - Gates: <required checks that ran on <head SHA>>
 - Proof: <real user path>
-- Hygiene: <skipped (no comment or test surface) / clean / N blocks harvested · M tests cut · K held>
+- Hygiene: <skipped (no comment, test, or artifact surface) / clean / N blocks harvested · M tests cut · K held · A artifacts moved>
+- Artifacts: <each moved file → where it landed / none>
 - Migrations: <none (trigger output empty) / pre-merge command / post-merge command and verification / blocker>
 - Tickets: <closed with confirmation / left open with reason / tracker unavailable>
 - Follow-up: <items or none>
