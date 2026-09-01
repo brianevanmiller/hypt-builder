@@ -36,6 +36,8 @@ Use this shape for a `website`, `webapp`, or `desktop` project. Preserve source 
 - **Supabase:** <project and auth/backend decision, or N/A>
 - **WorkOS:** <evaluation and rationale, or N/A>
 - **Growth posture:** <prototype, normal production, sensitive/critical; expected scale and consumer/B2B context>
+- **Task tracking:** <Linear / GitHub Issues / Beads / other / none>
+- **Beadcrumbs:** <installed and initialized / declined / unsupported platform / not asked>
 
 ## Integrations
 | Provider | Read/write purpose | Human setup |
@@ -67,7 +69,7 @@ Use this shape for a `website`, `webapp`, or `desktop` project. Preserve source 
 
 ## Source and setup dependencies
 - **Source material:** <links/paths and access status>
-- **Accounts/resources:** <GitHub, Vercel, Supabase, WorkOS decision, domain>
+- **Accounts/resources:** <GitHub, Vercel, Supabase, WorkOS decision, domain, Beads/Beadcrumbs>
 - **Human-only actions:** <OAuth, organization approval, payment, DNS, signing credentials>
 
 ## Constraints

@@ -18,7 +18,7 @@ npx skills add brianevanmiller/hypt-builder \
 
 | Say or invoke | What happens |
 |---|---|
-| `hypt-start` | Set up a new project and write its plan |
+| `hypt-start` | Set up a new project, optional Beads/Beadcrumbs, and write its plan |
 | `hypt-plan-critic` | Stress-test a plan before building |
 | `hypt-implement` | Implement approved work without owning the PR lifecycle |
 | `hypt-build` | Get work to a ready PR; yolo mode continues through close |

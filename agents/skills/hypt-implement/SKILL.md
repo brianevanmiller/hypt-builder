@@ -54,7 +54,7 @@ Completion: every acceptance criterion is implemented and the smallest relevant 
 
 ### 4. Leave contract code
 
-Keep comments only for invariants, gotchas, semantic definitions, or durable pointers. Keep tests that catch plausible regressions at the interface. Remove build notes, duplicated rationale, and temporary probes.
+Keep comments only for invariants, gotchas, semantic definitions, or durable pointers. Keep tests that catch plausible regressions at the interface. Remove build notes, duplicated rationale, and temporary probes. If Beadcrumbs is initialized, capture durable conclusions there instead of leaving session narration in code.
 
 Completion: the diff contains the implementation and its durable contract, not the session journal.
 

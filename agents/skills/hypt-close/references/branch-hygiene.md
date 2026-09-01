@@ -22,9 +22,9 @@ A mixed block is **Harvest** when it is mostly history. Preserve only a live inv
 
 Use the first suitable destination already supported by the repository:
 
-1. An existing issue, ticket, or project tracker record.
-2. The PR description or an existing decision/ADR document.
-3. An initialized Beadcrumbs ledger when `bdc` is installed. Capture the concise conclusion, not a transcript or secret, and follow Beadcrumbs' own provenance and redaction instructions. Do not initialize a ledger without asking.
+1. An existing issue, ticket, or project tracker record, including a Beads issue when `bd` is initialized.
+2. An initialized Beadcrumbs ledger when `bdc` is installed. Capture the concise conclusion, not a transcript or secret, and follow the installed `beadcrumbs` skill for provenance, harvest, and any Beads destination. Do not initialize a ledger without asking.
+3. The PR description or an existing decision/ADR document.
 4. The repository's normal follow-up file when no better destination exists.
 
 Keep one consolidated harvest per close run. On a re-run, extend the existing record instead of creating a duplicate. If no destination is clear, ask before making an external tracker write; a short PR-description note is the default when the repository allows it.

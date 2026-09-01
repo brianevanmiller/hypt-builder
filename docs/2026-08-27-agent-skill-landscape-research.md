@@ -5,7 +5,7 @@
 Hypt should remain a small lifecycle orchestrator rather than absorb this ecosystem as new wrapper skills. The strongest direction is:
 
 1. Keep `hypt-build` and `hypt-close` as the two shipping owners.
-2. Install the small required companion set during `hypt-start`, then call those specialists only at clear seams.
+2. Install the small required companion set during `hypt-start`, then call those specialists only at clear seams. Offer Beads and Beadcrumbs once as optional local ledgers; do not wrap them as Hypt skills.
 3. Glean small, portable completion criteria from external skills when a dependency would add more installation and cognitive load than value.
 4. Treat `yolo`, `ship it`, and `publish it` as routing phrases: `hypt-build` prepares the work, then hands it to `hypt-close` with its confirmation gate pre-approved.
 
@@ -48,7 +48,7 @@ Skill names in the analysis tables below refer back to the pinned source links i
 | Skill | One-line purpose |
 |---|---|
 | [`hypt`](../agents/skills/hypt/SKILL.md) | Routes requests across the Hypt shipping lifecycle. |
-| [`hypt-start`](../agents/skills/hypt-start/SKILL.md) | Onboards a project and owner, installs required companions, sets up accounts, and creates a build plan. |
+| [`hypt-start`](../agents/skills/hypt-start/SKILL.md) | Onboards a project and owner, installs required companions, optionally offers Beads/Beadcrumbs, sets up accounts, and creates a build plan. |
 | [`hypt-plan-critic`](../agents/skills/hypt-plan-critic/SKILL.md) | Stress-tests a non-trivial implementation plan for gaps and risks. |
 | [`hypt-implement`](../agents/skills/hypt-implement/SKILL.md) | Implements approved work as a focused coding pass behind `hypt-build`. |
 | [`hypt-build`](../agents/skills/hypt-build/SKILL.md) | Routes readiness, implements, proves, and reviews work through a remote PR, or continues through close in yolo mode. |

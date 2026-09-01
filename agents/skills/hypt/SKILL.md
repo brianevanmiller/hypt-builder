@@ -25,7 +25,7 @@ Route only workflows with explicit Hypt orchestration. Ordinary commits, isolate
 
 ```text
 hypt-start
-  project + person + companions + plan
+  project + person + companions + optional ledgers + plan
 
 hypt-build
   readiness -> plan -> hypt-implement -> PR -> proof -> review
