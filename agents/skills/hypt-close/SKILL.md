@@ -11,11 +11,11 @@ Own the transition from a ready remote PR to a verified release. A direct invoca
 
 ## Ground
 
-Read the repository instructions, current branch, actual PR base and head, merge-base, PR, unresolved comments, required checks, deployments, latest release, `VERSION`, changelog, migration configuration, and any configured project tracker. Record the expected PR head SHA before making decisions. Inspect `git worktree list --porcelain` before any branch cleanup.
+Read the repository instructions, current branch, actual PR base and head, merge-base, PR, unresolved comments, required checks, deployments, latest release, `VERSION`, changelog, migration configuration, and any configured project tracker, including Beads when `bd` is initialized. When the `beadcrumbs` skill is installed, load it before harvesting or promoting rationale. Record the expected PR head SHA before making decisions. Inspect `git worktree list --porcelain` before any branch cleanup.
 
 ## 1. Refresh the PR
 
-Review the complete branch diff against the PR's actual base (`git diff <base>...<head>`), not a guessed `main`. Fix material correctness, security, or build issues; update affected docs and existing follow-up records without creating a new tracking system.
+Review the complete branch diff against the PR's actual base (`git diff <base>...<head>`), not a guessed `main`. Fix material correctness, security, or build issues; update affected docs and existing follow-up records without creating a new tracking system. If Beadcrumbs is initialized, follow the `beadcrumbs` skill to harvest outstanding session crumbs before merge.
 
 Polish the PR title and body from the full branch. Include the user-visible outcome, migration or rollout work, and verification evidence. Preserve unrelated local changes; do not discard them merely to make close clean.
 
@@ -108,7 +108,7 @@ Update version and changelog on the feature branch, commit, and push. Return to 
 
 ## 7. Confirm or accept yolo
 
-If a configured tracker is available, identify referenced tickets from the PR title, body, and commits. Present proposed ticket closure separately and never infer closure from a merge. Keep any ticket with outstanding rollout work open. Ask before changing ticket state; if no tracker is configured, record follow-up in the PR or repository convention instead.
+If a configured tracker is available — including Beads when `bd` is initialized — identify referenced tickets from the PR title, body, and commits. Present proposed ticket closure separately and never infer closure from a merge. Keep any ticket with outstanding rollout work open. Ask before changing ticket state; if no tracker is configured, record follow-up in the PR or repository convention instead.
 
 Present the PR number and URL, base and head SHA, change size, approval, required checks that ran, real-path proof, hygiene result, migration result, prepared version, and worktree cleanup plan.
 

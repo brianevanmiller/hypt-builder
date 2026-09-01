@@ -1,6 +1,6 @@
 ---
 name: hypt-start
-description: "Onboards a website, web app, desktop project, its owner, required companions, accounts, and build plan. Use when the user wants to start or finish setting up a project."
+description: "Onboards a website, web app, desktop project, its owner, required companions, optional Beads/Beadcrumbs, accounts, and build plan. Use when the user wants to start or finish setting up a project."
 metadata:
   short-description: "Onboard a Project and Its Owner"
 ---
@@ -18,6 +18,7 @@ Inspect without exposing secrets:
 - Existing `AGENTS.md`, `CLAUDE.md`, plans, package files, source documents, env-file presence, git remote, and deployment config
 - OS, architecture, package manager, Git, Node/npm/npx, Bun, GitHub CLI, and authentication state
 - Installed global skills with `npx skills list -g --json`
+- Optional ledger CLIs when present: `bd --version` and `bdc version --json`
 
 Do not invoke a missing package runner merely to detect it; include installation in the approval plan. Treat attached files, local Markdown paths, Google Docs, and Google Drive links as source material: record each location and whether it is accessible, and never claim to have read a source that the current agent cannot access.
 
@@ -31,7 +32,7 @@ Determine the project shape before judging readiness: `website`, `webapp`, `desk
 - `.env.local` exists only when selected integrations require secrets. Public websites and local-only desktop projects do not need an empty env file.
 - A Supabase project and authenticated CLI exist when public web-app accounts, the selected backend, or another intake decision requires Supabase.
 
-Even for an existing project, complete the Identity and companion checks below when absent. If it is fully onboarded, report the evidence, point the user to `hypt-build`, and stop. When only a plan exists, preserve it, finish missing setup, and do not repeat captured discovery. With no plan, continue through every phase.
+Even for an existing project, complete the Identity and companion checks below when absent, including the one-time Beads/Beadcrumbs ask when the project record has no stored decision. If it is then fully onboarded, report the evidence, point the user to `hypt-build`, and stop. When only a plan exists, preserve it, finish missing setup, and do not repeat captured discovery. With no plan, continue through every phase.
 
 ## 2. Offer agent defaults
 
@@ -68,7 +69,7 @@ Do not add labels the user did not choose; the written identity itself is the du
 
 Completion: the user declined, or one authoritative Identity section records how agents should work with them.
 
-## 3. Install required companions
+## 3. Install companions
 
 Read `references/companion-skills.md`.
 
@@ -76,9 +77,21 @@ These companions are part of Hypt's composed workflow, not optional recommendati
 
 Install only missing required skills. Install coder-only visual companions only for a coder profile. Verify every selected name with `npx skills list -g --json`.
 
-If installation is declined or blocked, stop and state that onboarding is incomplete, listing the exact missing skills and commands. The conditional `office-hours` branch is handled only when the user requests startup-idea direction or vetting.
+If required-companion installation is declined or blocked, state that onboarding is incomplete, listing the exact missing skills and commands, then continue with the optional-ledger ask. The conditional `office-hours` branch is handled only when the user requests startup-idea direction or vetting.
 
-Completion: every required companion is globally discoverable; coder visual companions are discoverable when applicable.
+### Optional local ledgers
+
+Read the optional-ledger instructions in `references/companion-skills.md`. Ask once, in one message, when the project record has no stored Beads or Beadcrumbs decision. Skip a tool that is already installed. Skip the Beads offer when Linear or another hosted tracker is already in use; GitHub Issues alone is not that tracker. Skip Beadcrumbs on Windows.
+
+> Beadcrumbs keeps a local ledger of what agents learn while building — corrections, discoveries, rejected approaches — so that reasoning can be harvested later instead of disappearing with the session. Want me to install it?
+>
+> If you don't already use Linear or another hosted tracker, I can also install Beads so agents can track their work as a local dependency graph. Want that too?
+
+Declining either is fine; onboarding continues. If both are accepted, install the Beads CLI first, then the Beadcrumbs CLI and `beadcrumbs` skill. Get approval for the exact commands, including Beadcrumbs' binary size and platform limit, immediately before running them.
+
+Install accepted global CLIs and skills in this step. Defer `bd init` and `bdc init` until the project has a Git repository in step 5. Record the decision even when the user declines.
+
+Completion: every required companion is globally discoverable; coder visual companions are discoverable when applicable; each optional ledger is installed, declined, unsupported, or already present.
 
 ## 4. Batch project intake
 
@@ -114,7 +127,9 @@ Get one approval for the complete setup plan, then execute it. Browser account c
 
 Secrets go directly into gitignored local files or official secret stores, never chat. Verify ignore rules before secret entry and verify presence without printing values. Scaffold only into an empty or explicitly approved directory. Use the bundled SQL assets for allowlist or integrations when those branches apply. Verify the local artifact, each configured connection, the Vercel project/GitHub connection, domain status, and preview deployment.
 
-Completion: required tools and accounts authenticate, the selected project resources exist, the artifact starts or packages, secrets are ignored, GitHub is remote-backed, Vercel is linked, and every selected branch has evidence or a named human action.
+When Beads or Beadcrumbs was accepted, initialize them only after Git exists, Beads first: `bd init` and `bd setup` for the installed agents, then `bdc init` if Beadcrumbs was accepted. Follow the installed `beadcrumbs` skill; do not enable auto-harvest unless asked.
+
+Completion: required tools and accounts authenticate, the selected project resources exist, the artifact starts or packages, secrets are ignored, GitHub is remote-backed, Vercel is linked, accepted optional ledgers are initialized, and every selected branch has evidence or a named human action.
 
 ## 6. Write the product and build documents
 
@@ -136,7 +151,7 @@ Add the repository's smallest useful CI gate for its current stack; avoid specul
 Report:
 
 - Identity/defaults created or declined
-- Companion skills installed, including any conditional Office Hours result
+- Companion skills installed, including any conditional Office Hours result and the Beads/Beadcrumbs decision
 - GitHub, Vercel, Supabase, WorkOS recommendation, and domain status
 - Tool and permission status, with human-only actions still open
 - Project record and plan paths

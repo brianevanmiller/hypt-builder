@@ -17,8 +17,11 @@ Read:
 - `git status`, current branch, recent commits, and the merge-base with the target branch
 - Current PR, comments, checks, and deployment state when present
 - The originating request, spec, plan, and related shipped code
+- Optional local ledgers when present: Beads (`bd`) and Beadcrumbs (`bdc` plus the `beadcrumbs` skill)
 
 Use the profile only to shape communication: technical visuals are for coders; non-coders get plain-language outcomes and instructions.
+
+When Beads is initialized, use it as the project tracker instead of markdown TODOs; keep dated `docs/` plans as the human-facing build plan. When Beadcrumbs is initialized, load the `beadcrumbs` skill and follow it for capture, harvest before opening a PR, and promotion. If `bdc` is present without that skill, report the missing install and do not emulate it.
 
 ## 1. Route readiness
 
@@ -41,7 +44,7 @@ Run the first pass in parallel. Give each subagent the other's summary for one s
 
 ## 2. Plan the slice
 
-Reuse an existing plan when it still matches the request. Otherwise write a concise plan in the repository's existing tracker or `docs/<YYYY-MM-DD>-<slug>-plan.md`.
+Reuse an existing plan when it still matches the request. Otherwise write a concise plan in the repository's existing tracker — Beads when initialized — or `docs/<YYYY-MM-DD>-<slug>-plan.md`.
 
 For non-trivial work, invoke `hypt-plan-critic` in pipeline mode with the plan and original request. Resolve blockers; let it update lesser issues autonomously.
 
@@ -106,7 +109,7 @@ Sort the comments and tests it surfaces:
 - **Contract:** interface behavior, a plausible regression, invariant, gotcha, semantic definition, or durable ticket pointer
 - **Scaffolding:** build narration, discarded-design rationale, duplicate permutations, change detectors, or temporary probes
 
-Keep the contract. Move long decision rationale to the tracker when one exists; remove the scaffolding. Re-read docs and comments after late review fixes so they describe the current code. `hypt-close` Step 3 is the backstop for this sweep — it firing means this sweep didn't run.
+Keep the contract. Move long decision rationale to the tracker when one exists, or capture and harvest it with Beadcrumbs when that ledger is initialized; remove the scaffolding. Re-read docs and comments after late review fixes so they describe the current code. `hypt-close` Step 3 is the backstop for this sweep — it firing means this sweep didn't run.
 
 Completion: the remote PR contains every fix, no session journal, current verification notes, and no stale artifact.
 

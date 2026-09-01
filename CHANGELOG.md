@@ -1,7 +1,9 @@
 # Changelog
 
-## v0.32.2 — 2026-08-30
+## v0.32.2 — 2026-09-01
 
+- Offer optional Beads and Beadcrumbs during first `hypt-start`: one-line Beadcrumbs pitch, Beads when no hosted tracker is in use, Beads-first install order, and the `beadcrumbs` skill whenever `bdc` is installed.
+- Have `hypt-build`, `hypt-implement`, `hypt-close`, and `hypt-post-mortem` use an initialized Beads tracker or Beadcrumbs ledger when present, without wrapping either as a Hypt skill.
 - Replace bespoke Vercel CLI installation guidance with Vercel's official agent onboarding playbook: `hypt-start` now onboards Vercel by running "Set up Vercel for me. Fetch https://vercel.com/get-started.md and follow it.", which installs the CLI, adds Vercel guidance, and connects the Vercel MCP.
 - Update `hypt-start`'s default web stack reference, the beginner's guide, and the README so account setup, verification, and requirements all point at the official playbook instead of hand-rolled install and login steps.
 

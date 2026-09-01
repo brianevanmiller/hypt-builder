@@ -60,14 +60,14 @@ After installation, restart the agent if it does not reload skills automatically
 
 > **Required after installing Hypt:** run `hypt-start` once. Onboarding is incomplete until its companion check passes.
 
-`hypt-start` checks and installs Hypt's required Matt Pocock and pstack companions globally after showing the exact plan and getting approval. When a new startup idea needs direction or vetting, it can also approval-gate and invoke gstack's conditional `office-hours` skill:
+`hypt-start` checks and installs Hypt's required Matt Pocock and pstack companions globally after showing the exact plan and getting approval. When a new startup idea needs direction or vetting, it can also approval-gate and invoke gstack's conditional `office-hours` skill. On first onboarding it also asks, once, whether to install optional [Beads](https://github.com/gastownhall/beads) and [Beadcrumbs](https://github.com/brianevanmiller/beadcrumbs).
 
 | Source | Skills | Used for |
 |---|---|---|
 | `mattpocock/skills` | `wayfinder`, `grilling`, `codebase-design`, `code-review`, `tdd`, `diagnosing-bugs` | Readiness, discovery, design, review, light TDD, diagnosis |
 | `cursor/plugins` pstack | `architect`, `interrogate` | Second design perspective and adversarial review |
 
-Coder profiles also receive HumanLayer `show-me` and Archify; non-coder profiles skip technical visualization skills. `hypt-start` installs only missing names and verifies them through `npx skills list -g --json`. It batches website/web-app/desktop intake, always establishes GitHub and Vercel access — Vercel through its official agent onboarding playbook, [get-started.md](https://vercel.com/get-started.md) — and creates/links Supabase only for selected public-account or backend branches. Website intake can preserve a content brief, Google Drive assets, navigation, audience, vibe, and inspiration; web-app intake can record a WorkOS AuthKit evaluation for high-scale B2B products without silently provisioning a second auth system.
+Coder profiles also receive HumanLayer `show-me` and Archify; non-coder profiles skip technical visualization skills. `hypt-start` installs only missing required names and verifies them through `npx skills list -g --json`. It batches website/web-app/desktop intake, always establishes GitHub and Vercel access — Vercel through its official agent onboarding playbook, [get-started.md](https://vercel.com/get-started.md) — and creates/links Supabase only for selected public-account or backend branches. Website intake can preserve a content brief, Google Drive assets, navigation, audience, vibe, and inspiration; web-app intake can record a WorkOS AuthKit evaluation for high-scale B2B products without silently provisioning a second auth system.
 
 The exact source-qualified commands live in [`hypt-start`'s companion reference](agents/skills/hypt-start/references/companion-skills.md).
 
@@ -84,7 +84,7 @@ Installed skills use collision-safe standalone names. The old Claude plugin name
 | Skill | Purpose |
 |---|---|
 | `hypt` | Route requests that span the shipping lifecycle |
-| `hypt-start` | Onboard the owner and project, install companions, and create the initial plan |
+| `hypt-start` | Onboard the owner and project, install companions, optionally offer Beads/Beadcrumbs, and create the initial plan |
 | `hypt-plan-critic` | Stress-test a non-trivial implementation plan |
 | `hypt-implement` | Implement approved work through a focused coding pass |
 | `hypt-build` | Build to a ready PR; yolo phrases continue through close |

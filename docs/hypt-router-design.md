@@ -34,6 +34,7 @@ User request
 hypt-start
   person + communication profile
   required companion installation
+  optional Beads / Beadcrumbs offer
   project + accounts + plan
 
 hypt-build

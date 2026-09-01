@@ -84,7 +84,7 @@ Use the repository's incident-doc convention; otherwise write `docs/post-mortem/
 <How the fix will go red on the incident and how production health is proven.>
 ```
 
-Link existing issues instead of duplicating them. Add only concrete, non-duplicate follow-up to the existing backlog or tracker.
+Link existing issues instead of duplicating them. Add only concrete, non-duplicate follow-up to the existing backlog or tracker, including Beads when initialized. If Beadcrumbs is initialized, capture the causal conclusion there as well.
 
 Completion: a reader can trace every causal claim to evidence and every action to the failure mode it prevents.
 
