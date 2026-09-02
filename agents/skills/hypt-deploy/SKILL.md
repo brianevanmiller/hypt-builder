@@ -9,67 +9,42 @@ metadata:
 
 Resolve `scripts/vercel-bypass` relative to this `SKILL.md`.
 
-## Modes
-
-- **Status:** read deployment state and health without triggering or repairing anything.
-- **Remediate:** diagnose a failed deployment and apply only the bounded Vercel access bypass. Code fixes return to `hypt-build`.
-- **Production:** verify the deployment for the target branch after merge.
+Modes: **status** reads deployment state and health without triggering or repairing anything; **remediate** diagnoses a failed deployment and applies only the bounded Vercel access bypass, returning code fixes to `hypt-build`; **production** verifies the target-branch deployment after merge.
 
 ## 1. Locate the subject
 
-Read repository instructions, current branch and SHA, PR when present, provider config, GitHub checks, and GitHub Deployments.
+Read repository instructions, current branch and SHA, the PR when present, provider config, GitHub checks, and GitHub Deployments. A branch with a PR resolves to the PR head and preview environment; production mode or a branch without a PR resolves to the target-branch head and production environment. Inspect without stashing, switching, or mutating the worktree.
 
-Select:
-
-- PR head and preview environment for a branch with a PR
-- Target-branch head and production environment for production mode or a branch without a PR
-
-Do not stash, switch branches, or mutate the worktree merely to inspect a deployment.
-
-Detect Vercel, Netlify, Fly.io, Render, or Railway from repository config. With no provider match, use GitHub Deployments as the generic source.
+Detect Vercel, Netlify, Fly.io, Render, or Railway from repository config; with no match, GitHub Deployments is the generic source.
 
 Completion: provider, environment, expected SHA, deployment ID, state, and URL are known.
 
 ## 2. Wait within bounds
 
-For `pending` or `in_progress`, poll every 15 seconds for at most two minutes. Confirm the resulting deployment still targets the expected SHA.
-
-Stop and report when no deployment appears, the timeout expires, or the deployment points at another revision.
+For `pending` or `in_progress`, poll every 15 seconds for at most two minutes, then confirm the resulting deployment still targets the expected SHA. Stop and report when no deployment appears, the timeout expires, or the deployment points at another revision.
 
 ## 3. Diagnose failure
 
-Read check details, deployment status description, and available provider logs. Reproduce locally only when the repository already exposes a build command.
+Read check details, the deployment status description, and available provider logs. Reproduce locally only when the repository already exposes a build command.
 
-For Vercel descriptions containing `TEAM_ACCESS`, `not a member`, or `contributing access`, use the bundled helper:
+For Vercel descriptions containing `TEAM_ACCESS`, `not a member`, or `contributing access`, run the bundled helper at most once per deployment check (it is idempotent for the target revision):
 
 ```bash
-# Preview
-"<skill-dir>/scripts/vercel-bypass"
-
-# Production
-"<skill-dir>/scripts/vercel-bypass" --prod
+"<skill-dir>/scripts/vercel-bypass"          # preview
+"<skill-dir>/scripts/vercel-bypass" --prod   # production
 ```
 
-Interpret:
+| Exit | Meaning |
+|---|---|
+| `0` | Use the returned URL; continue to health verification. |
+| `1` | Stop with the helper error. |
+| `2` | No access block; continue normal diagnosis. |
 
-- Exit `0`: use the returned URL and continue to health verification.
-- Exit `1`: stop with the helper error.
-- Exit `2`: no access block; continue normal diagnosis.
-
-This bypass is idempotent for the target revision. Run it at most once per deployment check.
-
-For a code, configuration, or dependency failure, report the reproducing evidence and invoke `hypt-build` for the fix. `hypt-deploy` does not create and merge an unreviewed fix branch.
+For a code, configuration, or dependency failure, report the reproducing evidence and invoke `hypt-build` for the fix; `hypt-deploy` never creates and merges an unreviewed fix branch.
 
 ## 4. Verify health
 
-Require both:
-
-1. Provider state is successful for the expected SHA.
-2. The target URL returns the expected application response.
-
-Use an HTTP check for basic reachability. For a user-facing route, use browser or computer use to load the real page when the caller has not already captured current proof.
-
-Do not round redirects, auth walls, placeholder pages, or a successful deployment record up to application health. State exactly what was observed.
+Require both: provider state is successful for the expected SHA, and the target URL returns the expected application response. Use an HTTP check for reachability; for a user-facing route, load the real page through browser or computer use unless the caller already captured current proof. Redirects, auth walls, placeholder pages, and a successful deployment record are not application health; state exactly what was observed.
 
 ## Return
 

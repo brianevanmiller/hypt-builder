@@ -1,41 +1,62 @@
 # Default web stack setup
 
-Consult only the branches selected during product discovery. Existing repository conventions override this default. `website`, `webapp`, and `desktop` are distinct setup branches; do not scaffold a web app into a desktop-only project or create a backend that the intake did not select.
+Consult only the branches selected during intake; existing repository conventions override this default. `website`, `webapp`, and `desktop` are distinct branches: a desktop-only project gets no web-app scaffold, and no backend is created that the intake did not select.
 
 ## Tools and accounts
 
-Default tools are Git, Node/npm/npx, GitHub CLI, Bun, and the Vercel CLI. Use the OS package manager or official signed distribution. Onboard Vercel with the official playbook: "Set up Vercel for me. Fetch https://vercel.com/get-started.md and follow it." It installs the Vercel CLI globally, adds Vercel guidance, and connects the Vercel MCP; do not rely on a transient `bunx vercel` download or a hand-rolled install instead of the playbook. Install the Supabase CLI as a project dependency for Supabase branches, or through the official system package when the user needs a standalone CLI; do not silently add it to unrelated projects.
+Default tools are Git, Node/npm/npx, GitHub CLI, Bun, and the Vercel CLI, installed through the OS package manager or official signed distribution. Onboard Vercel with the official playbook, "Set up Vercel for me. Fetch https://vercel.com/get-started.md and follow it.", which installs the Vercel CLI globally, adds Vercel guidance, and connects the Vercel MCP; a transient `bunx vercel` download or hand-rolled install is not a substitute. Install the Supabase CLI as a project dependency for Supabase branches, or through the official system package when the user needs a standalone CLI, and only in projects that selected it.
 
 Authenticate in this order for every project:
 
-1. GitHub with `gh auth login --web`, then verify with `gh auth status`
-2. Vercel through the official https://vercel.com/get-started.md playbook (run during onboarding; re-verify with `vercel whoami`)
-3. Supabase with `supabase login` (or the selected package-runner equivalent), then verify with `supabase projects list` — web-app account/backend branches only
+1. GitHub with `gh auth login --web`, verified by `gh auth status`
+2. Vercel through the playbook, re-verified with `vercel whoami`
+3. Supabase with `supabase login` (or the package-runner equivalent), verified by `supabase projects list`: web-app account/backend branches only
 4. Stripe only for payments
 5. Resend only for email
 6. Integration providers only when selected
 
-GitHub account access is required even when the repository is not created yet. Connect the selected GitHub repository to Vercel after both accounts are authenticated. The Vercel GitHub App must be installed for the repository owner and granted access to the selected repository; organization owners may need to approve it. Confirm the linked Vercel project and repository rather than treating a local `.vercel` directory as proof of a GitHub connection.
+GitHub account access is required even before the repository exists. Connect the selected repository to Vercel after both accounts authenticate: the Vercel GitHub App must be installed for the repository owner and granted access to the repository, which an organization owner may need to approve. Confirm the linked Vercel project and repository rather than treating a local `.vercel` directory as proof.
 
-Each OAuth flow needs its own human interaction. Credentials go into official browser pages, a gitignored local file, or the provider's secret store. Never request passwords, API keys, or access tokens in chat.
+Each OAuth flow needs its own human interaction. Credentials go into official browser pages, a gitignored local file, or the provider's secret store, never chat.
 
 ## Project shape branches
 
 ### Website
 
-Use a content-first static or server-rendered web scaffold appropriate to the selected repository. Preserve the main brief, website copy source, Google Drive asset folder, navigation tabs, audience, vibe, and inspiration links in the project record. If the source material is inaccessible, pause the content implementation and record the exact human action needed to grant access or attach/export the source.
-
-Create or link the Vercel project from the GitHub repository, enable automatic deployments, and attach the selected custom domain. For a new domain, check availability and price first; require a final user confirmation immediately before purchase. Vercel supports `vercel domains check`, `vercel domains price`, `vercel domains buy`, and `vercel domains add`. A Vercel-registered domain can use Vercel nameservers and automatic DNS records; an external registrar requires the owner to approve or perform DNS changes. Adding the domain or seeing SSL provision does not publish the app: deploy the intended project to production and verify the custom HTTPS URL afterward. A preview deployment is not sufficient.
+Use a content-first static or server-rendered scaffold appropriate to the repository. Preserve the main brief, website copy source, Google Drive asset folder, navigation tabs, audience, vibe, and inspiration links in the project record. If source material is inaccessible, pause content implementation and record the exact human action needed to grant access or export the source. Create or link the Vercel project from the GitHub repository, enable automatic deployments, and attach the selected custom domain per the Custom domain section.
 
 ### Web app
 
-If other users sign up or the app needs a selected Supabase backend, install `@supabase/supabase-js`, `@supabase/ssr`, and the Supabase CLI, then create and link a remote project. For owner-only apps, do not assume public signup. For an open or invited service, configure the selected auth policy and verify the user journey. When growth and B2B/enterprise requirements make it plausible, record a WorkOS AuthKit evaluation as a decision or follow-up; provisioning WorkOS is a separate approved choice.
-
-For owner/team access, copy `assets/allowlist.sql` to a uniquely timestamped migration and replace the placeholder with the approved email rows. For external integrations, copy `assets/integrations.sql` to the next unique migration. Create one server-only provider adapter per selected integration, an OAuth callback that validates the provider and `state`, and a scheduled sync route protected by `CRON_SECRET`.
+If other users sign up or the app needs a selected Supabase backend, install `@supabase/supabase-js`, `@supabase/ssr`, and the Supabase CLI, then create and link a remote project. Owner-only apps get no public signup; an open or invited service gets the selected auth policy with the user journey verified. When growth and B2B/enterprise requirements make it plausible, record a WorkOS AuthKit evaluation as a decision or follow-up; provisioning WorkOS is a separate approved choice.
 
 ### Desktop
 
-Keep the desktop runtime, packaging, signing, and update channel in the repository's selected toolchain. Use Vercel only for the explicitly selected companion web surface, API, update metadata, or download/landing site. A local-only desktop app does not require Supabase, `.env.local`, or a Vercel-hosted backend. If the desktop app has accounts or sync, apply the web-app account and backend branch to its companion service.
+Keep the desktop runtime, packaging, signing, and update channel in the repository's selected toolchain. Use Vercel only for the explicitly selected companion web surface, API, update metadata, or download/landing site. A local-only desktop app needs no Supabase, `.env.local`, or Vercel-hosted backend; a desktop app with accounts or sync applies the web-app account and backend branch to its companion service.
+
+## Custom domain
+
+Buying a domain, pointing DNS, getting SSL, and deploying to production are separate steps. Lead with this model for non-coders (dashboard labels vary slightly):
+
+| State | Meaning |
+|---|---|
+| Purchased | Registration exists; the app may not be connected. |
+| DNS configured | The address points toward Vercel; there may be no published app. |
+| SSL pending/active | Vercel provisions HTTPS automatically after the domain is connected and DNS validates; it still does not publish the app. |
+| Preview deployment | A branch or pull-request version, not the public production version. |
+| Production deployment | The published project version the custom domain should serve. |
+| Live | DNS verified, HTTPS working, domain assigned to production, and an HTTPS request returns the intended app. |
+
+For a new domain, check availability and price first and require final user confirmation immediately before purchase (`vercel domains check`, `vercel domains price`, `vercel domains buy`, `vercel domains add`). A Vercel-registered domain can use Vercel nameservers and automatic DNS; an outside registrar requires the owner to approve or perform DNS changes.
+
+1. Confirm or create the Vercel project and connect the approved repository.
+2. Add the apex domain to that project and, when appropriate, its `www` variant.
+3. For a Vercel-purchased domain, check whether Vercel already configured DNS. For an outside registrar, show Vercel's exact records or nameservers and pause for owner approval before changes.
+4. Record the canonical hostname and configure the other hostname to redirect to it.
+5. Wait for Vercel to verify DNS and provision HTTPS.
+6. Deploy the intended project to production, normally by pushing approved code to `main` through the connected Git workflow. The dashboard is the preferred path for a non-coder; `vercel --prod` is an alternative only once the project is linked and the user is authenticated, never the only path.
+7. Confirm the production deployment is assigned to the custom domain, then test both `https://` hostnames and the redirect.
+
+When Vercel says "Your domain is properly configured, but you don't have a production deployment" (or equivalent), DNS is probably correct and the project still needs publication: have the user push approved code to the production branch or use the dashboard's production-deployment action, refresh Domains or Deployments, confirm the production deployment is associated with the domain, and test HTTPS. Domain onboarding is complete only with evidence of a production deployment and a successful HTTPS check on both hostnames, or a named remaining human action; DNS or SSL alone is not completion, and a preview deployment is not production.
 
 ## Scaffold
 
@@ -53,17 +74,13 @@ Add `stripe @stripe/stripe-js` only for payments and `resend` only for email.
 
 ## Supabase branches
 
-For owner/team access, copy `assets/allowlist.sql` to a uniquely timestamped migration and replace the placeholder with the approved email rows.
-
-For external integrations, copy `assets/integrations.sql` to the next unique migration. Create one server-only provider adapter per selected integration, an OAuth callback that validates the provider and `state`, and a scheduled sync route protected by `CRON_SECRET`.
+For owner/team access, copy `assets/allowlist.sql` to a uniquely timestamped migration and replace the placeholder with the approved email rows. For external integrations, copy `assets/integrations.sql` to the next unique migration, then create one server-only provider adapter per selected integration, an OAuth callback that validates the provider and `state`, and a scheduled sync route protected by `CRON_SECRET`.
 
 Create and link the remote Supabase project. Generate the database password locally, store it in a mode-`600` gitignored file, and never print it.
 
 ## Environment
 
-Before creating `.env.local`, ensure Git ignores it. Add only selected variables and write a value-free `.env.example`.
-
-Typical variables:
+Ensure Git ignores `.env.local` before creating it. Add only selected variables and write a value-free `.env.example`. Typical variables:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL
@@ -82,15 +99,4 @@ Keep service-role keys, OAuth secrets, and cron secrets server-only. Add the sam
 
 ## Git and deployment
 
-Initialize a private GitHub repository when none exists. Commit setup on a branch when repository protection requires it. Link Vercel and push the selected environment variables to development, preview, and production.
-
-Verify:
-
-1. `git status` contains no secret file.
-2. The repository remote resolves.
-3. Supabase and Vercel report the expected linked project.
-4. The local development server returns a successful response.
-5. The first preview deployment starts.
-6. When a custom domain is selected, DNS is verified, HTTPS is active, a production deployment is assigned to the domain, and both HTTPS hostnames (including the chosen redirect) return the intended app.
-
-Debug a failed condition before declaring setup complete.
+Initialize a private GitHub repository when none exists, committing setup on a branch when repository protection requires it. Link Vercel and push the selected environment variables to development, preview, and production. Setup is complete only when `git status` contains no secret file, the repository remote resolves, Supabase and Vercel report the expected linked project, the local development server returns a successful response, the first preview deployment starts, and, for a selected custom domain, DNS is verified, HTTPS is active, a production deployment is assigned to the domain, and both HTTPS hostnames (including the chosen redirect) return the intended app; debug any failed condition first.

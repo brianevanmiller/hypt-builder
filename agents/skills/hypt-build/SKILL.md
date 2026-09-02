@@ -11,17 +11,9 @@ Own the path from current state to a remote, review-ready PR. In **yolo mode**, 
 
 ## Ground
 
-Read:
+Read repository instructions and the user's Identity section (`AGENTS.md` or `CLAUDE.md`); `git status`, branch, recent commits, and the merge-base with the target branch; the current PR's comments, checks, and deployments; the originating request, spec, plan, and related shipped code; and the optional ledgers when present, Beads (`bd`) and Beadcrumbs (`bdc` plus the `beadcrumbs` skill). Identity shapes communication only: technical visuals for coders, plain-language outcomes otherwise.
 
-- Repository instructions and the user's Identity section in `AGENTS.md` or `CLAUDE.md`
-- `git status`, current branch, recent commits, and the merge-base with the target branch
-- Current PR, comments, checks, and deployment state when present
-- The originating request, spec, plan, and related shipped code
-- Optional local ledgers when present: Beads (`bd`) and Beadcrumbs (`bdc` plus the `beadcrumbs` skill)
-
-Use the profile only to shape communication: technical visuals are for coders; non-coders get plain-language outcomes and instructions.
-
-When Beads is initialized, use it as the project tracker instead of markdown TODOs; keep dated `docs/` plans as the human-facing build plan. When Beadcrumbs is initialized, load the `beadcrumbs` skill and follow it for capture, harvest before opening a PR, and promotion. If `bdc` is present without that skill, report the missing install and do not emulate it.
+An initialized Beads tracker is the project tracker (dated `docs/` plans stay the human-facing build plan). An initialized Beadcrumbs ledger means loading the `beadcrumbs` skill and following it for capture, harvest before opening a PR, and promotion; `bdc` without that skill is a missing install to report, not something to emulate.
 
 ## 1. Route readiness
 
@@ -29,98 +21,58 @@ Classify before editing:
 
 | State | Route | Completion |
 |---|---|---|
-| Already shipped | Prove the behavior exists on the target branch and stop. | Show the merged PR or source. |
-| Fog: too large for one session | Use `wayfinder`. | The decision map makes the next build slice executable. |
-| Ambiguous outcome | Use `grilling` or a short discovery pass. | Acceptance criteria distinguish done from not-done. |
-| Open design | Run the design pass below. | One design is chosen with tradeoffs recorded. |
-| Executable | Continue. | Scope, behavior, and verification are concrete. |
+| Already shipped | Prove the behavior exists on the target branch and stop. | Merged PR or source shown. |
+| Fog: too large for one session | `wayfinder` | The decision map makes the next slice executable. |
+| Ambiguous outcome | `grilling` or a short discovery pass | Acceptance criteria distinguish done from not-done. |
+| Open design | Design pass below | One design chosen, tradeoffs recorded. |
+| Executable | Continue | Scope, behavior, and verification are concrete. |
 
-For complicated design, spawn two read-only subagents over the same problem and code:
-
-1. One uses `codebase-design`.
-2. One uses pstack `architect`.
-
-Run the first pass in parallel. Give each subagent the other's summary for one short response, then synthesize their consensus and disagreements before choosing the deepest coherent design. If one companion is unavailable, use the other and report the missing perspective.
+Design pass for complicated work: two parallel read-only subagents over the same problem and code, one using `codebase-design` and one using pstack `architect`. Give each the other's summary for one short response, synthesize consensus and disagreements, and choose the deepest coherent design. If one companion is unavailable, use the other and report the missing perspective.
 
 ## 2. Plan the slice
 
-Reuse an existing plan when it still matches the request. Otherwise write a concise plan in the repository's existing tracker — Beads when initialized — or `docs/<YYYY-MM-DD>-<slug>-plan.md`.
-
-For non-trivial work, invoke `hypt-plan-critic` in pipeline mode with the plan and original request. Resolve blockers; let it update lesser issues autonomously.
+Reuse an existing plan that still matches the request; otherwise write a concise one in the repository's tracker (Beads when initialized) or `docs/<YYYY-MM-DD>-<slug>-plan.md`. For non-trivial work, invoke `hypt-plan-critic` in pipeline mode with the plan and original request; resolve its blockers and let it fix lesser issues itself.
 
 Completion: every acceptance criterion maps to an implementation step and a verification path.
 
 ## 3. Implement
 
-Create a PR branch when needed, then invoke `hypt-implement` with the approved plan, request, and scope. Continue immediately when it returns.
-
-Run the smallest relevant checks during implementation. Default testing is light:
-
-- Use TDD only when requested or when a cheap, obvious seam can fail first.
-- Keep the crux and distinct behavioral paths.
-- Skip new test infrastructure, per-value permutations, and speculative guard suites.
+Create a PR branch when needed, invoke `hypt-implement` with the approved plan, request, and scope, and continue when it returns. Testing stays light: TDD only when requested or when a cheap, obvious seam can fail first; one crux test per distinct behavior; no new test infrastructure, per-value permutations, or speculative guard suites.
 
 Completion: the implementation satisfies the plan and targeted checks pass.
 
 ## 4. Open the proof surface
 
-Commit and push using repository conventions; create or update the PR with the request, approach, and checks. Wait for the preview deployment when the change has a user-facing path.
-
-Prove behavior through browser or computer use:
-
-1. Prefer the Vercel preview attached to the PR.
-2. Use another provider's preview when applicable.
-3. Use localhost only when no usable preview exists.
-
-Exercise the real path, capture the resulting state, and verify important side effects. Spend at most three attempts on browser/tooling access; then record the exact blockage.
+Commit and push with repository conventions; create or update the PR with the request, approach, and checks. For a user-facing change, wait for the preview deployment and prove the real path through browser or computer use: the PR's Vercel preview first, another provider's preview second, localhost only when no usable preview exists. Capture the resulting state and verify important side effects. After three failed browser/tooling attempts, record the exact blockage.
 
 Completion: the requested path works in a real UI/runtime, or the report names why it could not be proven.
 
 ## 5. Review to green
 
-### Standards and spec
+Invoke Matt Pocock's `code-review` against the PR merge-base with the originating spec, keeping its axes separate: **Standards** (repository rules and code smells) and **Spec** (missing, extra, or incorrect behavior). Then run one capped adversarial pass with pstack `interrogate`, requiring severity, confidence, reachability on real data, `file:line`, and a concrete failure scenario. For a missing companion, report the incomplete installation and run the same brief with independent read-only reviewers.
 
-Invoke Matt Pocock's `code-review` against the PR merge-base. Give it the originating spec directly. Keep its two axes separate:
-
-- **Standards:** repository rules and code smells
-- **Spec:** missing, extra, or incorrect behavior
-
-If `code-review` is unavailable, report the incomplete companion installation and run the same two briefs with independent read-only reviewers. Fix every material finding and rerun affected checks.
-
-### Adversarial pass
-
-Run one capped adversarial pass with pstack `interrogate`. Require severity, confidence, reachability on real data, `file:line`, and a concrete failure scenario. If unavailable, use one independent read-only reviewer with the same brief.
-
-Fix material findings. Reject unreachable or incorrect findings with repository evidence. The cap is one pass plus verification of substantial fixes, not an open-ended review loop.
+Fix material findings and rerun affected checks; reject unreachable or incorrect findings with repository evidence. The cap is one adversarial pass plus verification of substantial fixes.
 
 Completion: both review axes and the adversarial pass have explicit dispositions; fixes are pushed.
 
 ## 6. Sweep the contract
 
-Run the trigger check over the branch diff against the merge-base — its output decides whether the sweep has surface:
+Run the trigger check over the branch diff; its output decides whether the sweep has surface:
 
 ```bash
 git diff --name-only <merge-base>...HEAD | grep -Ei '\.(test|spec)\.|_test\.|/tests?/'
 git diff -U0 <merge-base>...HEAD -- . ':(exclude)*.md' ':(exclude)*.txt' ':(exclude)*.json' ':(exclude)*.html' ':(exclude)*.xml' ':(exclude)*.csv' ':(exclude)*.rst' | grep -cE '^\+\s*(//|/\*|\*|#|--)'
 ```
 
-Sort the comments, tests, and session artifacts it surfaces:
-
-- **Contract:** interface behavior, a plausible regression, invariant, gotcha, semantic definition, or durable ticket pointer
-- **Scaffolding:** build narration, discarded-design rationale, duplicate permutations, change detectors, or temporary probes
-- **Session artifact:** anything whose whole job is to serve this change — a trace, verdict, root-cause writeup, `show-me`/Archify HTML, diagram, or one-off audit. Attach it where the work lives (Step 7) as soon as it is produced, and keep it out of the repo.
-
-Keep the contract. Move long decision rationale to the tracker when one exists, or capture and harvest it with Beadcrumbs when that ledger is initialized; remove the scaffolding; attach session artifacts rather than committing them. Re-read docs and comments after late review fixes so they describe the current code. `hypt-close` Step 3 is the backstop for this sweep — it firing means this sweep didn't run.
+Keep **contract** (interface behavior, plausible regression tests, invariants, gotchas, semantic definitions, durable ticket pointers). Remove **scaffolding** (build narration, discarded-design rationale, duplicate permutations, change detectors, temporary probes), moving long rationale to the tracker or an initialized Beadcrumbs ledger. Attach **session artifacts** (a trace, verdict, root-cause writeup, `show-me`/Archify HTML, diagram, or one-off audit whose whole job is to serve this change) where the work lives per Step 7 as soon as they are produced, and keep them out of the repository. Re-read docs and comments after late review fixes so they describe the current code. `hypt-close` Step 3 is this sweep's backstop; it firing means this sweep did not run.
 
 Completion: the remote PR contains every fix, no session journal, current verification notes, and nothing describing an earlier revision.
 
 ## 7. Hand off
 
-Confirm local `HEAD` equals the PR head SHA and required checks have started. Report the PR, user-path proof, checks, review dispositions, and any blocked evidence.
+Confirm local `HEAD` equals the PR head SHA and required checks have started. Report the PR, user-path proof, checks, review dispositions, and any blocked evidence. Coder profile: the smallest useful technical visual via HumanLayer `show-me`, with Archify only for a substantial architecture or workflow explainer. Otherwise, plain-language behavior and next actions.
 
-For a coder profile, use HumanLayer `show-me` for the smallest useful technical visual. Use Archify only when a substantial architecture or workflow warrants a polished standalone explainer. For a non-coder or uncertain profile, explain behavior and next actions without a technical diagram.
-
-That visual is a **session artifact**: it serves only this change, so it attaches where the work lives — a configured tracker issue, or the PR description or a PR comment when none is configured — as soon as it is produced, and it is never committed to the repository. Rewrite repo-relative links and same-file anchors before attaching. When a later review round invalidates what it depicts, replace it in place rather than adding a second copy.
+That visual is a session artifact: attach it to the configured tracker issue, or to the PR description or a PR comment when none is configured, as soon as it is produced, and never commit it. Rewrite repo-relative links and same-file anchors before attaching; when a later review round invalidates it, replace it in place rather than adding a second copy.
 
 Outside yolo mode, stop at:
 
@@ -130,4 +82,4 @@ In yolo mode, invoke `hypt-close`, state that the user's original phrase pre-app
 
 ## Safety stops
 
-Stop for a security vulnerability, destructive data operation, unresolved product ambiguity, or a persistent failure after two focused repair attempts. Make reversible implementation decisions autonomously.
+Stop for a security vulnerability, destructive data operation, unresolved product ambiguity, or a persistent failure after two focused repair attempts. Reversible implementation decisions are yours.
