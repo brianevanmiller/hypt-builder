@@ -25,8 +25,6 @@ Quick pass only when the work is local, reversible, and has no auth, data, payme
 
 ## 3. Apply the rubric
 
-In order:
-
 1. **Intent:** every requested behavior and acceptance criterion is represented.
 2. **Sequence:** dependencies are ordered and each step ends in a verifiable state.
 3. **Data and security:** auth, authorization, validation, secrets, migrations, destructive behavior, and tenant boundaries are explicit.

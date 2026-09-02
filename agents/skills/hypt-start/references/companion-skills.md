@@ -59,7 +59,7 @@ Verify the exact `office-hours` name through `npx skills list -g --json`, then i
 
 ## Optional local ledgers
 
-Not part of the required set; declining either never blocks onboarding. Ask once during first `hypt-start` and skip the ask when the project record already stores the decision. Install only what the user accepted and only the missing pieces, with explicit approval of the exact commands, using Homebrew or npm as written here rather than piping `curl` to a shell. Order when both are accepted: Beads CLI; Beadcrumbs CLI and the `beadcrumbs` skill; then, after Git exists, `bd init` and `bd setup`, then `bdc init`.
+Not part of the required set; declining either never blocks onboarding. Ask once during first `hypt-start` and skip the ask when the project record already stores the decision. Install only what the user accepted and only the missing pieces, with explicit approval of the exact commands written here (Beads via Homebrew or npm; Beadcrumbs via its pinned, checksum-verified release installer). Order when both are accepted: Beads CLI; Beadcrumbs CLI and the `beadcrumbs` skill; then, after Git exists, `bd init` and `bd setup`, then `bdc init`.
 
 ### Beads
 
@@ -84,8 +84,10 @@ Run `bd setup` for each agent where Hypt is installed (`claude`, `codex`, `curso
 
 macOS and Linux only (`arm64` and `amd64`); on Windows skip it and record `unsupported platform`. The binary is large (~142 MB, embedded Dolt): say so in the approval plan, not in the one-line offer.
 
+Beadcrumbs has no npm or Homebrew package. Its release installer verifies the archive's SHA-256 against the release `checksums.txt`; pin the tag from the upstream README and get approval for the exact URL.
+
 ```bash
-npm install -g @beadcrumbs/bdc
+curl -fsSL https://raw.githubusercontent.com/brianevanmiller/beadcrumbs/v1.1.0/scripts/install.sh | bash
 
 npx skills add brianevanmiller/beadcrumbs \
   --skill beadcrumbs \

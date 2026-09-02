@@ -51,7 +51,7 @@ Completion: the requested path works in a real UI/runtime, or the report names w
 
 Invoke Matt Pocock's `code-review` against the PR merge-base with the originating spec, keeping its axes separate: **Standards** (repository rules and code smells) and **Spec** (missing, extra, or incorrect behavior). Then run one capped adversarial pass with pstack `interrogate`, requiring severity, confidence, reachability on real data, `file:line`, and a concrete failure scenario. For a missing companion, report the incomplete installation and run the same brief with independent read-only reviewers.
 
-Fix material findings and rerun affected checks; reject unreachable or incorrect findings with repository evidence. The cap is one adversarial pass plus verification of substantial fixes.
+Fix material findings and rerun affected checks; reject unreachable or incorrect findings with repository evidence.
 
 Completion: both review axes and the adversarial pass have explicit dispositions; fixes are pushed.
 
