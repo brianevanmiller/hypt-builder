@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.33.1 — 2026-09-02
+
+- Compact every hypt skill and reference after a prompt audit: the always-loaded `SKILL.md` bodies shrink from 8,637 to 7,208 words (13,210 to 11,650 across skills and references) with every gate, command, path, safety rule, prompt, and cross-skill handoff preserved.
+- Move the custom-domain state model and dashboard procedure from `hypt-start` into `references/default-web-stack.md` § Custom domain, so only the custom-domain branch loads it; `hypt-start` keeps the human-only actions, completion rule, and pointer.
+- State each rule once: `hypt-close` says the yolo-scope and trigger-output rules once and defers hygiene and migration detail to its references; `hypt-start` stops restating Step 5's completion, the Vercel playbook, the WorkOS rule, and the ledger-ask conditions; `default-web-stack.md` loses an exact duplicate Supabase paragraph.
+- Rewrite bullet-formatted behavioral rules as prose and keep tables for reference data (routing, exit codes, status vocabulary, provider rollbacks, domain states).
+
 ## v0.33.0 — 2026-09-01
 
 - Guide non-coders through custom-domain purchase or connection, DNS, automatic HTTPS provisioning, and the separate production-deployment requirement during `hypt-start`.

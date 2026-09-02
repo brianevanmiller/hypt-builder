@@ -1,10 +1,8 @@
 # Project document shapes
 
-Write dated, kebab-case files. Adapt headings to existing repository documentation rather than creating duplicate sources of truth.
+Write dated, kebab-case files, adapting headings to existing repository documentation rather than creating duplicate sources of truth. Preserve source links instead of copying a source document's contents into a second, stale copy.
 
 ## Project record
-
-Use this shape for a `website`, `webapp`, or `desktop` project. Preserve source links rather than copying a source document's full contents into a second, stale source of truth.
 
 ```markdown
 # <Project name>
@@ -103,4 +101,4 @@ Use this shape for a `website`, `webapp`, or `desktop` project. Preserve source 
 <Only the level the user selected: prototype, normal production, or sensitive/critical.>
 ```
 
-Each slice must leave the repository runnable and verifiable. Prefer one real vertical path before building layer depth. The plan is complete when `hypt-build` can map every acceptance criterion to a slice and proof path.
+Each slice leaves the repository runnable and verifiable, with one real vertical path before layer depth. The plan is complete when `hypt-build` can map every acceptance criterion to a slice and proof path.
