@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.33.2 — 2026-09-02
+
+- Fix the Beadcrumbs install in `companion-skills.md`: `@beadcrumbs/bdc` is not an npm package; point at the upstream README's pinned, checksum-verified release installer and require approval of the exact command.
+- Drop migration-relative phrasing about the retired `hypt:` plugin namespace from `AGENTS.md` and `agents/README.md`, and the deferred `plugin.json` rationale.
+- State the `hypt-build` adversarial-pass cap once; `hypt-plan-critic` rubric lenses are unordered.
+
 ## v0.33.1 — 2026-09-02
 
 - Compact every hypt skill and reference after a prompt audit: the always-loaded `SKILL.md` bodies shrink from 8,637 to 7,208 words (13,210 to 11,650 across skills and references) with every gate, command, path, safety rule, prompt, and cross-skill handoff preserved.
