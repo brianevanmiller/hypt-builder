@@ -84,11 +84,9 @@ Run `bd setup` for each agent where Hypt is installed (`claude`, `codex`, `curso
 
 macOS and Linux only (`arm64` and `amd64`); on Windows skip it and record `unsupported platform`. The binary is large (~142 MB, embedded Dolt): say so in the approval plan, not in the one-line offer.
 
-Beadcrumbs has no npm or Homebrew package. Its release installer verifies the archive's SHA-256 against the release `checksums.txt`; pin the tag from the upstream README and get approval for the exact URL.
+Beadcrumbs has no npm or Homebrew package. Install the CLI with the release installer documented in the upstream README (`github.com/brianevanmiller/beadcrumbs`), pinned to a tagged release; it verifies the archive's SHA-256 against that release's `checksums.txt`. Show the user the exact pinned command from the README and get approval before running it. Then add the skill:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/brianevanmiller/beadcrumbs/v1.1.0/scripts/install.sh | bash
-
 npx skills add brianevanmiller/beadcrumbs \
   --skill beadcrumbs \
   --global \
