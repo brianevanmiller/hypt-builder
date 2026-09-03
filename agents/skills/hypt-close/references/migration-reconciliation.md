@@ -1,6 +1,6 @@
 # Migration and Post-Merge Reconciliation
 
-Run from `hypt-close` Step 5 when the branch changes a schema, migration, seed, backfill, environment contract, queue, cache, or another operation that may need to happen around deployment. The repository is the source of truth: inspect its package scripts, Makefile, pyproject, framework configuration, deployment workflow, README, and CI before selecting a command.
+Run from `hypt-close` Step 6 when the branch changes a schema, migration, seed, backfill, environment contract, queue, cache, or another operation that may need to happen around deployment. The repository is the source of truth: inspect its package scripts, Makefile, pyproject, framework configuration, deployment workflow, README, and CI before selecting a command.
 
 ## 1. Identify the migration mode
 

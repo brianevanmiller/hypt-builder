@@ -25,7 +25,7 @@ Composition:
 
 ```text
 hypt-start    project + person + companions + optional ledgers + plan
-hypt-build    readiness -> plan -> hypt-implement -> PR -> proof -> review; yolo -> hypt-close
+hypt-build    readiness -> plan -> (instruction path | hypt-implement) -> PR -> proof -> review; yolo -> hypt-close
 hypt-close    gates -> merge -> hypt-deploy -> release
 hypt-restore  restore -> proof -> hypt-post-mortem
 ```

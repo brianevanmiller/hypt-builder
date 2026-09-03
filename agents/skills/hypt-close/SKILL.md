@@ -7,7 +7,7 @@ metadata:
 
 # hypt-close — Merge, Verify, and Release
 
-Own the transition from a ready remote PR to a verified release. A direct invocation confirms before merge. A `hypt-build` yolo handoff pre-approves only that ordinary confirmation: failed gates, critical-test deletions, migration operations, irreversible actions, and ticket closure each still need their own explicit decision. Every gate's recorded status comes from its trigger check's output, not from a sense of the branch.
+Own the transition from a ready remote PR to a verified release. A direct invocation confirms before merge. A `hypt-build` yolo handoff pre-approves only that ordinary confirmation: failed gates, critical-test deletions, introduced-package `defer`/`block`, migration operations, irreversible actions, and ticket closure each still need their own explicit decision. Every gate's recorded status comes from its trigger check's output, not from a sense of the branch.
 
 ## Ground
 
@@ -48,13 +48,31 @@ When any output is non-empty, execute [`references/branch-hygiene.md`](reference
 
 After any hygiene edit, commit with repository conventions, push, and return to Step 2; checks and approval on an older head do not make the PR ready.
 
-## 4. Sweep freshness
+## 4. Audit introduced packages
 
-Re-read comments, tests, docs, PR text, release notes, migration notes, and verification evidence touched by this work. They must describe the current head, including any late review reversal; apply Step 3's rubric to anything stale.
+Run the trigger check:
+
+```bash
+git diff --name-only <base>...<head> | grep -Ei '(^|/)(package\.json|package-lock\.json|npm-shrinkwrap\.json|yarn\.lock|pnpm-lock\.yaml|bun\.lockb?|deno\.lock|go\.(mod|sum)|Cargo\.(toml|lock)|composer\.(json|lock)|Gemfile(\.lock)?|poetry\.lock|uv\.lock|Pipfile(\.lock)?|requirements[^/]*\.txt|pyproject\.toml)$|(^|/)\.github/(workflows/[^/]+\.ya?ml|actions/.+/action\.ya?ml)$'
+```
+
+| Trigger check | Package status |
+|---|---|
+| Empty | `skipped (no package surface)` |
+| Non-empty, inspect finds no introduced identity | `none (no introduced identity)` |
+| Non-empty, inspect finds identities | `approve` / `approve with conditions` / `defer` / `block` |
+
+When the trigger is non-empty, execute [`references/package-audit.md`](references/package-audit.md). `defer` and `block` stop close, including yolo.
+
+Completion: a status from the table is recorded.
+
+## 5. Sweep freshness
+
+Re-read comments, tests, docs, PR text, release notes, migration notes, package-audit evidence, and verification evidence touched by this work. They must describe the current head, including any late review reversal; apply Step 3's rubric to anything stale.
 
 Completion: remote code, proof, and prose describe the same revision, and every hygiene candidate is handled or explicitly held for the user.
 
-## 5. Resolve migration and rollout work
+## 6. Resolve migration and rollout work
 
 Run the trigger check, and scan the PR title, body, and changed docs for environment, queue, cache, or other post-merge operations that paths cannot reveal:
 
@@ -66,27 +84,27 @@ When either finds a surface, execute [`references/migration-reconciliation.md`](
 
 Completion: migration status is `none` when trigger output and scan are both empty; otherwise the exact pre-merge and post-merge actions, target, verification, and any blocker are recorded.
 
-## 6. Prepare the release
+## 7. Prepare the release
 
 ```bash
 git ls-files VERSION 'CHANGELOG*' && gh release list --limit 1
 ```
 
-Empty output from both means the repository does not version releases: record `Release: none (not versioned)`. Otherwise compare the latest GitHub release, `VERSION`, and changelog. Keep an already prepared coherent version newer than the latest release; otherwise bump patch for fixes or small maintenance and minor for features or significant enhancements, asking only when genuinely ambiguous. Update version and changelog on the feature branch, commit, push, return to Step 2, then refresh the PR summary and Step 4 evidence on the new head.
+Empty output from both means the repository does not version releases: record `Release: none (not versioned)`. Otherwise compare the latest GitHub release, `VERSION`, and changelog. Keep an already prepared coherent version newer than the latest release; otherwise bump patch for fixes or small maintenance and minor for features or significant enhancements, asking only when genuinely ambiguous. Update version and changelog on the feature branch, commit, push, return to Step 2, then refresh the PR summary and Step 5 evidence on the new head.
 
-## 7. Confirm or accept yolo
+## 8. Confirm or accept yolo
 
 With a configured tracker (Beads when `bd` is initialized), identify tickets referenced by the PR title, body, and commits and present proposed closures separately: never inferred from a merge, and never for a ticket with outstanding rollout work. Ask before changing ticket state; without a tracker, record follow-up in the PR or repository convention.
 
-Present the PR number and URL, base and head SHA, change size, approval, gates, proof, hygiene, migrations, prepared version, and worktree cleanup plan. When `hypt-build` invoked this skill in yolo mode, mark this confirmation pre-approved and continue. Otherwise ask:
+Present the PR number and URL, base and head SHA, change size, approval, gates, proof, hygiene, packages, migrations, prepared version, and worktree cleanup plan. When `hypt-build` invoked this skill in yolo mode, mark this confirmation pre-approved and continue. Otherwise ask:
 
 > Merge, deploy, and release? (yes/no)
 
 Proceed only on direct confirmation or the recorded yolo pre-approval.
 
-## 8. Merge safely
+## 9. Merge safely
 
-Immediately before merging, refresh the PR and re-check state, head SHA, base branch, approval, actionable comments, required checks, and mergeability. Confirm Steps 3 and 5 each recorded a status from their trigger checks; run any gate whose status is missing. If a stacked parent changed the base, rebase or resolve conflicts, let newly applicable gates run, and repeat the checks.
+Immediately before merging, refresh the PR and re-check state, head SHA, base branch, approval, actionable comments, required checks, and mergeability. Confirm Steps 3, 4, and 6 each recorded a status from their trigger checks; run any gate whose status is missing. If a stacked parent changed the base, rebase or resolve conflicts, let newly applicable gates run, and repeat the checks.
 
 ```bash
 gh pr merge <PR_NUMBER> --squash
@@ -94,13 +112,13 @@ gh pr merge <PR_NUMBER> --squash
 
 Never pass `--delete-branch` from a worktree. If `git worktree list --porcelain` shows the branch, leave the worktree and branch intact rather than switching, resetting, or cleaning to finish close. On merge failure, stop with the exact conflict, check, or merge-state reason. Fetch the target branch after merge and record the merged PR number and commit. A merge is not yet a release.
 
-## 9. Verify production and post-merge operations
+## 10. Verify production and post-merge operations
 
-Invoke `hypt-deploy` in production mode for the merged commit and wait within its bounds. When Step 5 recorded a post-merge migration command, run it per the reference once the merged deployment is available, then repeat the health and migration-state checks; its safety stops block the release and carry the exact evidence into follow-up or recovery.
+Invoke `hypt-deploy` in production mode for the merged commit and wait within its bounds. When Step 6 recorded a post-merge migration command, run it per the reference once the merged deployment is available, then repeat the health and migration-state checks; its safety stops block the release and carry the exact evidence into follow-up or recovery.
 
 A release requires both provider success for the merged SHA and application health on the real target path; a provider access block follows `hypt-deploy`'s remediation path and is never treated as success. Apply only previously confirmed ticket closures, after their rollout work completes.
 
-## 10. Release and re-check
+## 11. Release and re-check
 
 Create the GitHub release from the prepared version without another version commit. Refresh merge, production, release, stacked-branch, and ticket state, then report:
 
@@ -114,6 +132,7 @@ Closed
 - Proof: <real user path>
 - Hygiene: <skipped (no comment, test, or artifact surface) / clean / N blocks harvested · M tests cut · K held · A artifacts moved>
 - Artifacts: <each moved file → where it landed / none>
+- Packages: <skipped (no package surface) / none (no introduced identity) / approve / approve with conditions / defer / block>
 - Migrations: <none (trigger output empty) / pre-merge command / post-merge command and verification / blocker>
 - Tickets: <closed with confirmation / left open with reason / tracker unavailable>
 - Follow-up: <items or none>
