@@ -39,11 +39,10 @@ hypt-start
 
 hypt-build
   readiness routing
-  hypt-plan-critic
-  hypt-implement
-  real-path proof
-  standards/spec review
-  adversarial review
+  instruction path or hypt-plan-critic + hypt-implement
+  real-path or instruction-path proof
+  standards/spec review (coding path) or writing-for-agents (instruction path)
+  adversarial review (coding path)
   contract sweep
   PR finalization
   if yolo mode:
