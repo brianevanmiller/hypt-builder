@@ -15,7 +15,7 @@ Read repository instructions, current branch, the PR's actual base and head, mer
 
 ## 1. Refresh the PR
 
-Review the full branch diff against the PR's actual base (`git diff <base>...<head>`). Fix material correctness, security, or build issues and update affected docs and existing follow-up records; when Beadcrumbs is initialized, harvest outstanding session crumbs per the `beadcrumbs` skill before merge. Polish the title and body from the full branch: user-visible outcome, migration or rollout work, and verification evidence. Preserve unrelated local changes.
+Review the full branch diff against the PR's actual base (`git diff <base>...<head>`). Fix material correctness, security, or build issues and update affected docs and existing follow-up records; when Beadcrumbs is initialized, harvest outstanding session crumbs per the `beadcrumbs` skill before merge. Polish the title from the full branch. If the body is not already in Matt's `pr` shape, apply that skill: the smallest summary visual, before/after evidence, a one-way or two-way door, and blast radius, plus migration or rollout work. That door and blast radius inform the Step 7 confirmation. They are not a second review. Preserve unrelated local changes.
 
 Completion: the PR is open, local `HEAD` equals its remote head SHA, every fix is pushed, nothing unrelated was discarded, and title, body, and evidence describe that head.
 
@@ -118,5 +118,7 @@ Closed
 - Tickets: <closed with confirmation / left open with reason / tracker unavailable>
 - Follow-up: <items or none>
 ```
+
+The merge path is done. Tell the user they can run `/retro` to improve the agent's navigation, checks, standards, or steering, and `/correct` when the same mistake has already repeated. Do not run either on this path.
 
 State any post-merge action the user must perform. Merge-ready and released describe current state, never stale state.

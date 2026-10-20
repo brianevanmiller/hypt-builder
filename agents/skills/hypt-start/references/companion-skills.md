@@ -6,21 +6,25 @@ Install companions globally for the coding agents where the user installed Hypt.
 
 ```bash
 npx skills add mattpocock/skills \
-  --skill wayfinder grilling codebase-design code-review tdd diagnosing-bugs \
+  --skill wayfinder grilling domain-modeling research prototype codebase-design code-review pr tdd diagnosing-bugs setup-matt-pocock-skills \
   --global \
   <agent-flags> \
   --yes \
   --full-depth
 
 npx skills add cursor/plugins \
-  --skill architect interrogate \
+  --skill architect how why arena interrogate blast-radius unslop setup-pstack \
   --global \
   <agent-flags> \
   --yes \
   --full-depth
 ```
 
-These own readiness mapping, discovery, parallel design, two-axis review, light test-first work, root-cause diagnosis, and adversarial review.
+These own readiness mapping, discovery, shared vocabulary, throwaway prototypes, parallel design, the PR body, two-axis review, light test-first work, root-cause diagnosis, adversarial review, and cross-boundary proof. `architect` grounds with `how` and `why` and sketches with `arena`. `blast-radius` writes through `unslop`.
+
+Install these names only. Do not add pstack `tdd` or `teach` from `cursor/plugins` or `backnotprop/pstack`. Those names collide with Matt Pocock's skills, and Hypt's test-first path is Matt's `tdd`.
+
+`setup-matt-pocock-skills` and `setup-pstack` are installed here and run by the user, once. Hypt does not invoke them or `poteto-mode`. After the tracker exists, `/setup-matt-pocock-skills` points `docs/agents/issue-tracker.md` at Beads, GitHub, or that other tracker, including Wayfinding operations. Until that file exists, `/wayfinder` falls back to local markdown. `/setup-pstack` writes the model map `architect`, `interrogate`, and `blast-radius` read.
 
 ## Coder-only visual companions
 
@@ -99,4 +103,4 @@ The `beadcrumbs` skill is a dependency of the CLI: `bdc` is never left installed
 
 ## Verification
 
-Parse `npx skills list -g --json` and require every core name: `wayfinder`, `grilling`, `codebase-design`, `code-review`, `tdd`, `diagnosing-bugs`, `architect`, `interrogate`. For coder profiles also require `show-me` and `archify`. When Beads was accepted, also require `bd` on PATH; when Beadcrumbs was accepted, `bdc` on PATH and `beadcrumbs` in the skill list. A declined or unsupported optional ledger is not a missing required companion. Report the source repository or skill name when installation fails, and never substitute an unreviewed package with a similar name.
+Parse `npx skills list -g --json` and require every core name: `wayfinder`, `grilling`, `domain-modeling`, `research`, `prototype`, `codebase-design`, `code-review`, `pr`, `tdd`, `diagnosing-bugs`, `setup-matt-pocock-skills`, `architect`, `how`, `why`, `arena`, `interrogate`, `blast-radius`, `unslop`, `setup-pstack`. For coder profiles also require `show-me` and `archify`. When Beads was accepted, also require `bd` on PATH; when Beadcrumbs was accepted, `bdc` on PATH and `beadcrumbs` in the skill list. A declined or unsupported optional ledger is not a missing required companion. Report the source repository or skill name when installation fails, and never substitute an unreviewed package with a similar name.

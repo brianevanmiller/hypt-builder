@@ -52,6 +52,8 @@ hypt-build
 
 Review, verification, documentation, and git completion criteria live inside these parent workflows. They are steps, not independently installed skills.
 
+Inside `hypt-build`, `/wayfinder` is only for a big project whose size is not yet knowable. An unclear task or mini-project uses `grilling` and `domain-modeling`. Skills that are not Hypt stages are listed in [`agents/skills/hypt/SKILL.md`](../agents/skills/hypt/SKILL.md).
+
 ## Close and recovery
 
 ```text

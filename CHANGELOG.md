@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.34.0 — 2026-10-20
+
+- Narrow `/wayfinder` to a big project whose size is not yet knowable. An unclear task or mini-project uses `grilling` and `domain-modeling`, and a design question uses `prototype` and stops before a PR.
+- Install the Matt Pocock and pstack leaves those steps call: `domain-modeling`, `research`, `prototype`, `pr`, `how`, `why`, `arena`, `blast-radius`, `unslop`, plus user-run `setup-matt-pocock-skills` and `setup-pstack`.
+- Point PR bodies at Matt's `pr`, prove a cross-boundary safety claim with `blast-radius`, and name `/retro`, `/correct`, and the other non-Hypt skills without folding them into build or close.
+
 ## v0.33.2 — 2026-09-02
 
 - Fix the Beadcrumbs install in `companion-skills.md`: `@beadcrumbs/bdc` is not an npm package; point at the upstream README's pinned, checksum-verified release installer and require approval of the exact command.

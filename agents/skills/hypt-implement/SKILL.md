@@ -21,7 +21,7 @@ Completion: the intended behavior, existing seam, affected callers, and verifica
 
 ## 2. Shape
 
-Choose the smallest coherent design: a **deep module** with useful behavior behind a small interface; the seam where behavior actually varies (one adapter is not a reason for an abstraction); dependencies accepted, results returned, side effects at boundaries; domain states explicit so invalid states are hard to represent; causes fixed rather than symptoms guarded; deletion and locality over wrappers, compatibility layers, or speculative hooks. For complicated work, consume `hypt-build`'s design consensus rather than restarting design here.
+Choose the smallest coherent design: a **deep module** with useful behavior behind a small interface; the seam where behavior actually varies (one adapter is not a reason for an abstraction); dependencies accepted, results returned, side effects at boundaries; domain states explicit so invalid states are hard to represent; causes fixed rather than symptoms guarded; deletion and locality over wrappers, compatibility layers, or speculative hooks. That shape is the design rule for this pass, in place of pstack's principle skills. For complicated work, consume `hypt-build`'s design consensus rather than restarting design here. Matt's `implement` and a multi-worktree `/implement-spec` are not this pass.
 
 Completion: one interface owns the behavior and tests exercise that same interface.
 

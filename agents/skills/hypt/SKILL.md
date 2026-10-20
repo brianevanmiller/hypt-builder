@@ -31,3 +31,16 @@ hypt-restore  restore -> proof -> hypt-post-mortem
 ```
 
 When a child workflow returns, continue the parent unless the child reports a safety stop. Each step lives in its named skill.
+
+These are not Hypt stages. Tell the user to run the skill. Do not fold it into build or close.
+
+| Situation | Skill |
+|---|---|
+| Which Matt Pocock skill fits | `/ask-matt` |
+| Which pstack skill fits | `/poteto-help` |
+| One spec, many worktrees, one integration branch | `/implement-spec` |
+| Publish the conversation as a spec or ticket graph | `/to-spec`, `/to-tickets` |
+| Survey an existing muddy codebase | `/improve-codebase-architecture` |
+| After a session, improve navigation, checks, standards, or steering | `/retro` |
+| The same agent mistake has already repeated | `/correct` |
+| Rigorous work outside this shipping lifecycle | `/poteto-mode` |

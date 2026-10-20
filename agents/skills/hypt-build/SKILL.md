@@ -22,12 +22,15 @@ Classify before editing:
 | State | Route | Completion |
 |---|---|---|
 | Already shipped | Prove the behavior exists on the target branch and stop. | Merged PR or source shown. |
-| Fog: too large for one session | `wayfinder` | The decision map makes the next slice executable. |
-| Ambiguous outcome | `grilling` or a short discovery pass | Acceptance criteria distinguish done from not-done. |
+| Big and unscoped | Tell the user to run `/wayfinder`, then stop. | A later session has one executable slice. |
+| Unclear task or mini-project | `grilling` and `domain-modeling` | Acceptance criteria distinguish done from not-done. |
+| Design question | `prototype` | A throwaway artifact answers how it should look or behave. Stop before a PR. |
 | Open design | Design pass below | One design chosen, tradeoffs recorded. |
 | Executable | Continue | Scope, behavior, and verification are concrete. |
 
-Design pass for complicated work: two parallel read-only subagents over the same problem and code, one using `codebase-design` and one using pstack `architect`. Give each the other's summary for one short response, synthesize consensus and disagreements, and choose the deepest coherent design. If one companion is unavailable, use the other and report the missing perspective.
+`/wayfinder` is only for a big project whose size is not yet knowable. An unclear task or a mini-project that needs clarifying stays on `grilling` and `domain-modeling`. Before `/wayfinder`, `docs/agents/issue-tracker.md` must name the chosen tracker. If that file is missing, tell the user to run `/setup-matt-pocock-skills` first. Do not chart a local-markdown map over Beads or another chosen tracker.
+
+Design pass for complicated work: two parallel read-only subagents over the same problem and code, one using `codebase-design` and one using pstack `architect`. `architect` grounds with `how` and `why` and sketches with `arena`. Give each the other's summary for one short response, synthesize consensus and disagreements, and choose the deepest coherent design. If one companion is unavailable, use the other and report the missing perspective.
 
 ## 2. Plan the slice
 
@@ -43,13 +46,13 @@ Completion: the implementation satisfies the plan and targeted checks pass.
 
 ## 4. Open the proof surface
 
-Commit and push with repository conventions; create or update the PR with the request, approach, and checks. For a user-facing change, wait for the preview deployment and prove the real path through browser or computer use: the PR's Vercel preview first, another provider's preview second, localhost only when no usable preview exists. Capture the resulting state and verify important side effects. After three failed browser/tooling attempts, record the exact blockage.
+Commit and push with repository conventions. Create or update the PR and invoke Matt's `pr` for the body: the smallest summary visual, before/after evidence, a one-way or two-way door, and blast radius, plus the request and checks. For a user-facing change, wait for the preview deployment and prove the real path through browser or computer use: the PR's Vercel preview first, another provider's preview second, localhost only when no usable preview exists. Capture the resulting state and verify important side effects. After three failed browser/tooling attempts, record the exact blockage.
 
 Completion: the requested path works in a real UI/runtime, or the report names why it could not be proven.
 
 ## 5. Review to green
 
-Invoke Matt Pocock's `code-review` against the PR merge-base with the originating spec, keeping its axes separate: **Standards** (repository rules and code smells) and **Spec** (missing, extra, or incorrect behavior). Then run one capped adversarial pass with pstack `interrogate`, requiring severity, confidence, reachability on real data, `file:line`, and a concrete failure scenario. For a missing companion, report the incomplete installation and run the same brief with independent read-only reviewers.
+Invoke Matt Pocock's `code-review` against the PR merge-base with the originating spec, keeping its axes separate: **Standards** (repository rules and code smells) and **Spec** (missing, extra, or incorrect behavior). Then run one capped adversarial pass with pstack `interrogate`, requiring severity, confidence, reachability on real data, `file:line`, and a concrete failure scenario. When the diff crosses a shared interface or public contract, invoke `blast-radius` and keep a safety claim only when that pass proved it by running code. For a missing companion, report the incomplete installation and run the same brief with independent read-only reviewers. A missing `blast-radius` still needs that one safety fact proved in place. A writeup alone leaves the claim unproven.
 
 Fix material findings and rerun affected checks; reject unreachable or incorrect findings with repository evidence.
 
