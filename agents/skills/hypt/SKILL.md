@@ -34,6 +34,8 @@ When a child workflow returns, continue the parent unless the child reports a sa
 
 These are not Hypt stages. Tell the user to run the skill. Do not fold it into build or close.
 
+A non-coder who is building, shipping, or fixing their project stays in the Hypt stage that owns that request. Do the work at a senior engineer's standard and explain it in friendly plain language. Name a skill below only when they asked for that separate job.
+
 | Situation | Skill |
 |---|---|
 | Which Matt Pocock skill fits | `/ask-matt` |

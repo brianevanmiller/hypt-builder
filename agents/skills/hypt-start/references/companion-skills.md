@@ -24,7 +24,7 @@ These own readiness mapping, discovery, shared vocabulary, throwaway prototypes,
 
 Install these names only. Do not add pstack `tdd` or `teach` from `cursor/plugins` or `backnotprop/pstack`. Those names collide with Matt Pocock's skills, and Hypt's test-first path is Matt's `tdd`.
 
-`setup-matt-pocock-skills` and `setup-pstack` are installed here and run by the user, once. Hypt does not invoke them or `poteto-mode`. After the tracker exists, `/setup-matt-pocock-skills` points `docs/agents/issue-tracker.md` at Beads, GitHub, or that other tracker, including Wayfinding operations. Until that file exists, `/wayfinder` falls back to local markdown. `/setup-pstack` writes the model map `architect`, `interrogate`, and `blast-radius` read.
+`setup-matt-pocock-skills` and `setup-pstack` are installed here and run by the user, once. Hypt does not invoke them or `poteto-mode`. After the tracker exists, `/setup-matt-pocock-skills` points `docs/agents/issue-tracker.md` at Beads, GitHub, or that other tracker, including Wayfinding operations. Until that file exists, `/wayfinder` falls back to local markdown. `/setup-pstack` writes the model map `architect`, `interrogate`, and `blast-radius` read. Hypt invokes the leaves above during build, review, and diagnosis, and a non-coder is never assigned those leaves. The two setup skills are the only commands that person types, and only while this onboarding walks through them.
 
 ## Coder-only visual companions
 

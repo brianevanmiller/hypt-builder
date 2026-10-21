@@ -65,7 +65,7 @@ Completion: a reader can trace every causal claim to evidence and every action t
 
 ## 4. Save and hand off
 
-Commit and push the record with repository conventions when the current branch is meant for documentation changes; otherwise report the file for the caller to include. Return:
+Commit and push the record with repository conventions when the current branch is meant for documentation changes; otherwise report the file for the caller to include. The document stays the engineering record. Tell a non-coder what broke, who it affected, and what was fixed, without naming the diagnosis skills. Return:
 
 ```text
 Post-mortem

@@ -15,7 +15,7 @@ The plan and the original request. Locate the plan from an explicit path, the co
 
 ## 1. Ground
 
-Read repository instructions and the code, schemas, tests, configs, and docs the plan expects to change, verifying every named file, interface, command, and dependency rather than trusting the plan. When a step names a seam the plan has not traced, invoke `how` before treating that seam as real. Invoke `why` only when the open question is why that design exists. If either skill is missing, trace the seam or the history directly and report the gap.
+Read repository instructions and the code, schemas, tests, configs, and docs the plan expects to change, verifying every named file, interface, command, and dependency rather than trusting the plan. When a step names a seam the plan has not traced, invoke `how` before treating that seam as real. Invoke `why` only when the open question is why that design exists. If either skill is missing, trace the seam or the history directly and report the gap. Those traces stay internal. Ask a non-coder only a product question, and do not offer a design menu. Pipeline mode still updates the plan itself.
 
 Completion: each plan step points to a real seam or explicitly creates one.
 
