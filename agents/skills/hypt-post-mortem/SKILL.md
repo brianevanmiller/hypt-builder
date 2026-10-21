@@ -15,7 +15,7 @@ Incident and restore timestamps; bad and known-good revisions/deployments; the r
 
 ## 1. Reproduce the causal chain
 
-Invoke `diagnosing-bugs` with the symptom, timeline, bad diff, logs, and restored state; if it is unavailable, report the incomplete Hypt companion installation and run the same evidence loop directly. Establish the **trigger** (the change or event that introduced the condition), **mechanism** (how it produced the failure), **reachability** (why production users or data encountered it), **detection** (what surfaced it and what failed to surface it earlier), and **recovery** (why the restore or fix returned health). Test each link against code, logs, and runtime evidence and label it **confirmed**, **strongly supported**, or **unknown**; "the latest PR changed this file" is correlation, not cause.
+Invoke `diagnosing-bugs` with the symptom, timeline, bad diff, logs, and restored state; if it is unavailable, report the incomplete Hypt companion installation and run the same evidence loop directly. When the open question is why the design existed, invoke `why` for that history. If `why` is missing, use the preserved evidence already in hand and report the gap. Establish the **trigger** (the change or event that introduced the condition), **mechanism** (how it produced the failure), **reachability** (why production users or data encountered it), **detection** (what surfaced it and what failed to surface it earlier), and **recovery** (why the restore or fix returned health). Test each link against code, logs, and runtime evidence and label it **confirmed**, **strongly supported**, or **unknown**; "the latest PR changed this file" is correlation, not cause.
 
 Completion: each link has evidence or is explicitly unknown.
 
@@ -65,7 +65,7 @@ Completion: a reader can trace every causal claim to evidence and every action t
 
 ## 4. Save and hand off
 
-Commit and push the record with repository conventions when the current branch is meant for documentation changes; otherwise report the file for the caller to include. Return:
+Commit and push the record with repository conventions when the current branch is meant for documentation changes; otherwise report the file for the caller to include. The document stays the engineering record. Tell a non-coder what broke, who it affected, and what was fixed, without naming the diagnosis skills. Return:
 
 ```text
 Post-mortem

@@ -11,7 +11,7 @@ Own the path from current state to a remote, review-ready PR. In **yolo mode**, 
 
 ## Ground
 
-Read repository instructions and the user's Identity section (`AGENTS.md` or `CLAUDE.md`); `git status`, branch, recent commits, and the merge-base with the target branch; the current PR's comments, checks, and deployments; the originating request, spec, plan, and related shipped code; and the optional ledgers when present, Beads (`bd`) and Beadcrumbs (`bdc` plus the `beadcrumbs` skill). Identity shapes communication only: technical visuals for coders, plain-language outcomes otherwise.
+Read repository instructions and the user's Identity section (`AGENTS.md` or `CLAUDE.md`); `git status`, branch, recent commits, and the merge-base with the target branch; the current PR's comments, checks, and deployments; the originating request, spec, plan, and related shipped code; and the optional ledgers when present, Beads (`bd`) and Beadcrumbs (`bdc` plus the `beadcrumbs` skill). Identity shapes the words, not the engineering. A non-coder, and an unclear profile, stays in Hypt and receives the same senior-engineer build as a coder: design, plan review, implementation, tests, review, and running proof. Speak to them in friendly plain language, ask only when the answer changes what gets built or whether to ship, bring one recommendation, and mention a finding only when it needs a decision or could not be fixed. Leave companion-skill names, review axes, doors, blast radius, seams, and modules out of that conversation. A coder gets the technical handoff and visuals. Neither profile is sent away to run a companion skill.
 
 An initialized Beads tracker is the project tracker (dated `docs/` plans stay the human-facing build plan). An initialized Beadcrumbs ledger means loading the `beadcrumbs` skill and following it for capture, harvest before opening a PR, and promotion; `bdc` without that skill is a missing install to report, not something to emulate.
 
@@ -22,12 +22,15 @@ Classify before editing:
 | State | Route | Completion |
 |---|---|---|
 | Already shipped | Prove the behavior exists on the target branch and stop. | Merged PR or source shown. |
-| Fog: too large for one session | `wayfinder` | The decision map makes the next slice executable. |
-| Ambiguous outcome | `grilling` or a short discovery pass | Acceptance criteria distinguish done from not-done. |
+| Big and unscoped | Invoke `wayfinder` when `docs/agents/issue-tracker.md` names the tracker; otherwise write the first slice into the existing tracker or dated plan. Confirm that slice before building it. | The user has accepted one executable slice. |
+| Unclear task or mini-project | `grilling` and `domain-modeling` | Acceptance criteria distinguish done from not-done. |
+| Design question | `prototype` | A throwaway artifact answers how it should look or behave. Stop before a PR. |
 | Open design | Design pass below | One design chosen, tradeoffs recorded. |
 | Executable | Continue | Scope, behavior, and verification are concrete. |
 
-Design pass for complicated work: two parallel read-only subagents over the same problem and code, one using `codebase-design` and one using pstack `architect`. Give each the other's summary for one short response, synthesize consensus and disagreements, and choose the deepest coherent design. If one companion is unavailable, use the other and report the missing perspective.
+`wayfinder` is only for a big project whose size is not yet knowable. Hypt invokes it and stays with the user. An unclear task or a mini-project uses `grilling` and `domain-modeling`. When `docs/agents/issue-tracker.md` is missing, write the first slice into the existing tracker or dated plan instead of invoking `wayfinder`, and do not chart a local-markdown map over Beads or another chosen tracker. Tracker setup stays a one-time `hypt-start` step, not a build stop.
+
+Design pass for complicated work: two parallel read-only subagents over the same problem and code, one using `codebase-design` and one using pstack `architect`. `architect` grounds with `how` and `why` and sketches with `arena`. Give each the other's summary for one short response, synthesize consensus and disagreements, and choose the deepest coherent design. If one companion is unavailable, use the other and report the missing perspective. Choose that design yourself. Ask only when the options differ in what the user will see, what it costs, or how hard it is to undo. A non-coder hears the recommendation and that one difference.
 
 ## 2. Plan the slice
 
@@ -43,13 +46,13 @@ Completion: the implementation satisfies the plan and targeted checks pass.
 
 ## 4. Open the proof surface
 
-Commit and push with repository conventions; create or update the PR with the request, approach, and checks. For a user-facing change, wait for the preview deployment and prove the real path through browser or computer use: the PR's Vercel preview first, another provider's preview second, localhost only when no usable preview exists. Capture the resulting state and verify important side effects. After three failed browser/tooling attempts, record the exact blockage.
+Commit and push with repository conventions. Create or update the PR and invoke Matt's `pr` for the body: the smallest summary visual, before/after evidence, a one-way or two-way door, and blast radius, plus the request and checks. The PR keeps that shape for reviewers. A non-coder's chat report says what they can now do and where to try it, and leaves the door and blast-radius lines on the PR. For a user-facing change, wait for the preview deployment and prove the real path through browser or computer use: the PR's Vercel preview first, another provider's preview second, localhost only when no usable preview exists. Capture the resulting state and verify important side effects. After three failed browser/tooling attempts, record the exact blockage.
 
 Completion: the requested path works in a real UI/runtime, or the report names why it could not be proven.
 
 ## 5. Review to green
 
-Invoke Matt Pocock's `code-review` against the PR merge-base with the originating spec, keeping its axes separate: **Standards** (repository rules and code smells) and **Spec** (missing, extra, or incorrect behavior). Then run one capped adversarial pass with pstack `interrogate`, requiring severity, confidence, reachability on real data, `file:line`, and a concrete failure scenario. For a missing companion, report the incomplete installation and run the same brief with independent read-only reviewers.
+Invoke Matt Pocock's `code-review` against the PR merge-base with the originating spec, keeping its axes separate: **Standards** (repository rules and code smells) and **Spec** (missing, extra, or incorrect behavior). Then run one capped adversarial pass with pstack `interrogate`, requiring severity, confidence, reachability on real data, `file:line`, and a concrete failure scenario. When the diff crosses a shared interface or public contract, invoke `blast-radius` and keep a safety claim only when that pass proved it by running code. For a missing companion, report the incomplete installation and run the same brief with independent read-only reviewers. A missing `blast-radius` still needs that one safety fact proved in place. A writeup alone leaves the claim unproven. Record every disposition. A non-coder hears a finding only when it needs a decision or could not be fixed, told either "I checked the shared part by running it" or "I could not prove that, so I am not calling it safe."
 
 Fix material findings and rerun affected checks; reject unreachable or incorrect findings with repository evidence.
 
@@ -70,13 +73,11 @@ Completion: the remote PR contains every fix, no session journal, current verifi
 
 ## 7. Hand off
 
-Confirm local `HEAD` equals the PR head SHA and required checks have started. Report the PR, user-path proof, checks, review dispositions, and any blocked evidence. Coder profile: the smallest useful technical visual via HumanLayer `show-me`, with Archify only for a substantial architecture or workflow explainer. Otherwise, plain-language behavior and next actions.
+Confirm local `HEAD` equals the PR head SHA and required checks have started. Report the PR, user-path proof, checks, and any blocked evidence. Coder profile: also report review dispositions, and include the smallest useful technical visual via HumanLayer `show-me`, with Archify only for a substantial architecture or workflow explainer. Non-coder: say what changed, how to try it, and the next action, and say that nothing is live yet.
 
 That visual is a session artifact: attach it to the configured tracker issue, or to the PR description or a PR comment when none is configured, as soon as it is produced, and never commit it. Rewrite repo-relative links and same-file anchors before attaching; when a later review round invalidates it, replace it in place rather than adding a second copy.
 
-Outside yolo mode, stop at:
-
-> Pipeline complete. PR is proven, reviewed, and ready.
+Outside yolo mode, stop. A coder hears: "Pipeline complete. PR is proven, reviewed, and ready." A non-coder hears what is ready to try and that it is not live yet.
 
 In yolo mode, invoke `hypt-close`, state that the user's original phrase pre-approved its confirmation gate, and continue until close completes or reaches a safety stop.
 

@@ -15,7 +15,7 @@ Read repository instructions, current branch, the PR's actual base and head, mer
 
 ## 1. Refresh the PR
 
-Review the full branch diff against the PR's actual base (`git diff <base>...<head>`). Fix material correctness, security, or build issues and update affected docs and existing follow-up records; when Beadcrumbs is initialized, harvest outstanding session crumbs per the `beadcrumbs` skill before merge. Polish the title and body from the full branch: user-visible outcome, migration or rollout work, and verification evidence. Preserve unrelated local changes.
+Review the full branch diff against the PR's actual base (`git diff <base>...<head>`). Fix material correctness, security, or build issues and update affected docs and existing follow-up records; when Beadcrumbs is initialized, harvest outstanding session crumbs per the `beadcrumbs` skill before merge. Polish the title from the full branch. If the body is not already in Matt's `pr` shape, apply that skill: the smallest summary visual, before/after evidence, a one-way or two-way door, and blast radius, plus migration or rollout work. That door and blast radius inform the Step 7 confirmation. They are not a second review. For a non-coder, Step 7 says whether the change is easy or hard to undo, in plain language. The PR body keeps both lines. Preserve unrelated local changes.
 
 Completion: the PR is open, local `HEAD` equals its remote head SHA, every fix is pushed, nothing unrelated was discarded, and title, body, and evidence describe that head.
 
@@ -78,7 +78,7 @@ Empty output from both means the repository does not version releases: record `R
 
 With a configured tracker (Beads when `bd` is initialized), identify tickets referenced by the PR title, body, and commits and present proposed closures separately: never inferred from a merge, and never for a ticket with outstanding rollout work. Ask before changing ticket state; without a tracker, record follow-up in the PR or repository convention.
 
-Present the PR number and URL, base and head SHA, change size, approval, gates, proof, hygiene, migrations, prepared version, and worktree cleanup plan. When `hypt-build` invoked this skill in yolo mode, mark this confirmation pre-approved and continue. Otherwise ask:
+Present the PR number and URL, base and head SHA, change size, approval, gates, proof, hygiene, migrations, prepared version, and worktree cleanup plan. Read the user's Identity. A non-coder hears what will go live and whether it is easy or hard to undo, then the question below. The checks above still ran; leave SHAs, gate names, and review vocabulary out of that ask. When `hypt-build` invoked this skill in yolo mode, mark this confirmation pre-approved and continue. Otherwise ask:
 
 > Merge, deploy, and release? (yes/no)
 
@@ -118,5 +118,7 @@ Closed
 - Tickets: <closed with confirmation / left open with reason / tracker unavailable>
 - Follow-up: <items or none>
 ```
+
+The merge path is done. Offer a coder `/retro` to improve the agent's navigation, checks, standards, or steering, and `/correct` when the same mistake has already repeated. Offer a non-coder the same look-back in plain language, without a skill name. Do not run either on this path.
 
 State any post-merge action the user must perform. Merge-ready and released describe current state, never stale state.
